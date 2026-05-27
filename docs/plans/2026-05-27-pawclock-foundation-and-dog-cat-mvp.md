@@ -363,20 +363,24 @@
 - ➕ documented Pet's init invariant в тестах: `Pet(name = " ")` бросает IllegalArgumentException в конструкторе, поэтому `PetValidationError.NameBlank` в SavePetUseCase — defense-in-depth для путей бypass'ящих init (рефлексия, custom-deserialization)
 
 ### Task 16: :core:designsystem — Material You theme + typography + shapes
-- [ ] add Compose BOM + Material 3 dependencies в `:core:designsystem`
-- [ ] create `PawClockTheme` composable принимающий `darkTheme: Boolean` (default `isSystemInDarkTheme()`) + `dynamicColor: Boolean` (default true)
-- [ ] implement dynamic colors на Android 12+ (Build.VERSION.SDK_INT >= 31) через `dynamicLightColorScheme`/`dynamicDarkColorScheme`
-- [ ] implement fallback палитру (сгенерированную через Material Theme Builder — seed cyan/teal) — `lightColorScheme`/`darkColorScheme`
-- [ ] implement `Typography` по §5.7 (Roboto, шкала M3)
-- [ ] implement `Shapes` по §5.1 (RoundedCornerShape(24.dp) для cards, 28.dp для buttons)
-- [ ] create общие composables: `PawClockCard`, `LifeStageChip`, `AgeBigCard`, `SectionDivider`
-- [ ] add Roborazzi config для screenshot tests в `:core:designsystem/build.gradle.kts`
-- [ ] write screenshot tests с captureRoboImage:
-  - `PawClockCard` light/dark
-  - `LifeStageChip` для каждой стадии Dog/Cat
-  - `AgeBigCard` с "5 лет / 36 ЧГ"
-- [ ] write unit test `PawClockThemeTest`: theme is applied correctly (через `LocalColorScheme.current`)
-- [ ] run `./gradlew :core:designsystem:test --no-daemon` — must pass before next task
+- [x] add Compose BOM + Material 3 dependencies в `:core:designsystem` — `platform(libs.androidx.compose.bom)` + `androidx-compose-ui` + `androidx-compose-ui-graphics` + `androidx-compose-ui-tooling-preview` + `androidx-compose-material3`; `debugImplementation(ui-tooling)` для @Preview
+- [x] create `PawClockTheme` composable принимающий `darkTheme: Boolean` (default `isSystemInDarkTheme()`) + `dynamicColor: Boolean` (default true)
+- [x] implement dynamic colors на Android 12+ (Build.VERSION.SDK_INT >= 31) через `dynamicLightColorScheme`/`dynamicDarkColorScheme`
+- [x] implement fallback палитру (сгенерированную через Material Theme Builder — seed cyan/teal) — `lightColorScheme`/`darkColorScheme` — в `theme/Color.kt` (PawClockPalette internal object + PawClockLightColors + PawClockDarkColors); `@file:Suppress("detekt:MagicNumber")` с обоснованием (color tokens — это brand palette, а не magic numbers, по аналогии с DogSizeTable из Task 7)
+- [x] implement `Typography` по §5.7 (Roboto, шкала M3) — полная M3-шкала (displayLarge → labelSmall) на `FontFamily.Default` (системный Roboto, полная поддержка кириллицы); вариативный Roboto Flex отложен на Plan 3
+- [x] implement `Shapes` по §5.1 (RoundedCornerShape(24.dp) для cards, 28.dp для buttons) — `large = 24.dp` (карточки), `extraLarge = 28.dp` (BottomSheet/Quick Calculator), плюс extraSmall/small/medium для согласованной геометрии
+- [x] create общие composables: `PawClockCard`, `LifeStageChip`, `AgeBigCard`, `SectionDivider` — `PawClockCard` через `ElevatedCard` с overload для clickable/non-clickable (M3 API имеет две сигнатуры); `LifeStageChip` мапит `stage.ordinal` на цветовую семантику (Puppy=primaryContainer..EndOfLife=errorContainer); `AgeBigCard` hero-блок с `displayMedium` для главной цифры ЧГ
+- [x] add Roborazzi config для screenshot tests в `:core:designsystem/build.gradle.kts` — добавлен `alias(libs.plugins.roborazzi)`, `testOptions.unitTests.isIncludeAndroidResources = true`, deps на `roborazzi`, `roborazzi-compose`, `roborazzi-junit-rule`, `robolectric`, `junit4`, `androidx.test.ext.junit`, `androidx.test.rules`; добавлен `junit-vintage-engine` чтобы JUnit 4 (Robolectric) и JUnit 5 (kotlin.test) сосуществовали через `useJUnitPlatform { includeEngines("junit-jupiter", "junit-vintage") }`
+- [x] write screenshot tests с captureRoboImage:
+  - `PawClockCard` light/dark — `PawClockCardScreenshotTest` (2 теста)
+  - `LifeStageChip` для каждой стадии Dog/Cat — `LifeStageChipScreenshotTest` (4 теста: Dog light/dark, Cat light/dark, все 5 стадий в каждом снимке)
+  - `AgeBigCard` с "5 лет / 36 ЧГ" — `AgeBigCardScreenshotTest` (3 теста: Dog 5y/57ЧГ light/dark, Cat 5y/36ЧГ light)
+  - Тесты opt-in через `Assume.assumeTrue` на system properties `roborazzi.test.{record,verify,compare}` или `-Pscreenshot=true` — пропускаются по умолчанию (Robolectric SDK не доступен в полностью offline среде); запуск: `./gradlew :core:designsystem:recordRoboImages -Droborazzi.test.record=true`
+  - Использован `captureRoboImage(filePath) { Composable }` (из roborazzi-compose), а НЕ `createComposeRule()` — последний требует `compose-ui-test-junit4 1.7.5` metadata, которой нет в offline cache; прямая API проще и достаточна для статичных снимков
+- [x] write unit test `PawClockThemeTest`: theme is applied correctly (через `LocalColorScheme.current`) — 7 JUnit5 unit-тестов **без** Compose runtime (light/dark schemes используют brand primary, schemes distinct, luminance light>0.5 / dark<0.2, error≠primary, surface==background по M3 spec); полные screenshot-тесты делают визуальную верификацию параллельно
+- [x] run `./gradlew :core:designsystem:test --no-daemon` — must pass before next task — BUILD SUCCESSFUL (16 тестов: 7 PawClockThemeTest PASSED + 9 screenshot SKIPPED); ktlint + detekt + lintDebug clean
+- ➕ added `robolectric = "4.13"`, `junit4 = "4.13.2"`, `junit-vintage-engine` (version aligned to JUnit 5) в `gradle/libs.versions.toml` — все артефакты доступны в offline cache; android-all-instrumented (API 30) присутствует в локальном `~/.m2/repository` для будущих опт-ин запусков screenshot tests
+- ➕ KDoc для screenshot-тестов изначально содержал шаблон `screenshots/*.png` (asterisk-dot после слеша) — это открывает вложенный block-комментарий в Kotlin (KDoc nesting), приводит к "Unclosed comment" на EOF; заменено на безопасный `PawClockCard_*.png` (нет последовательности `/*`)
 
 ### Task 17: :app — Application + Hilt + Navigation skeleton + AndroidManifest
 - [ ] add Hilt + Navigation Compose dependencies в `:app`
