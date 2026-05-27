@@ -246,22 +246,23 @@
 - [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — 145 тестов прошло (предыдущие 112 + 33 новых), ktlint + detekt clean
 
 ### Task 10: :core:calculator — Cat life stages TDD
-- [ ] write FAILING test `CatLifeStageCalculatorTest` для всех границ по §4.2:
+- [x] write FAILING test `CatLifeStageCalculatorTest` для всех границ по §4.2:
   - `0.5 year → Kitten`
   - `1 year → Kitten` (граничный случай — спецификация Kitten = 0-1)
   - `2 years → YoungAdult`
   - `7 years → MatureAdult`
   - `10 years → MatureAdult` (граница 10+)
   - `12 years → Senior`
-- [ ] verify tests fail — **Red**
-- [ ] create `CatLifeStageCalculator.determine(ageInYears: Double, catType: CatType): LifeStage.Cat`
-- [ ] implement: Kitten (0–1), YoungAdult (1–6), MatureAdult (7–10), Senior (10+), EndOfLife (близко к 18 для домашних, 5 для уличных)
-- [ ] verify все тесты — **Green**
-- [ ] add ParameterizedTest для всех границ × CatType
-- [ ] add KDoc со ссылкой на AAHA/AAFP 2021
-- [ ] add `expectedLifespanRange(catType: CatType): ClosedRange<Double>` (12-18 indoor, 2-5 outdoor, +1-2 года large breed)
-- [ ] write tests для `expectedLifespanRange`
-- [ ] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task
+- [x] verify tests fail — **Red** (compileTestKotlin FAILED: `Unresolved reference 'CatLifeStageCalculator'`)
+- [x] create `CatLifeStageCalculator.determine(ageInYears: Double, catType: CatType): LifeStage.Cat`
+- [x] implement: Kitten (0–1), YoungAdult (1–6), MatureAdult (7–10), Senior (10+), EndOfLife (близко к 18 для домашних, 5 для уличных) — порог Senior = 11.0 (AAFP «10+» интерпретирован как «начало 11-го года жизни», чтобы соответствовать тесту `10 years → MatureAdult`); EndOfLife вынесен в табличный `CatLifeStageThresholds` (Indoor 16, Outdoor 4, LargeBreed 13)
+- [x] verify все тесты — **Green** (32 теста CatLifeStageCalculatorTest прошли)
+- [x] add ParameterizedTest для всех границ × CatType — 32 кейса (13 IndoorShortHair + 6 IndoorLongHair + 6 Outdoor + 7 LargeBreed) покрывают все переходы; bonus: тест монотонности ordinal'а по возрасту (smoke property-check до Task 11) — для уличной кошки в 5 лет EndOfLife наступает раньше, чем MatureAdult у домашней (ord 4 > ord 1) — задокументировано в KDoc
+- [x] add KDoc со ссылкой на AAHA/AAFP 2021 — DOI: 10.1177/1098612X21993657 (полные ссылки + Quimby et al. citation)
+- [x] add `expectedLifespanRange(catType: CatType): ClosedRange<Double>` (12-18 indoor, 2-5 outdoor, +1-2 года large breed) — реализовано как `ClosedFloatingPointRange<Double>` (поддержка `contains()` с Double); LargeBreed = 12.0..15.0 (Maine Coon median ≈ 12.5)
+- [x] write tests для `expectedLifespanRange` — 5 тестов: 4 на типы + 1 биоинвариант «домашние живут дольше уличных»
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — 177 тестов прошло (предыдущие 145 + 32 новых), ktlint + detekt clean
+- ➕ extracted `internal object CatLifeStageThresholds` (отдельный файл) для табличных порогов EndOfLife по CatType — следует существующему паттерну `DogLifeStageThresholds.kt`; для Outdoor EndOfLife (4.0) ниже порога MatureAdult (7.0), что приводит к «пропуску» промежуточных стадий — задокументировано в KDoc как намеренное поведение, отражающее статистику смертности уличных кошек до достижения Senior-стадии
 
 ### Task 11: Kotest property-based tests for calculators
 - [ ] add Kotest dependencies to `:core:calculator` (kotest-runner-junit5, kotest-property)
