@@ -1,0 +1,29 @@
+# Spec §8.8 — CODEOWNERS for solo maintainership. Granular paths exist not for
+# review distribution but to flag PRs touching scientific/architectural cores
+# so they cannot land via auto-merge of an unrelated change.
+#
+# Syntax: https://docs.github.com/articles/about-code-owners
+# Order matters: the LAST matching pattern wins.
+
+# Default catch-all.
+* @dnovichkov
+
+# Scientific cores — every formula touch must be reviewed against its
+# cited primary source (DOI / AKC / AAHA / AAFP).
+/core/calculator/             @dnovichkov
+/core/model/                  @dnovichkov
+
+# Care recommendations — JSON assets that ship to users.
+/app/src/main/assets/care/    @dnovichkov
+
+# Architectural decisions — ADRs are immutable once Accepted; only allow
+# Status flips (Accepted → Deprecated → Superseded) through CODEOWNERS gate.
+/docs/adr/                    @dnovichkov
+
+# CI/CD & dependency surface — supply-chain risk vector.
+/.github/                     @dnovichkov
+/gradle/libs.versions.toml    @dnovichkov
+/scripts/                     @dnovichkov
+
+# Signing & manifest — privacy guarantees ("no data collected", no INTERNET).
+/app/src/main/AndroidManifest.xml   @dnovichkov

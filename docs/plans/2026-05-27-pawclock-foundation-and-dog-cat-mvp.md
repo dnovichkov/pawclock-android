@@ -150,16 +150,17 @@
 - ➕ create minimal `app/src/main/AndroidManifest.xml` stub чтобы разблокировать `:app:lintDebug` и `:app:assembleDebug` до Task 17; содержит `INTERNET tools:node="remove"` по §9 заранее
 
 ### Task 4: GitHub Actions — release.yml + nightly.yml + dependabot + PR/issue templates + CODEOWNERS
-- [ ] create `.github/workflows/release.yml` по §8.5.2 (триггер на тег `v*.*.*`, сборка bundleRelease с подписью из Secrets, verify-bundle-size.sh, gh release с changelog, опциональный r0adkll/upload-google-play закомментирован пока)
-- [ ] create `.github/workflows/nightly.yml` по §8.5.3 (reactivecircus/android-emulator-runner API 24/30/35, прогон Compose UI + Maestro, cron `0 2 * * *`)
-- [ ] create `.github/dependabot.yml` по §8.9 (gradle weekly, github-actions monthly, лимит 5 PR)
-- [ ] create `.github/ISSUE_TEMPLATE/bug_report.md` по §8.7
-- [ ] create `.github/ISSUE_TEMPLATE/feature_request.md` (минимальный template)
-- [ ] create `.github/ISSUE_TEMPLATE/species_request.md` (вид, научное название, источник формулы, стадии)
-- [ ] create `.github/PULL_REQUEST_TEMPLATE.md` по §8.7 (чеклист с TDD-пунктами)
-- [ ] create `.github/CODEOWNERS` по §8.8 с `* @dnovichkov` и `/core/calculator/ @dnovichkov` и `/docs/adr/ @dnovichkov`
-- [ ] write test: `actionlint .github/workflows/*.yml` валидирует release.yml и nightly.yml
-- [ ] write test: проверка существования всех template-файлов через `ls -la .github/ISSUE_TEMPLATE/` и наличие обязательных секций
+- [x] create `.github/workflows/release.yml` по §8.5.2 (триггер на тег `v*.*.*`, сборка bundleRelease с подписью из Secrets, verify-bundle-size.sh, gh release с changelog, опциональный r0adkll/upload-google-play закомментирован пока) — keystore декодируется из `KEYSTORE_BASE64`, env-vars с префиксом `PAWCLOCK_` (читаются в Task 17 signing config), `concurrency: cancel-in-progress: false` чтобы релизы не отменяли друг друга
+- [x] create `.github/workflows/nightly.yml` по §8.5.3 (reactivecircus/android-emulator-runner API 24/30/35, прогон Compose UI + Maestro, cron `0 2 * * *`) — AVD-cache + create-snapshot стадия для ускорения; matrix.target: API 24 = `default` (без GApps), 30/35 = `google_apis`; Maestro-job guard'ом detect_flows skip'ается до Task 23; +`workflow_dispatch` для ручного запуска
+- [x] create `.github/dependabot.yml` по §8.9 (gradle weekly, github-actions monthly, лимит 5 PR) — добавлены `groups` (kotlin-and-ksp, androidx-compose, androidx-core, test-runners) чтобы routine bumps шли пачками; security alerts всё равно отдельными PR
+- [x] create `.github/ISSUE_TEMPLATE/bug_report.md` по §8.7
+- [x] create `.github/ISSUE_TEMPLATE/feature_request.md` (минимальный template)
+- [x] create `.github/ISSUE_TEMPLATE/species_request.md` (вид, научное название, источник формулы, стадии) — источник формулы оформлен чек-листом (peer-review/vet-org/textbook), чтобы reviewer мог быстро отсеивать issues без citation
+- [x] create `.github/PULL_REQUEST_TEMPLATE.md` по §8.7 (чеклист с TDD-пунктами) — секции TDD & correctness / Source attribution / Quality gates / Privacy & safety
+- [x] create `.github/CODEOWNERS` по §8.8 с `* @dnovichkov` и `/core/calculator/ @dnovichkov` и `/docs/adr/ @dnovichkov` — расширено защитой `/core/model/`, `/app/src/main/assets/care/`, `/.github/`, `/gradle/libs.versions.toml`, `/scripts/`, AndroidManifest.xml
+- [x] write test: `actionlint .github/workflows/*.yml` валидирует release.yml и nightly.yml — выполняется через `scripts/verify-workflows.sh` (унаследованный из Task 3 fallback chain actionlint → yamllint → python+pyyaml → grep); все 4 workflow парсятся
+- [x] write test: проверка существования всех template-файлов через `ls -la .github/ISSUE_TEMPLATE/` и наличие обязательных секций — `scripts/verify-github-templates.sh` проверяет файлы, front-matter, обязательные секции species_request.md, TDD-маркеры PR-template, защищённые пути CODEOWNERS, структуру dependabot.yml
+- ➕ add `.github/ISSUE_TEMPLATE/config.yml` с `blank_issues_enabled: false` + Discussions/spec contact links — закрывает обход template'ов через "New blank issue"
 
 ### Task 5: :core:model — Species, LifeStage, Pet
 - [ ] write FAILING tests in `:core:model` `SpeciesTest`, `LifeStageTest`, `PetTest` (TDD: red first):
