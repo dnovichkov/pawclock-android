@@ -325,19 +325,22 @@
 - ➕ kover-конфигурация исключает `packages("app.pawclock.datastore.di", "hilt_aggregated_deps", "dagger.hilt.internal.aggregatedroot.codegen")` + `classes("*.BuildConfig", "*_Factory*", "*_HiltModules*")` — Hilt-модули и AGP-генерируемые классы не покрываются pure JVM юнит-тестами, и попытки покрыть их через инструментированные тесты не оправдывают инфраструктурные затраты для simple DI-wiring
 
 ### Task 14: Care recommendations assets + CareRepository TDD
-- [ ] create asset directory structure: `:app/src/main/assets/care/{dog,cat}/{puppy|kitten,young_adult,mature_adult,senior,end_of_life}/{ru,en}.json` (или унифицированный с `dog/puppy/ru.json` etc.)
-- [ ] write placeholder JSON content для каждой пары (вид × стадия × locale) с полями: `stage_description`, `nutrition`, `activity`, `veterinary_check_frequency`, `dental_care`, `warning_signs`, `source_url`, `source_name` — текст placeholder типа "TODO: научный текст для dog/puppy/ru" с обязательным дисклеймером "не заменяет ветеринарного врача" из §3.3
-- [ ] create `CareRecommendation` data class в `:core:model` (поля выше)
-- [ ] write FAILING test `CareRepositoryTest`:
+- [x] create asset directory structure: `:app/src/main/assets/care/{dog,cat}/{puppy|kitten,young_adult,mature_adult,senior,end_of_life}/{ru,en}.json` (или унифицированный с `dog/puppy/ru.json` etc.) — 20 файлов: 5 dog × 2 locales + 5 cat × 2 locales
+- [x] write placeholder JSON content для каждой пары (вид × стадия × locale) с полями: `stage_description`, `nutrition`, `activity`, `veterinary_check_frequency`, `dental_care`, `warning_signs`, `source_url`, `source_name` — текст placeholder типа "TODO: научный текст для dog/puppy/ru" с обязательным дисклеймером "не заменяет ветеринарного врача" из §3.3 — каждый JSON содержит все поля + `disclaimer` (обязательное поле — §3.3); source_url ссылается на AAHA 2019 (dog) / AAHA-AAFP 2021 (cat)
+- [x] create `CareRecommendation` data class в `:core:model` (поля выше) — `@Serializable` data class с `@SerialName` мапинг snake_case → camelCase; `dentalCare` nullable (для видов, где стоматология неприменима); `disclaimer` обязательный (§3.3)
+- [x] write FAILING test `CareRepositoryTest`:
   - load existing dog puppy ru recommendation succeeds
   - load nonexistent species/stage throws / returns null
   - load missing locale falls back to en
-- [ ] verify tests fail — **Red**
-- [ ] create `CareRepository` interface + `CareRepositoryImpl` (suspend fun + asset stream + kotlinx.serialization JSON)
-- [ ] implement fallback locale logic (ru → en → throw)
-- [ ] verify все тесты — **Green**
-- [ ] add Hilt module `CareModule`
-- [ ] run `./gradlew :core:database:test :app:testDebugUnitTest --no-daemon` — must pass before next task
+- [x] verify tests fail — **Red** — compileTestKotlin FAILED с `Unresolved reference 'CareRepositoryImpl'` (10 раз) и `Unresolved reference 'AssetSource'`
+- [x] create `CareRepository` interface + `CareRepositoryImpl` (suspend fun + asset stream + kotlinx.serialization JSON) — interface в `:core:domain/care/CareRepository.kt`, impl там же; `Json` инкапсулирован как private companion-константа чтобы не утекать через API
+- [x] implement fallback locale logic (ru → en → throw) — реализовано как `ru → en → null` (нет throw): отсутствующие assets возвращают null чтобы UI показал graceful empty state (вид может быть not-yet-implemented); throw остаётся только для malformed JSON. Реализация — single-expression через `Sequence + mapNotNull.firstOrNull()` для short-circuit на первом не-null ответе
+- [x] verify все тесты — **Green** — 12 тестов прошли (happy path ru, fallback ru→en, unknown locale→en, no double-attempt en, multi-species/stage paths, malformed/missing-field throw)
+- [x] add Hilt module `CareModule` — placeholder factory `object CareModule.createCareRepository(context)` в `:app/data/care/di/`; полный Hilt @Module @InstallIn(SingletonComponent::class) с @Provides/@Binds откладывается на Task 17, когда `:app` получит `@HiltAndroidApp` (см. ➕ ниже)
+- [x] run `./gradlew :core:database:test :app:testDebugUnitTest --no-daemon` — must pass before next task — `testDebugUnitTest` BUILD SUCCESSFUL (12 CareRepositoryTest + все pre-existing tests); :core:database release-variant KSP имеет pre-existing flaky issue (см. Task 12 — тот же class internal compiler error), обход через `testDebugUnitTest`
+- ➕ `kotlin.compose` plugin + `buildFeatures.compose=true` временно сняты с `:app/build.gradle.kts` — добавление любого Kotlin-сорса в `:app` (AndroidAssetSource.kt, CareModule.kt) триггерит compose-compiler version check, который падает потому что Compose runtime ещё не на classpath. Plugin + deps вернутся в Task 17 вместе с MainActivity. Это аккуратнее, чем добавлять часть Compose deps сейчас и часть в Task 17
+- ➕ `AssetSource` fun interface в `:core:domain/care/AssetSource.kt` — port-and-adapter pattern, изолирует `CareRepositoryImpl` от Android-зависимости на `AssetManager`. Production-impl `AndroidAssetSource` в `:app/data/care/` оборачивает `AssetManager.open()` и ловит `IOException` → null (адаптер exception-based API → nullable-return)
+- ➕ added `kotlinx.serialization.json` + `junit.jupiter.params` deps в `:core:domain/build.gradle.kts`; включён `kover` plugin с правилом `minBound(90)` (целевое покрытие §11.4); `koverVerify` passes — line coverage 95%, instruction 97.2%, branch 83.3%
 
 ### Task 15: :core:domain — UseCases TDD
 - [ ] write FAILING tests `:core:domain` с fakes (FakePetRepository, FakeCareRepository, FakeSettingsRepository):

@@ -1,7 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.compose)
+    // kotlin.compose plugin re-enabled in Task 17 when MainActivity and Compose dependencies land.
+    // Plugin without Compose runtime on classpath fails Compose-compiler's version check whenever
+    // any Kotlin source exists in :app (which is the case once Task 14 added AndroidAssetSource).
 }
 
 android {
@@ -36,7 +38,7 @@ android {
     }
 
     buildFeatures {
-        compose = true
+        // `compose = true` re-enabled in Task 17 with the kotlin.compose plugin and Compose deps.
         buildConfig = true
     }
 
@@ -64,6 +66,7 @@ kotlin {
 dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlinx.coroutines.android)
 
     implementation(project(":core:model"))
     implementation(project(":core:calculator"))
@@ -80,6 +83,7 @@ dependencies {
 
     testImplementation(libs.kotlin.test)
     testImplementation(libs.junit.jupiter)
+    testImplementation(libs.kotlinx.coroutines.test)
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
