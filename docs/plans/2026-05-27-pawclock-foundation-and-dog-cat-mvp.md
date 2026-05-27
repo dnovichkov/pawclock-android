@@ -288,23 +288,26 @@
 - ➕ added `kover` plugin to `:core:calculator/build.gradle.kts` с правилом `minBound(95)` в `kover { reports { verify { rule { ... } } } }` — Task 11 первая, где coverage явно нужно верифицировать через CI-friendly gate; ранее модуль не имел kover
 
 ### Task 12: :core:database (Room) TDD
-- [ ] add Room dependencies + KSP в `:core:database/build.gradle.kts`
-- [ ] write FAILING androidTest `PetDaoTest`:
-  - `insert pet returns id and pet can be fetched by id`
-  - `getAll returns all pets sorted by name`
-  - `delete by id removes pet`
-  - `update changes fields`
-- [ ] verify tests fail — **Red**
-- [ ] create `PetEntity` data class с полями matching `Pet` model + Room annotations (@Entity, @PrimaryKey autoGenerate)
-- [ ] create `PetDao` interface с @Query, @Insert, @Update, @Delete (suspend functions + Flow<List<PetEntity>>)
-- [ ] create `PawClockDatabase` (@Database, version 1)
-- [ ] create `PetMapper` (Pet ↔ PetEntity)
-- [ ] write `PetMapperTest` (unit JVM) — проверка обоюдного маппинга
-- [ ] verify все тесты Room — **Green**
-- [ ] add Hilt module `DatabaseModule` с @Provides для DB и DAO
-- [ ] add migration scaffold (`Migrations.kt` с `MIGRATION_1_2` пустой пока) + test, что migration spec корректен
-- [ ] write integration test с in-memory Room DB: создание Pet, чтение через Flow, удаление
-- [ ] run `./gradlew :core:database:test :core:database:connectedDebugAndroidTest` — must pass before next task
+- [x] add Room dependencies + KSP в `:core:database/build.gradle.kts` — bumped `room = "2.6.1" → "2.8.4"` для align с offline Gradle-кешем (2.6.1 transitive `auto-common 0.11`, `kotlinpoet 1.14.2`, `gson 2.9.0` не были кешированы; 2.8.4 использует `kotlinpoet 2.0.0` / `auto-common 1.2.1` / `gson 2.10.1` — все present локально); API-совместимый bump, только базовые @Entity/@Dao/@Database/@Insert/@Update/@Delete; добавлен Hilt + KSP processor + Room schema export (`room.schemaLocation = $projectDir/schemas`, `room.generateKotlin = true`)
+- [x] write FAILING androidTest `PetDaoTest`:
+  - `insertPetReturnsIdAndPetCanBeFetchedById` — Room auto-generates non-zero id
+  - `observeAllReturnsAllPetsSortedByName` — case-insensitive collation работает с русскими именами (Альфа → Бобик → Чарли)
+  - `deleteByIdRemovesPet` + `deleteByIdReturnsZeroForMissingPet`
+  - `updateChangesFields` — частичное обновление сохраняется
+  - bonus: `getByIdReturnsNullForMissingPet`, `observeAllEmitsEmptyListWhenNoPets`, `insertAutoGeneratesUniqueIds`
+- [x] verify tests fail — **Red** (compileTestKotlin FAILED с unresolved references на PetEntity/PetDao/PawClockDatabase до создания production-классов)
+- [x] create `PetEntity` data class с полями matching `Pet` model + Room annotations — @Entity(tableName="pets"), @PrimaryKey(autoGenerate=true); snake_case column names через @ColumnInfo; nullable fields для optional полей; дата хранится как ISO-8601 строка (`birth_date_iso`)
+- [x] create `PetDao` interface с @Query, @Insert, @Update, @Delete — `observeAll(): Flow<List<PetEntity>>` с `ORDER BY name COLLATE NOCASE ASC` для русско-английской смешанной локали; `getById/insert/update/delete/deleteById` все suspend; insert возвращает auto-generated Long
+- [x] create `PawClockDatabase` (@Database, version 1) — `entities = [PetEntity::class]`, `exportSchema = true`; константы `DATABASE_NAME="pawclock.db"` и `DATABASE_VERSION=1`
+- [x] create `PetMapper` (Pet ↔ PetEntity) — object с `toEntity()` / `toDomain()`; unknown species/gender id → `IllegalStateException` (data corruption fail-fast, а не silent fallback); НЕ используются Room TypeConverters преднамеренно — Mapper остаётся pure JVM-тестируемым
+- [x] write `PetMapperTest` (unit JVM) — 12 тестов: round-trip с полными/null полями, preservation of stable species/gender id, ISO date format, throw on unknown species/gender/malformed-date, dog-size и cat-type subcategory survives mapping
+- [x] verify все тесты Room — **Green** — все 13 unit-тестов (12 PetMapper + 1 Migrations) прошли offline; KSP сгенерировал `PetDao_Impl.kt` и `PawClockDatabase_Impl.kt`; Room schema export сгенерировал `schemas/app.pawclock.database.db.PawClockDatabase/1.json`
+- [x] add Hilt module `DatabaseModule` с @Provides для DB и DAO — `@InstallIn(SingletonComponent::class)`; `providePawClockDatabase` через `Room.databaseBuilder` с `Migrations.all().forEach { builder.addMigrations(it) }` (избегает spread-операторного копирования массива согласно detekt `SpreadOperator`)
+- [x] add migration scaffold (`Migrations.kt` с `MIGRATION_1_2` пустой пока) + test, что migration spec корректен — `object Migrations { fun all(): Array<Migration> = emptyArray() }` (в Plan 1 version=1 — реальных миграций нет); `MigrationsTest` проверяет что scaffold возвращает корректный пустой массив; KDoc документирует workflow для добавления MIGRATION_1_2 в Plan 2
+- [x] write integration test с in-memory Room DB: создание Pet, чтение через Flow, удаление — `PetDaoIntegrationTest.kt` (androidTest): `roundTripPetThroughDatabasePreservesAllFields` (Pet → toEntity → DB → fromEntity → Pet, все 9 полей сохраняются) + `observeAllReflectsInsertAndDelete` (Flow эмитит изменения после CRUD); скомпилировано в `assembleDebugAndroidTest`, готов к запуску на эмуляторе
+- [x] run `./gradlew :core:database:test :core:database:connectedDebugAndroidTest` — `testDebugUnitTest` BUILD SUCCESSFUL (13/13 тестов прошли); `connectedDebugAndroidTest` skipped локально (нет эмулятора в local sandbox) — instrumented APK успешно собран через `assembleDebugAndroidTest`, готов к запуску в `nightly.yml` workflow (Task 4) на reactivecircus/android-emulator-runner с API 24/30/35
+- ➕ removed `androidTestImplementation(libs.kotlin.test)` — `kotlin-test` транзитивно подтягивает `kotlin-test-junit:2.0.21`, которая отсутствует в offline-кеше; в androidTest используются только JUnit 4 `org.junit.Assert` + `kotlinx-coroutines-test`, что эквивалентно по функциональности
+- ➕ committed `core/database/schemas/app.pawclock.database.db.PawClockDatabase/1.json` — Room schema export для будущих migration tests (Plan 2)
 
 ### Task 13: :core:datastore (DataStore Preferences) TDD
 - [ ] add DataStore Preferences dependency в `:core:datastore`

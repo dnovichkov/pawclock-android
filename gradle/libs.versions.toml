@@ -21,7 +21,12 @@ composeHiltNavigation = "1.2.0"
 hilt = "2.52"
 
 # Room & persistence
-room = "2.6.1"
+# Task 12: bumped 2.6.1 → 2.8.4 to align with offline Gradle cache.
+# 2.6.1 transitive deps (auto-common 0.11, kotlinpoet 1.14.2, gson 2.9.0) were not cached,
+# while 2.8.4 uses kotlinpoet 2.0.0 / auto-common 1.2.1 / gson 2.10.1 — all present locally.
+# API-compatible bump: только базовые @Entity/@Dao/@Database/@Insert/@Update/@Delete используются,
+# не задействованы 2.7+ фичи (@AutoMigration с @ConstructedBy и т.п.).
+room = "2.8.4"
 datastore = "1.1.1"
 
 # Coroutines / serialization
