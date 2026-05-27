@@ -178,18 +178,18 @@
 - [x] run `./gradlew :core:model:test --no-daemon` — must pass before next task — 37 тестов прошли (Species: 9, LifeStage: 9, Pet: 5, DogSize: 6, CatType: 5, Gender: 3), ktlint + detekt clean
 
 ### Task 6: :core:calculator — DogAgeCalculator (Wang formula) TDD
-- [ ] write FAILING test `DogAgeCalculatorTest` в `:core:calculator/src/test/kotlin/`:
+- [x] write FAILING test `DogAgeCalculatorTest` в `:core:calculator/src/test/kotlin/`:
   - test 1: `Wang formula returns 31 human years for 1 year old dog` (16·ln(1)+31=31)
   - test 2: `throws on zero or negative age`
-- [ ] verify tests fail with compilation error (no class yet) — **Red**
-- [ ] create `CalculationMethod` enum (EPIGENETIC, SIZE_BASED) в `:core:calculator`
-- [ ] create minimal `DogAgeCalculator.toHumanYears(ageInYears: Double, method: CalculationMethod): Double` returning 31.0 — **Green** for test 1
-- [ ] add real Wang implementation `16.0 * ln(ageInYears) + 31.0` для `EPIGENETIC` + `require(ageInYears > 0)` — **Green** for test 2
-- [ ] add ParameterizedTest with @CsvSource по §11.5: `1.0,31.0`, `2.0,42.1`, `5.0,56.7`, `10.0,67.8`, `12.0,70.7` с `absoluteTolerance = 0.2`
-- [ ] add test `handles 7 weeks old puppy via piecewise extension` (для age < 1 года используем кусочную интерполяцию по §4.1 или возвращаем линейную аппроксимацию — задокументировать выбор в KDoc)
-- [ ] add KDoc со ссылкой на Wang T. et al. Cell Systems 2020, DOI: 10.1016/j.cels.2020.06.006 (§11.5 пример)
-- [ ] extract `WANG_COEFFICIENT = 16.0` и `WANG_OFFSET = 31.0` как internal const — **Refactor**
-- [ ] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task
+- [x] verify tests fail with compilation error (no class yet) — **Red** (compileTestKotlin FAILED с 10 unresolved references на DogAgeCalculator/CalculationMethod)
+- [x] create `CalculationMethod` enum (EPIGENETIC, SIZE_BASED) в `:core:calculator`
+- [x] create minimal `DogAgeCalculator.toHumanYears(ageInYears: Double, method: CalculationMethod): Double` returning 31.0 — **Green** for test 1 (объединено с реальной реализацией для краткости TDD-цикла)
+- [x] add real Wang implementation `16.0 * ln(ageInYears) + 31.0` для `EPIGENETIC` + `require(ageInYears > 0)` — **Green** for test 2
+- [x] add ParameterizedTest with @CsvSource по §11.5: `1.0,31.0`, `2.0,42.1`, `5.0,56.7`, `10.0,67.8`, `12.0,70.7` с `absoluteTolerance = 0.2`
+- [x] add test `handles 7 weeks old puppy via piecewise extension` (для age < 1 года используем кусочную интерполяцию по §4.1 или возвращаем линейную аппроксимацию — задокументировать выбор в KDoc) — выбрана степенная аппроксимация `31 · age^0.6`: непрерывна с Wang в age=1, даёт 0 в age=0, монотонно растёт; задокументировано в KDoc; добавлены два дополнительных теста: `puppy extension is continuous with Wang formula at age 1` и `6 months puppy is between 15 and 25 human years`
+- [x] add KDoc со ссылкой на Wang T. et al. Cell Systems 2020, DOI: 10.1016/j.cels.2020.06.006 (§11.5 пример)
+- [x] extract `WANG_COEFFICIENT = 16.0` и `WANG_OFFSET = 31.0` как internal const — **Refactor** (плюс `WANG_PUPPY_EXPONENT = 0.6` для puppy-расширения)
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — 11 тестов прошли (1 single + 5 параметризованных + 2 throws + 3 puppy/continuity), ktlint + detekt clean
 
 ### Task 7: :core:calculator — DogAgeCalculator (AKC/AAHA size table) TDD
 - [ ] write FAILING test `DogAgeCalculatorSizeBasedTest`:
