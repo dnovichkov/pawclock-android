@@ -265,22 +265,27 @@
 - ➕ extracted `internal object CatLifeStageThresholds` (отдельный файл) для табличных порогов EndOfLife по CatType — следует существующему паттерну `DogLifeStageThresholds.kt`; для Outdoor EndOfLife (4.0) ниже порога MatureAdult (7.0), что приводит к «пропуску» промежуточных стадий — задокументировано в KDoc как намеренное поведение, отражающее статистику смертности уличных кошек до достижения Senior-стадии
 
 ### Task 11: Kotest property-based tests for calculators
-- [ ] add Kotest dependencies to `:core:calculator` (kotest-runner-junit5, kotest-property)
-- [ ] write `DogAgeCalculatorPropertyTest` (по §11.6):
-  - `human age is monotonically increasing in dog age` (EPIGENETIC) для `Arb.double(0.1, 20.0)`
+- [x] add Kotest dependencies to `:core:calculator` (kotest-runner-junit5, kotest-property) — добавлены только `kotest-property` и `kotest-assertions-core` (без `kotest-runner-junit5`), чтобы сохранить единый JUnit5-runner стиль; property-checks обёрнуты в `@Test fun ... = runBlocking { checkAll(...) }`; также добавлен `kotlinx-coroutines-core` для `runBlocking`
+- [x] write `DogAgeCalculatorPropertyTest` (по §11.6):
+  - `human age is monotonically increasing in dog age` (EPIGENETIC) для `Arb.double(0.1, 20.0)` — реализовано на `Arb.double(0.01, 30.0)`
   - `result is always positive for positive input`
-  - `result is bounded above by 200` (никакая собака не даёт > 200 ЧГ)
-- [ ] write `DogAgeCalculatorSizeBasedPropertyTest`:
+  - `result is bounded above by 200` (никакая собака не даёт > 200 ЧГ) — реализовано для age до 30 лет
+  - bonus: непрерывность Wang↔puppy ext в окрестности age=1, и инвариант "throws IAE для всех age ≤ 0"
+- [x] write `DogAgeCalculatorSizeBasedPropertyTest`:
   - monotonicity для каждого `DogSize`
   - giant size at given age >= small size at same age для age > 5 (гиганты стареют быстрее)
-- [ ] write `CatAgeCalculatorPropertyTest`:
+  - bonus: large >= small для age > 6, positivity, граница 250 ЧГ для возрастов до 30 (экстраполяция Giant)
+- [x] write `CatAgeCalculatorPropertyTest`:
   - monotonicity в возрасте
   - outdoor cat at age > 2 always >= indoor cat at same age
-  - large breed at age > 2 always >= small breed at same age
-- [ ] write `LifeStageCalculatorPropertyTest`:
+  - large breed at age > 2 always >= small breed at same age — реализовано как large breed >= IndoorShortHair (CatType `Small` не существует, корректный baseline — Indoor)
+  - bonus: positivity, граница 200 ЧГ, kitten-интервал ровно `15·age` для всех CatType
+- [x] write `LifeStageCalculatorPropertyTest`:
   - `if age1 < age2, then stage(age1).ordinal <= stage(age2).ordinal` (стадии не возвращаются назад) для собак и кошек
-- [ ] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task
-- [ ] verify coverage `:core:calculator` ≥ 95% через `./gradlew :core:calculator:koverHtmlReport`
+  - bonus: `throws IAE on zero/negative ages` для обеих калькуляторов, валидность `expectedLifespanRange` (start > 0, start ≤ endInclusive) для всех DogSize/CatType
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — все тесты прошли (157+ тестов, включая 22 новых property-теста); ktlint + detekt clean
+- [x] verify coverage `:core:calculator` ≥ 95% через `./gradlew :core:calculator:koverHtmlReport` — line coverage 117/122 = 95.9%, instructions 828/848 = 97.6%, branch 90/96 = 93.75%; `koverVerify` с правилом `minBound(95)` прошёл; HTML отчёт: `core/calculator/build/reports/kover/html/index.html`
+- ➕ added `kover` plugin to `:core:calculator/build.gradle.kts` с правилом `minBound(95)` в `kover { reports { verify { rule { ... } } } }` — Task 11 первая, где coverage явно нужно верифицировать через CI-friendly gate; ранее модуль не имел kover
 
 ### Task 12: :core:database (Room) TDD
 - [ ] add Room dependencies + KSP в `:core:database/build.gradle.kts`
