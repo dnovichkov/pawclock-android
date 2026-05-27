@@ -225,25 +225,25 @@
 - ➕ extracted `internal object DogLifeStageThresholds` (отдельный файл) для табличных порогов senior/endOfLife — следует существующему паттерну `DogSizeTable.kt`; обнаружено в процессе TDD-цикла, что единая формула `endOfLife = lifespanUpperBound − 3` коллапсирует Senior-окно для Medium/Large/Giant (где Senior-фаза короче), поэтому EndOfLife также сделан табличным с обоснованием в KDoc
 
 ### Task 9: :core:calculator — CatAgeCalculator (AAHA/AAFP 2021) TDD
-- [ ] write FAILING test `CatAgeCalculatorTest`:
+- [x] write FAILING test `CatAgeCalculatorTest`:
   - test 1: `1 year cat = 15 human years` (§4.2)
   - test 2: `2 year cat = 24 human years`
   - test 3: `5 year cat = 24 + 4*3 = 36 human years`
   - test 4: `outdoor 5 year cat = 36 * 1.15 = 41.4 human years` (поправка)
   - test 5: `large breed (MaineCoon) 5 year = 36 + 1*3 = 39 human years` (поправка)
   - test 6: `throws on negative age`
-- [ ] verify tests fail — **Red**
-- [ ] create `CatAgeCalculator.toHumanYears(ageInYears: Double, catType: CatType): Double`
-- [ ] implement кусочную формулу:
+- [x] verify tests fail — **Red** (compileTestKotlin FAILED: `Unresolved reference 'CatAgeCalculator'`)
+- [x] create `CatAgeCalculator.toHumanYears(ageInYears: Double, catType: CatType): Double`
+- [x] implement кусочную формулу:
   - `ageInYears <= 1.0` → `15 * ageInYears` (линейная интерполяция)
   - `ageInYears <= 2.0` → `15 + 9 * (ageInYears - 1)` (с 15 до 24)
   - `ageInYears > 2.0` → `24 + 4 * (ageInYears - 2)`
-- [ ] implement поправки: `Outdoor` после 2 лет → result *= 1.15; `LargeBreed` после 2 лет → result += (ageInYears - 2)
-- [ ] verify все тесты — **Green**
-- [ ] add ParameterizedTest с табличными значениями для домашних и уличных кошек
-- [ ] add KDoc со ссылкой на AAHA/AAFP 2021 Feline Life Stage Guidelines, DOI: 10.1177/1098612X21993657
-- [ ] refactor: вынести константы `FIRST_YEAR_HUMAN_AGE = 15`, `SECOND_YEAR_INCREMENT = 9`, `SUBSEQUENT_YEAR_INCREMENT = 4`, `OUTDOOR_AGING_FACTOR = 1.15`
-- [ ] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task
+- [x] implement поправки: `Outdoor` после 2 лет → result *= 1.15; `LargeBreed` после 2 лет → result += (ageInYears - 2) — поправки применяются при `age > 2` (на границе age=2 (age-2)=0, поэтому Outdoor/Indoor дают одинаковое значение 24 ЧГ; задокументировано в тесте `outdoor correction kicks in at exactly 2 years`)
+- [x] verify все тесты — **Green** (33 теста CatAgeCalculatorTest прошли)
+- [x] add ParameterizedTest с табличными значениями для домашних и уличных кошек — три `@CsvSource` параметризованных теста: indoor (10 кейсов: 0.5..20 лет), outdoor (6 кейсов вкл. до/после границы 2 лет), large breed (5 кейсов); плюс bonus тест `result is monotonically increasing in age for indoor cat` (2000 точек) для смокового property-check'а до Task 11
+- [x] add KDoc со ссылкой на AAHA/AAFP 2021 Feline Life Stage Guidelines, DOI: 10.1177/1098612X21993657
+- [x] refactor: вынести константы `FIRST_YEAR_HUMAN_AGE = 15`, `SECOND_YEAR_INCREMENT = 9`, `SUBSEQUENT_YEAR_INCREMENT = 4`, `OUTDOOR_AGING_FACTOR = 1.15` — также добавлены `FIRST_YEAR_THRESHOLD = 1.0`, `SECOND_YEAR_THRESHOLD = 2.0`, `SECOND_YEAR_HUMAN_AGE = 24.0` чтобы магических чисел не осталось в коде; декомпозиция на private `baselineHumanYears()` + `applyCorrections()` ради читаемости
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — 145 тестов прошло (предыдущие 112 + 33 новых), ktlint + detekt clean
 
 ### Task 10: :core:calculator — Cat life stages TDD
 - [ ] write FAILING test `CatLifeStageCalculatorTest` для всех границ по §4.2:
