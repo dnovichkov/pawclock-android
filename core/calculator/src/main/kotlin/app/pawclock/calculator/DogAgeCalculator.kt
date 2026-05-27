@@ -1,5 +1,6 @@
 package app.pawclock.calculator
 
+import app.pawclock.model.CalculationMethod
 import app.pawclock.model.DogSize
 import kotlin.math.ln
 import kotlin.math.pow

@@ -310,21 +310,19 @@
 - ➕ committed `core/database/schemas/app.pawclock.database.db.PawClockDatabase/1.json` — Room schema export для будущих migration tests (Plan 2)
 
 ### Task 13: :core:datastore (DataStore Preferences) TDD
-- [ ] add DataStore Preferences dependency в `:core:datastore`
-- [ ] write FAILING test `SettingsRepositoryTest` (с TestDataStore):
-  - default theme is System
-  - setting theme to Dark persists
-  - default language is system / null
-  - setting dynamicColor=false persists
-- [ ] verify tests fail — **Red**
-- [ ] create `ThemeMode` enum (Light, Dark, System) в `:core:model` (или в datastore)
-- [ ] create `AppSettings` data class (themeMode, language, dynamicColor, defaultCalculationMethod) — readonly snapshot
-- [ ] create `SettingsRepository` interface + `SettingsRepositoryImpl` использующий DataStore
-- [ ] implement read/write для каждого preference
-- [ ] verify все тесты — **Green**
-- [ ] add Hilt module `DataStoreModule`
-- [ ] write test `SettingsRepository emits Flow<AppSettings> on each change` (Turbine)
-- [ ] run `./gradlew :core:datastore:test --no-daemon` — must pass before next task
+- [x] add DataStore Preferences dependency в `:core:datastore` — `libs.datastore.preferences` (1.1.1) + `libs.hilt.android` / `ksp(libs.hilt.compiler)` + `libs.kover` plugin; test deps: `kotlinx.coroutines.test`, `turbine`, `junit.jupiter.params`
+- [x] write FAILING test `SettingsRepositoryTest` (с TestDataStore) — 14 тестов в `core/datastore/src/test/kotlin/.../SettingsRepositoryTest.kt`, использует JUnit 5 `@TempDir` + `PreferenceDataStoreFactory.create()` (без Context, чистый JVM); покрывает defaults, persist, corrupted-id fallback, multi-key snapshot, persistence через recreation репозитория
+- [x] verify tests fail — **Red** — confirmed compileTestKotlin FAILED с unresolved references на `SettingsRepositoryImpl`, `SettingsKeys`, `ThemeMode`, `CalculationMethod` (тесты были написаны первыми, production-классы — после)
+- [x] create `ThemeMode` enum (Light, Dark, System) в `:core:model` — выбран `:core:model`, чтобы избежать peer-dep `:core:datastore → :core:calculator`; stable `id` field для DataStore-сериализации; `fromId(id)` возвращает null при unknown
+- [x] create `AppSettings` data class (themeMode, language, dynamicColor, defaultCalculationMethod) — readonly snapshot с `Default` companion для fallback; languageTag (BCP 47) nullable = follow system locale; dynamicColor default = true (opt-in)
+- [x] create `SettingsRepository` interface + `SettingsRepositoryImpl` использующий DataStore — interface с одним `observe(): Flow<AppSettings>` (вместо отдельных Flow per key — облегчает `combine` в ViewModel); все setter'ы `suspend`; `@Singleton` + `@Inject` constructor для Hilt
+- [x] implement read/write для каждого preference — маппинг: ThemeMode → id, CalculationMethod → enum.name; corrupted значения → fallback на default через `ThemeMode.fromId()` / `runCatching { valueOf() }`; IOException → `emit(emptyPreferences())` (рекомендованный паттерн AndroidX)
+- [x] verify все тесты — **Green** — все 14 тестов прошли с первой попытки; debug + release unit-tests BUILD SUCCESSFUL
+- [x] add Hilt module `DataStoreModule` — `object DataStoreModule` (@Provides DataStore<Preferences> через `@ApplicationContext context.settingsDataStore`) + `abstract class SettingsRepositoryModule` (@Binds — обязан быть abstract по Hilt-правилам); top-level `private val Context.settingsDataStore by preferencesDataStore(name = "app_settings")` — built-in singleton-by-path
+- [x] write test `SettingsRepository emits Flow<AppSettings> on each change` (Turbine) — тест `observe() emits new AppSettings snapshot on each write` использует `turbine.test { awaitItem() }` для трёх последовательных эмиссий (defaults → Dark → Dark + SIZE_BASED), проверяет независимость полей при обновлении одного из них
+- [x] run `./gradlew :core:datastore:test --no-daemon` — must pass before next task — BUILD SUCCESSFUL; coverage line=91.7% / instruction=93.1% / branch=87.5% (production-код `app.pawclock.datastore.*`); ktlint + detekt clean; `koverVerify` passes с порогом 80% (DI-пакет исключён по обоснованным причинам — см. ➕ ниже)
+- ➕ moved `CalculationMethod` enum из `:core:calculator` в `:core:model` — нужно для `AppSettings.defaultCalculationMethod` без введения peer-зависимости `:core:datastore → :core:calculator`; план эту структуру уже предусматривал ("`CalculationMethod.kt (re-exported из :core:calculator)`" в структуре `:core:model`); обновлены импорты в `DogAgeCalculator.kt` + 3 тест-файлах; все 145+ тестов `:core:calculator` продолжают проходить
+- ➕ kover-конфигурация исключает `packages("app.pawclock.datastore.di", "hilt_aggregated_deps", "dagger.hilt.internal.aggregatedroot.codegen")` + `classes("*.BuildConfig", "*_Factory*", "*_HiltModules*")` — Hilt-модули и AGP-генерируемые классы не покрываются pure JVM юнит-тестами, и попытки покрыть их через инструментированные тесты не оправдывают инфраструктурные затраты для simple DI-wiring
 
 ### Task 14: Care recommendations assets + CareRepository TDD
 - [ ] create asset directory structure: `:app/src/main/assets/care/{dog,cat}/{puppy|kitten,young_adult,mature_adult,senior,end_of_life}/{ru,en}.json` (или унифицированный с `dog/puppy/ru.json` etc.)

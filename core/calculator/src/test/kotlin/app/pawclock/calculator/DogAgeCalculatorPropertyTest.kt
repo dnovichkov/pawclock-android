@@ -2,6 +2,7 @@
 
 package app.pawclock.calculator
 
+import app.pawclock.model.CalculationMethod
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.double

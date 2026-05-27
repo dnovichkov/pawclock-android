@@ -1,5 +1,6 @@
 package app.pawclock.calculator
 
+import app.pawclock.model.CalculationMethod
 import app.pawclock.model.DogSize
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
