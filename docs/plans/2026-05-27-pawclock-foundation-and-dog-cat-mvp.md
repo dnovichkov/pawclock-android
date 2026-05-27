@@ -125,16 +125,16 @@
 - [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task
 
 ### Task 2: ADRs (Architecture Decision Records 0001-0007)
-- [ ] create `docs/adr/` directory + `docs/adr/template-madr.md` (шаблон MADR по §8.11)
-- [ ] write `docs/adr/0001-jetpack-compose-over-views.md` (Status: Accepted; Context: новый проект; Decision: Compose; Consequences: меньше xml, нет View-stack)
-- [ ] write `docs/adr/0002-multi-module-architecture.md` (структура по §7.3, build time benefits, fast TDD на `:core:calculator`)
-- [ ] write `docs/adr/0003-tdd-as-required-practice.md` (TDD обязателен для `:core:calculator` и `:core:domain`, цели coverage из §11.4)
-- [ ] write `docs/adr/0004-room-over-sqldelight.md` (Room + KSP, причина: широкая поддержка, хорошая интеграция с Hilt)
-- [ ] write `docs/adr/0005-no-network-permission.md` (запрет INTERNET permission, отсутствие аналитики, Data Safety "No data collected" по §9)
-- [ ] write `docs/adr/0006-wang-et-al-formula-as-default-for-dogs.md` (default = Wang 2020, альтернатива = AKC/AAHA size table; пользователь может переключать)
-- [ ] write `docs/adr/0007-conventional-commits.md` (Conventional Commits, типы из §8.3, генерация CHANGELOG через git-cliff позже)
-- [ ] verify all ADRs have Status, Context, Decision, Consequences sections (smoke-check через `grep -l "## Status" docs/adr/*.md`)
-- [ ] write test script `scripts/verify-adrs.sh` проверяющий наличие всех 7 ADR и базовую структуру
+- [x] create `docs/adr/` directory + `docs/adr/template-madr.md` (шаблон MADR по §8.11)
+- [x] write `docs/adr/0001-jetpack-compose-over-views.md` (Status: Accepted; Context: новый проект; Decision: Compose; Consequences: меньше xml, нет View-stack)
+- [x] write `docs/adr/0002-multi-module-architecture.md` (структура по §7.3, build time benefits, fast TDD на `:core:calculator`)
+- [x] write `docs/adr/0003-tdd-as-required-practice.md` (TDD обязателен для `:core:calculator` и `:core:domain`, цели coverage из §11.4)
+- [x] write `docs/adr/0004-room-over-sqldelight.md` (Room + KSP, причина: широкая поддержка, хорошая интеграция с Hilt)
+- [x] write `docs/adr/0005-no-network-permission.md` (запрет INTERNET permission, отсутствие аналитики, Data Safety "No data collected" по §9)
+- [x] write `docs/adr/0006-wang-et-al-formula-as-default-for-dogs.md` (default = Wang 2020, альтернатива = AKC/AAHA size table; пользователь может переключать)
+- [x] write `docs/adr/0007-conventional-commits.md` (Conventional Commits, типы из §8.3, генерация CHANGELOG через git-cliff позже)
+- [x] verify all ADRs have Status, Context, Decision, Consequences sections (smoke-check через `grep -l "## Status" docs/adr/*.md`) — MADR-формат использует nested `### Positive/Negative Consequences`; verify-script принимает любой heading level
+- [x] write test script `scripts/verify-adrs.sh` проверяющий наличие всех 7 ADR и базовую структуру
 
 ### Task 3: GitHub Actions — ci.yml + lint.yml + scripts/pre-commit.sh
 - [ ] create `.github/workflows/ci.yml` по §8.5.1 с jobs: `unit-tests`, `lint`, `build`, `screenshot-tests` (последний — placeholder, чтобы не падать пока)
