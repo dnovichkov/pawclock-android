@@ -192,18 +192,19 @@
 - [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — 11 тестов прошли (1 single + 5 параметризованных + 2 throws + 3 puppy/continuity), ktlint + detekt clean
 
 ### Task 7: :core:calculator — DogAgeCalculator (AKC/AAHA size table) TDD
-- [ ] write FAILING test `DogAgeCalculatorSizeBasedTest`:
+- [x] write FAILING test `DogAgeCalculatorSizeBasedTest`:
   - параметризованные кейсы из таблицы §4.1: для каждого `DogSize` × табличного `Возраст` ожидаемое ЧГ
   - `Toy 1y = 15`, `Toy 2y = 24`, `Giant 1y = 12`, `Giant 6y = 49`, и т.д. (вся таблица из §4.1)
-- [ ] verify tests fail (метод SIZE_BASED ещё не реализован) — **Red**
-- [ ] add `DogSize` parameter overload: `toHumanYears(ageInYears, method, size: DogSize)` или передавать `DogSize` в `subcategory`
-- [ ] implement size-based lookup table как private `Map<DogSize, NavigableMap<Double, Double>>` с табличными значениями из §4.1
-- [ ] implement линейную интерполяцию между ближайшими табличными значениями для нецелых возрастов (например, 3.5 года Toy = (28+32)/2 = 30)
-- [ ] verify все табличные тесты — **Green**
-- [ ] add edge tests: `age=0.5` (puppy), `age=20.0` (за пределами таблицы — экстраполяция или cap), отрицательный возраст бросает IllegalArgumentException
-- [ ] add KDoc со ссылкой на AKC/AAHA 2019 + объяснение интерполяции/экстраполяции
-- [ ] refactor: вынести таблицу в companion object `DogSizeTable.kt` для читаемости
-- [ ] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task
+- [x] verify tests fail (метод SIZE_BASED ещё не реализован) — **Red** (compileTestKotlin FAILED: `Argument type mismatch: actual type is 'app.pawclock.model.DogSize', but 'app.pawclock.calculator.CalculationMethod' was expected`)
+- [x] add `DogSize` parameter overload: `toHumanYears(ageInYears, method, size: DogSize)` или передавать `DogSize` в `subcategory` — введены **две** перегрузки: type-safe `toHumanYears(age, DogSize)` (предпочтительный API) и `toHumanYears(age, method, DogSize?)` для UseCase-слоя, который читает дефолтный метод из настроек
+- [x] implement size-based lookup table как private `Map<DogSize, NavigableMap<Double, Double>>` с табличными значениями из §4.1 — отступление от плана: использован общий `DoubleArray ANCHOR_AGES` + 4 параллельных `DoubleArray` колонок ради zero boxing на горячем пути. `DogSize.Toy` и `DogSize.Small` обе мапятся на колонку «Малая ≤9 кг» (AKC/AAHA 2019 не разделяет миниатюрных и малых)
+- [x] implement линейную интерполяцию между ближайшими табличными значениями для нецелых возрастов (например, 3.5 года Toy = (28+32)/2 = 30) — выделена в private `interpolateWithinTable()` чтобы удовлетворить detekt `ReturnCount`
+- [x] verify все табличные тесты — **Green** (47 новых SIZE_BASED тестов прошли: Toy 12, Small 4, Medium 8, Large 6, Giant 8, + interpolation/extrapolation/edge cases)
+- [x] add edge tests: `age=0.5` (puppy), `age=20.0` (за пределами таблицы — экстраполяция или cap), отрицательный возраст бросает IllegalArgumentException — linear extrapolation использует наклон последних двух точек (14-15 лет), документировано в KDoc; puppy < 1 года: линейная интерполяция от 0 ЧГ к первой табличной точке
+- [x] add KDoc со ссылкой на AKC/AAHA 2019 + объяснение интерполяции/экстраполяции — полная таблица в KDoc `DogSizeTable`, ссылки в `DogAgeCalculator` KDoc; `@file:Suppress("detekt:MagicNumber")` с обоснованием что числа — это published-стандарт, а не magic
+- [x] refactor: вынести таблицу в companion object `DogSizeTable.kt` для читаемости — `internal object DogSizeTable` (не companion object: `DogAgeCalculator` остаётся `class`, чтобы можно было инстанцировать в тестах; таблица — separate file-level object для encapsulation)
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — 59 тестов прошли (11 EPIGENETIC + 47 SIZE_BASED + 1 skeleton), ktlint + detekt clean
+- ➕ added `implementation(project(":core:model"))` to `:core:calculator/build.gradle.kts` — Task 7 первая, где calculator нуждается в `DogSize` из `:core:model`
 
 ### Task 8: :core:calculator — Dog life stages TDD
 - [ ] write FAILING test `DogLifeStageCalculatorTest`:

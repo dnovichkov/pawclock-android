@@ -24,6 +24,7 @@ kotlin {
 
 dependencies {
     implementation(libs.kotlin.stdlib)
+    implementation(project(":core:model"))
 
     testImplementation(libs.kotlin.test)
     testImplementation(libs.kotlin.test.junit5)
