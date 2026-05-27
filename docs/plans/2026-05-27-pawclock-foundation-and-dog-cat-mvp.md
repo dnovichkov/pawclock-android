@@ -163,19 +163,19 @@
 - ➕ add `.github/ISSUE_TEMPLATE/config.yml` с `blank_issues_enabled: false` + Discussions/spec contact links — закрывает обход template'ов через "New blank issue"
 
 ### Task 5: :core:model — Species, LifeStage, Pet
-- [ ] write FAILING tests in `:core:model` `SpeciesTest`, `LifeStageTest`, `PetTest` (TDD: red first):
+- [x] write FAILING tests in `:core:model` `SpeciesTest`, `LifeStageTest`, `PetTest` (TDD: red first):
   - `Species.fromString("dog")` returns `Species.Dog`
   - `Species.fromString("unknown")` throws / returns null
   - `LifeStage.Dog.Senior` существует и `displayKey == "dog_senior"`
   - `Pet.equals/hashCode/copy` корректны для двух одинаковых dataclass instances
-- [ ] implement `Species` sealed class или enum со всеми 12 видами из §4 (Dog, Cat, Rabbit, Hamster, GuineaPig, Rat, Mouse, Ferret, Bird, Reptile, Horse, Fish), но **только Dog и Cat имеют флаг `isImplemented = true`** в этом плане
-- [ ] implement `LifeStage` sealed class с подтипами `Dog` (Puppy, YoungAdult, MatureAdult, Senior, EndOfLife) и `Cat` (Kitten, YoungAdult, MatureAdult, Senior, EndOfLife) по §4.1, §4.2
-- [ ] implement `Pet` data class с полями: id (Long), name (String, required), species (Species), subcategory (String? — DogSize или CatType), birthDate (LocalDate), gender (Gender?), weightKg (Double?), notes (String?), photoPath (String?)
-- [ ] implement `DogSize` enum: Toy, Small, Medium, Large, Giant с границами в кг (по §4.1)
-- [ ] implement `CatType` enum: IndoorShortHair, IndoorLongHair, Outdoor, LargeBreed
-- [ ] implement `Gender` enum: Male, Female, Unknown
-- [ ] add KDoc для каждого публичного типа со ссылкой на спецификацию (§4.1, §4.2)
-- [ ] run `./gradlew :core:model:test --no-daemon` — must pass before next task
+- [x] implement `Species` sealed class или enum со всеми 12 видами из §4 (Dog, Cat, Rabbit, Hamster, GuineaPig, Rat, Mouse, Ferret, Bird, Reptile, Horse, Fish), но **только Dog и Cat имеют флаг `isImplemented = true`** в этом плане
+- [x] implement `LifeStage` sealed class с подтипами `Dog` (Puppy, YoungAdult, MatureAdult, Senior, EndOfLife) и `Cat` (Kitten, YoungAdult, MatureAdult, Senior, EndOfLife) по §4.1, §4.2
+- [x] implement `Pet` data class с полями: id (Long), name (String, required), species (Species), subcategory (String? — DogSize или CatType), birthDate (LocalDate), gender (Gender?), weightKg (Double?), notes (String?), photoPath (String?) — `init` блок enforces `require(name.isNotBlank())` для type-safe валидации на уровне модели
+- [x] implement `DogSize` enum: Toy, Small, Medium, Large, Giant с границами в кг (по §4.1) — добавлен `fromWeight(kg)` helper с правилом `[min, max)` и null для non-positive веса
+- [x] implement `CatType` enum: IndoorShortHair, IndoorLongHair, Outdoor, LargeBreed — добавлены флаги `isOutdoor` / `isLargeBreed` для использования в формулах калькулятора (Task 9)
+- [x] implement `Gender` enum: Male, Female, Unknown
+- [x] add KDoc для каждого публичного типа со ссылкой на спецификацию (§4.1, §4.2)
+- [x] run `./gradlew :core:model:test --no-daemon` — must pass before next task — 37 тестов прошли (Species: 9, LifeStage: 9, Pet: 5, DogSize: 6, CatType: 5, Gender: 3), ktlint + detekt clean
 
 ### Task 6: :core:calculator — DogAgeCalculator (Wang formula) TDD
 - [ ] write FAILING test `DogAgeCalculatorTest` в `:core:calculator/src/test/kotlin/`:
