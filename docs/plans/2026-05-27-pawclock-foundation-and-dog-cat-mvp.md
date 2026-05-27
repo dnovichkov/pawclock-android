@@ -343,20 +343,24 @@
 - ➕ added `kotlinx.serialization.json` + `junit.jupiter.params` deps в `:core:domain/build.gradle.kts`; включён `kover` plugin с правилом `minBound(90)` (целевое покрытие §11.4); `koverVerify` passes — line coverage 95%, instruction 97.2%, branch 83.3%
 
 ### Task 15: :core:domain — UseCases TDD
-- [ ] write FAILING tests `:core:domain` с fakes (FakePetRepository, FakeCareRepository, FakeSettingsRepository):
-  - `CalculatePetAgeUseCase` возвращает (humanYears, lifeStage) для Dog Wang/SizeBased и Cat
-  - `GetPetsUseCase` возвращает Flow<List<Pet>> отсортированный
-  - `SavePetUseCase` валидирует имя (required) и birthDate (не в будущем)
-  - `DeletePetUseCase` — bag тестируется через fake
-  - `GetCareRecommendationsUseCase` берёт recommendations через CareRepository по (species, stage, locale)
-- [ ] verify tests fail — **Red**
-- [ ] create UseCase'ы: `CalculatePetAgeUseCase`, `GetPetsUseCase`, `SavePetUseCase`, `DeletePetUseCase`, `GetCareRecommendationsUseCase`, `GetPetByIdUseCase`
-- [ ] implement validation в `SavePetUseCase` (throw `PetValidationException` с локализуемыми ключами)
-- [ ] implement `CalculatePetAgeUseCase` который агрегирует `DogAgeCalculator`/`CatAgeCalculator` + `DogLifeStageCalculator`/`CatLifeStageCalculator` + читает default method из `SettingsRepository`
-- [ ] verify все тесты — **Green**
-- [ ] add Hilt module `DomainModule`
-- [ ] add coverage verification: `:core:domain` ≥ 90%
-- [ ] run `./gradlew :core:domain:test --no-daemon` — must pass before next task
+- [x] write FAILING tests `:core:domain` с fakes (FakePetRepository, FakeCareRepository, FakeSettingsReader):
+  - `CalculatePetAgeUseCase` возвращает (humanYears, lifeStage) для Dog Wang/SizeBased и Cat — 16 тестов (включая life-stage переходы, null-subcategory fallback, methodOverride wins-over-settings, errors)
+  - `GetPetsUseCase` возвращает Flow<List<Pet>> отсортированный — 3 теста (empty, sort, реактивная эмиссия после insert через Turbine)
+  - `SavePetUseCase` валидирует имя (required) и birthDate (не в будущем) — 9 тестов (insert/update, FutureDate, UnrealisticDate, UnsupportedSpecies, multi-error семантика, Pet's init-blank-name invariant)
+  - `DeletePetUseCase` — bag тестируется через fake — 2 теста (true on existing, false on missing)
+  - `GetCareRecommendationsUseCase` берёт recommendations через CareRepository по (species, stage, locale) — 3 теста (pass-through, null-when-missing, fallback-is-repo-concern)
+- [x] verify tests fail — **Red** — confirmed: compileTestKotlin FAILED с unresolved references на `CalculatePetAgeUseCase`, `SavePetUseCase`, `PetRepository`, `SettingsReader` до создания production-классов
+- [x] create UseCase'ы: `CalculatePetAgeUseCase`, `GetPetsUseCase`, `SavePetUseCase`, `DeletePetUseCase`, `GetCareRecommendationsUseCase`, `GetPetByIdUseCase` — все 6 как простые классы с конструкторной инъекцией без Hilt-аннотаций (готовы к Task 17 миграции); `operator fun invoke` для idiomatic UseCase-API
+- [x] implement validation в `SavePetUseCase` (throw `PetValidationException` с локализуемыми ключами) — `PetValidationError` enum (`NameBlank`/`BirthDateInFuture`/`BirthDateUnrealistic`) с `messageKey` для Task 22 stringResource; `buildList` аккумулирует ВСЕ ошибки, не первую; `UnsupportedSpeciesException` для not-implemented видов
+- [x] implement `CalculatePetAgeUseCase` который агрегирует `DogAgeCalculator`/`CatAgeCalculator` + `DogLifeStageCalculator`/`CatLifeStageCalculator` + читает default method из `SettingsRepository` — через узкий port `SettingsReader` (Hexagonal), а не прямую зависимость на `:core:datastore`; `methodOverride` параметр для Quick Calculator; `Clock` параметр для детерминированных тестов
+- [x] verify все тесты — **Green** — 47 тестов прошли (33 новых UseCase-теста + 12 pre-existing CareRepository + 2 SkeletonTest), 2 итерации (первая упала на nested-runTest и Pet-init-blocks-multi-error — обе исправлены)
+- [x] add Hilt module `DomainModule` — placeholder factory `object DomainModule` в `:app/src/main/kotlin/app/pawclock/data/domain/di/` (по аналогии с `CareModule` из Task 14, т. к. `:app` ещё не имеет `@HiltAndroidApp` до Task 17); экспонирует `createUseCases(petRepo, careRepo, settingsRepo)` возвращающий `UseCases` data class; полная Hilt-миграция (с `@Module @InstallIn @Provides`) — в Task 17
+- [x] add coverage verification: `:core:domain` ≥ 90% — `koverVerify` прошёл с line 98.1% (104/106), method 96.9% (31/32), instruction 97.8% (623/637), branch 88.1% (37/42); существенно выше требуемых 90%
+- [x] run `./gradlew :core:domain:test --no-daemon` — must pass before next task — BUILD SUCCESSFUL, 47 тестов, ktlint + detekt + Android Lint clean на `:app` и `:core:domain`
+- ➕ added `SettingsReader` interface в `:core:domain/settings/` — узкий port-API возвращающий `Flow<CalculationMethod>` (вместо широкого `Flow<AppSettings>`); устраняет необходимость прямой зависимости `:core:domain → :core:datastore` (которая невозможна архитектурно: pure-Kotlin JVM модуль не может depend on Android library)
+- ➕ added `DataStoreSettingsReader` адаптер в `:app/data/settings/` реализующий `SettingsReader` поверх `SettingsRepository.observe().map { it.defaultCalculationMethod }` — изолирует домен от datastore-деталей через Port-and-Adapter
+- ➕ added `PetRepository` interface в `:core:domain/pet/` — production-реализация (Room-based) будет создана в более поздней задаче плана (Task 18 или Task 17 wiring)
+- ➕ documented Pet's init invariant в тестах: `Pet(name = " ")` бросает IllegalArgumentException в конструкторе, поэтому `PetValidationError.NameBlank` в SavePetUseCase — defense-in-depth для путей бypass'ящих init (рефлексия, custom-deserialization)
 
 ### Task 16: :core:designsystem — Material You theme + typography + shapes
 - [ ] add Compose BOM + Material 3 dependencies в `:core:designsystem`
