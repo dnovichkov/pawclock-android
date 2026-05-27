@@ -46,7 +46,7 @@ espressoCore = "3.6.1"
 composeUiTest = "1.7.5"
 
 # Static analysis & quality
-ktlint = "12.1.2"
+ktlint = "12.1.1"
 detekt = "1.23.7"
 kover = "0.9.0"
 roborazzi = "1.30.1"

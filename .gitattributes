@@ -1,0 +1,29 @@
+# Default: auto-detect, normalize on commit.
+* text=auto
+
+# Shell scripts must be LF — CI runners on Linux refuse to execute CRLF.
+*.sh text eol=lf
+gradlew text eol=lf
+
+# Batch and PowerShell stay CRLF on Windows.
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# Source files: LF everywhere (matches .editorconfig).
+*.kt text eol=lf
+*.kts text eol=lf
+*.java text eol=lf
+*.xml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+
+# Binary blobs — do not touch.
+*.jar binary
+*.keystore binary
+*.png binary
+*.jpg binary
+*.webp binary

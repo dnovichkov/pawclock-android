@@ -18,7 +18,11 @@ android {
 }
 
 kotlin {
-    jvmToolchain(libs.versions.javaToolchain.get().toInt())
+    jvmToolchain(
+        libs.versions.javaToolchain
+            .get()
+            .toInt(),
+    )
 }
 
 dependencies {

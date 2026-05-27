@@ -137,16 +137,17 @@
 - [x] write test script `scripts/verify-adrs.sh` проверяющий наличие всех 7 ADR и базовую структуру
 
 ### Task 3: GitHub Actions — ci.yml + lint.yml + scripts/pre-commit.sh
-- [ ] create `.github/workflows/ci.yml` по §8.5.1 с jobs: `unit-tests`, `lint`, `build`, `screenshot-tests` (последний — placeholder, чтобы не падать пока)
-- [ ] create `.github/workflows/lint.yml` отдельным workflow по §8.5.4 (ktlint, detekt, Android Lint)
-- [ ] create `scripts/pre-commit.sh` по §8.6 (ktlintFormat, detekt, `:core:calculator:test`)
-- [ ] create `scripts/verify-bundle-size.sh` (placeholder, лимит 15 МБ — реально проверяется в release.yml в Task 4)
-- [ ] add ktlint + detekt + Android Lint конфиги: `.editorconfig` уже есть, добавить `detekt.yml` (стартовая конфигурация) и `lint.xml` (suppress несущественные)
-- [ ] add ktlint и detekt Gradle plugins в `gradle/libs.versions.toml` и в root `build.gradle.kts`
-- [ ] write test: запустить `./gradlew ktlintCheck detekt lintDebug` локально — должно проходить (или, при первом запуске, корректно репортить)
-- [ ] write test: `actionlint .github/workflows/*.yml` (если доступен) или хотя бы `yamllint -s` для синтаксиса
-- [ ] verify scripts/pre-commit.sh executable (`chmod +x` зафиксировать в git через `git update-index --chmod=+x`)
-- [ ] run `./gradlew ktlintCheck detekt lintDebug` — must pass before next task
+- [x] create `.github/workflows/ci.yml` по §8.5.1 с jobs: `unit-tests`, `lint`, `build`, `screenshot-tests` (последний — placeholder, чтобы не падать пока)
+- [x] create `.github/workflows/lint.yml` отдельным workflow по §8.5.4 (ktlint, detekt, Android Lint) — с `paths:` фильтром для пропуска docs-only PR
+- [x] create `scripts/pre-commit.sh` по §8.6 (ktlintFormat, detekt, `:core:calculator:test`) — c re-stage после ktlintFormat
+- [x] create `scripts/verify-bundle-size.sh` (placeholder, лимит 15 МБ — реально проверяется в release.yml в Task 4); exit 0 если AAB ещё не собран
+- [x] add ktlint + detekt + Android Lint конфиги: `.editorconfig` уже есть, добавить `detekt.yml` (стартовая конфигурация) и `lint.xml` (suppress несущественные); добавлен `.gitattributes` чтобы shell-скрипты оставались LF на Linux runners
+- [x] add ktlint и detekt Gradle plugins в `gradle/libs.versions.toml` и в root `build.gradle.kts` — ktlint bumped 12.1.2 → 12.1.1 для align с offline-кэшем; применяется через `subprojects { apply(plugin = "...") }` blanket-блок (auto-no-op на модулях без Kotlin)
+- [x] write test: запустить `./gradlew ktlintCheck detekt lintDebug` локально — passes (ktlintFormat auto-fix применился к `build.gradle.kts` файлам по правилу `standard:chain-method-continuation`)
+- [x] write test: `actionlint .github/workflows/*.yml` (если доступен) или хотя бы `yamllint -s` для синтаксиса — `scripts/verify-workflows.sh` с graceful fallback chain actionlint → yamllint → python+pyyaml → grep
+- [x] verify scripts/pre-commit.sh executable (`chmod +x` зафиксировать в git через `git update-index --chmod=+x`) — все 3 новых скрипта 100755
+- [x] run `./gradlew ktlintCheck detekt lintDebug` — passes (включая `:app:lintDebug` после добавления stub AndroidManifest.xml, который Task 17 расширит до полного манифеста)
+- ➕ create minimal `app/src/main/AndroidManifest.xml` stub чтобы разблокировать `:app:lintDebug` и `:app:assembleDebug` до Task 17; содержит `INTERNET tools:node="remove"` по §9 заранее
 
 ### Task 4: GitHub Actions — release.yml + nightly.yml + dependabot + PR/issue templates + CODEOWNERS
 - [ ] create `.github/workflows/release.yml` по §8.5.2 (триггер на тег `v*.*.*`, сборка bundleRelease с подписью из Secrets, verify-bundle-size.sh, gh release с changelog, опциональный r0adkll/upload-google-play закомментирован пока)

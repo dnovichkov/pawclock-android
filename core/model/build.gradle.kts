@@ -5,12 +5,22 @@ plugins {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(libs.versions.javaToolchain.get().toInt()))
+        languageVersion.set(
+            JavaLanguageVersion.of(
+                libs.versions.javaToolchain
+                    .get()
+                    .toInt(),
+            ),
+        )
     }
 }
 
 kotlin {
-    jvmToolchain(libs.versions.javaToolchain.get().toInt())
+    jvmToolchain(
+        libs.versions.javaToolchain
+            .get()
+            .toInt(),
+    )
 }
 
 dependencies {

@@ -1,0 +1,95 @@
+name: Lint
+
+# Dedicated lint workflow per spec §8.5.4: runs on PRs and on push to main.
+# Kept separate from ci.yml so doc-only PRs do not pay full unit-test cost,
+# and so lint failures show up as their own check in the PR UI.
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - 'gradle/libs.versions.toml'
+      - 'detekt.yml'
+      - 'lint.xml'
+      - '.editorconfig'
+      - '.github/workflows/lint.yml'
+  pull_request:
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - 'gradle/libs.versions.toml'
+      - 'detekt.yml'
+      - 'lint.xml'
+      - '.editorconfig'
+      - '.github/workflows/lint.yml'
+
+concurrency:
+  group: lint-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  ktlint:
+    name: ktlint
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v3
+      - name: ktlintCheck
+        run: ./gradlew ktlintCheck --no-daemon --stacktrace
+      - name: Upload ktlint reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ktlint-reports
+          path: '**/build/reports/ktlint/**'
+
+  detekt:
+    name: detekt
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v3
+      - name: detekt
+        run: ./gradlew detekt --no-daemon --stacktrace
+      - name: Upload detekt reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: detekt-reports
+          path: '**/build/reports/detekt/**'
+
+  android-lint:
+    name: Android Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v3
+      - name: lintDebug
+        run: ./gradlew lintDebug --no-daemon --stacktrace
+      - name: Upload lint reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-lint-reports
+          path: '**/build/reports/lint-results-*.html'

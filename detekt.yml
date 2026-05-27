@@ -1,0 +1,86 @@
+# detekt configuration for PawClock.
+# Inherits all rules from detekt 1.23.7 defaults via buildUponDefaultConfig = true.
+# Only project-specific overrides go here.
+#
+# Strategy: start strict, relax only with documented reason.
+# Tests and generated code are excluded; production code (especially :core:calculator
+# and :core:domain) is held to the strictest threshold.
+
+build:
+  maxIssues: 0
+  excludeCorrectable: false
+
+config:
+  validation: true
+  warningsAsErrors: false
+
+complexity:
+  active: true
+  LongMethod:
+    threshold: 80
+  LongParameterList:
+    functionThreshold: 7
+    constructorThreshold: 7
+  CyclomaticComplexMethod:
+    threshold: 18
+  TooManyFunctions:
+    thresholdInFiles: 25
+    thresholdInClasses: 25
+    thresholdInInterfaces: 25
+    thresholdInObjects: 25
+    thresholdInEnums: 25
+
+style:
+  active: true
+  MaxLineLength:
+    maxLineLength: 120
+    excludeCommentStatements: true
+  MagicNumber:
+    active: true
+    ignoreNumbers: ['-1', '0', '1', '2', '3', '10', '100', '1000']
+    ignoreAnnotation: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreEnums: true
+    ignoreLocalVariableDeclaration: true
+  ForbiddenComment:
+    active: false
+  WildcardImport:
+    active: false
+  UnusedPrivateMember:
+    active: true
+    allowedNames: '(_|ignored|expected|serialVersionUID)'
+
+naming:
+  active: true
+  FunctionNaming:
+    # Compose composables use PascalCase; tests use sentence case via @DisplayName
+    functionPattern: '[a-zA-Z][a-zA-Z0-9]*'
+    ignoreAnnotated:
+      - 'Composable'
+      - 'Test'
+      - 'ParameterizedTest'
+      - 'RepeatedTest'
+
+empty-blocks:
+  active: true
+  EmptyFunctionBlock:
+    active: true
+    ignoreOverridden: true
+
+exceptions:
+  active: true
+  TooGenericExceptionCaught:
+    active: false
+  SwallowedException:
+    active: true
+
+# Excludes apply to every rule unless overridden.
+processors:
+  active: true
+
+console-reports:
+  active: true
+  exclude:
+    - 'ProjectStatisticsReport'
+    - 'ComplexityReport'
+    - 'NotificationReport'

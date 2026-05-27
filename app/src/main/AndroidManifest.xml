@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Minimal manifest stub — Plan 1 / Task 3 (to unblock lintDebug + assembleDebug).
+  Task 17 will fill this in with:
+    • PawClockApplication (Hilt @HiltAndroidApp)
+    • MainActivity (Compose entry point)
+    • <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />  per §9 "no network"
+    • localeConfig attribute (§Task 22)
+  Keep this file tiny until Task 17.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Explicitly forbid network access at the manifest level (§9 Privacy). -->
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        tools:node="remove" />
+
+    <application
+        android:allowBackup="false"
+        android:label="PawClock"
+        tools:targetApi="31" />
+</manifest>
