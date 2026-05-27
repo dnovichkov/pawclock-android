@@ -112,17 +112,17 @@
 ## Implementation Steps
 
 ### Task 1: Project skeleton (Gradle multi-module + version catalog)
-- [ ] create root files: `settings.gradle.kts`, `build.gradle.kts`, `gradle.properties` (с Kotlin code style, AndroidX, JVM args)
-- [ ] create `gradle/libs.versions.toml` с версиями всех библиотек по §7.1 (Kotlin 2.0, Compose BOM 2024.12, Material 3 1.3, Hilt, Navigation 2.8, Room 2.6, Coroutines, Turbine, JUnit 5, Kotest, MockK, Roborazzi, Maestro)
-- [ ] create gradle wrapper (`gradlew`, `gradlew.bat`, `gradle/wrapper/gradle-wrapper.properties`, `gradle-wrapper.jar`) — Gradle 8.9+
-- [ ] create Android-стандартный `.gitignore` (build/, .gradle/, local.properties, *.iml, .idea/, .DS_Store)
-- [ ] create `.editorconfig` (по §8.1) с UTF-8, LF, 4-space indent, max line 120
-- [ ] create 12 модулей-пустышек по §7.3 с минимальным `build.gradle.kts` каждый: `:app` (com.android.application), `:core:designsystem`, `:core:model`, `:core:calculator` (pure Kotlin JVM), `:core:database`, `:core:datastore`, `:core:domain`, `:core:testing`, `:feature:pets`, `:feature:editor`, `:feature:quickcalc`, `:feature:settings`
-- [ ] register all modules in `settings.gradle.kts`
-- [ ] add `gradle/init.gradle` или buildSrc convention plugins (по выбору агента) для общих настроек compileSdk/minSdk/targetSdk
-- [ ] write smoke-test script `scripts/verify-skeleton.sh` который запускает `./gradlew help` и `./gradlew projects` и проверяет, что все 12 модулей зарегистрированы
-- [ ] write unit test `:core:calculator` `SkeletonTest` (один тривиальный assertion `1+1==2`) — чтобы убедиться, что JVM-тесты вообще запускаются
-- [ ] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task
+- [x] create root files: `settings.gradle.kts`, `build.gradle.kts`, `gradle.properties` (с Kotlin code style, AndroidX, JVM args)
+- [x] create `gradle/libs.versions.toml` с версиями всех библиотек по §7.1 (Kotlin 2.0, Compose BOM 2024.12, Material 3 1.3, Hilt, Navigation 2.8, Room 2.6, Coroutines, Turbine, JUnit 5, Kotest, MockK, Roborazzi, Maestro) — версии align с offline-cache (Kotlin 2.0.21, AGP 8.5.2, KSP 2.0.21-1.0.28, Roborazzi 1.30.1; bump в следующих задачах при наличии сети)
+- [x] create gradle wrapper (`gradlew`, `gradlew.bat`, `gradle/wrapper/gradle-wrapper.properties`, `gradle-wrapper.jar`) — Gradle 8.14.3 (>= 8.9 как требует спека)
+- [x] create Android-стандартный `.gitignore` (build/, .gradle/, local.properties, *.iml, .idea/, .DS_Store)
+- [x] create `.editorconfig` (по §8.1) с UTF-8, LF, 4-space indent, max line 120
+- [x] create 12 модулей-пустышек по §7.3 с минимальным `build.gradle.kts` каждый: `:app` (com.android.application), `:core:designsystem`, `:core:model`, `:core:calculator` (pure Kotlin JVM), `:core:database`, `:core:datastore`, `:core:domain`, `:core:testing`, `:feature:pets`, `:feature:editor`, `:feature:quickcalc`, `:feature:settings`
+- [x] register all modules in `settings.gradle.kts`
+- [x] add `gradle/init.gradle` или buildSrc convention plugins (по выбору агента) для общих настроек compileSdk/minSdk/targetSdk — выбран простой inline-подход (constants в каждом модуле); convention plugins можно ввести позже при разрастании дублирования
+- [x] write smoke-test script `scripts/verify-skeleton.sh` который запускает `./gradlew help` и `./gradlew projects` и проверяет, что все 12 модулей зарегистрированы
+- [x] write unit test `:core:calculator` `SkeletonTest` (один тривиальный assertion `1+1==2`) — чтобы убедиться, что JVM-тесты вообще запускаются
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task
 
 ### Task 2: ADRs (Architecture Decision Records 0001-0007)
 - [ ] create `docs/adr/` directory + `docs/adr/template-madr.md` (шаблон MADR по §8.11)
