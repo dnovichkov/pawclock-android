@@ -207,21 +207,22 @@
 - ➕ added `implementation(project(":core:model"))` to `:core:calculator/build.gradle.kts` — Task 7 первая, где calculator нуждается в `DogSize` из `:core:model`
 
 ### Task 8: :core:calculator — Dog life stages TDD
-- [ ] write FAILING test `DogLifeStageCalculatorTest`:
+- [x] write FAILING test `DogLifeStageCalculatorTest`:
   - `Toy puppy at 6 months → LifeStage.Dog.Puppy`
   - `Small adult at 4 years → LifeStage.Dog.MatureAdult`
   - `Large senior at 7 years → LifeStage.Dog.Senior`
   - `Giant senior at 5 years → LifeStage.Dog.Senior` (для гигантских с 5-6 лет по §4.1)
   - `Toy at 15 years → LifeStage.Dog.EndOfLife` (когда возраст близок к ЧЖ)
-- [ ] verify tests fail — **Red**
-- [ ] create `DogLifeStageCalculator.determine(ageInYears: Double, size: DogSize): LifeStage.Dog`
-- [ ] implement пороги по §4.1 (AAHA 2019): Puppy (0 — половая зрелость), YoungAdult, MatureAdult, Senior (зависит от размера: Toy/Small 11+, Medium 9+, Large 7+, Giant 5+), EndOfLife (близко к expected lifespan)
-- [ ] verify все тесты — **Green**
-- [ ] add ParameterizedTest для всех границ size × stage
-- [ ] add KDoc со ссылкой на AAHA 2019 Canine Life Stage Guidelines
-- [ ] add `expectedLifespanRange(size: DogSize): ClosedRange<Double>` по §4.1 (6-18 лет в зависимости от размера, McMillan 2024)
-- [ ] write tests для `expectedLifespanRange` (4 размера × ожидаемые границы)
-- [ ] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task
+- [x] verify tests fail — **Red** (compileTestKotlin FAILED с `Unresolved reference 'DogLifeStageCalculator'`)
+- [x] create `DogLifeStageCalculator.determine(ageInYears: Double, size: DogSize): LifeStage.Dog`
+- [x] implement пороги по §4.1 (AAHA 2019): Puppy (0 — половая зрелость), YoungAdult, MatureAdult, Senior (зависит от размера: Toy/Small 11+, Medium 9+, Large 7+, Giant 5+), EndOfLife (близко к expected lifespan) — порог Puppy→YoungAdult = 0.75 года (единый для всех размеров, медиана AAHA по половой зрелости); MatureAdult с 3 лет (социальная зрелость по AAHA 2019)
+- [x] verify все тесты — **Green** (53 новых теста прошли)
+- [x] add ParameterizedTest для всех границ size × stage — 36 параметризованных кейсов, по 7-11 на каждый из 5 размеров, покрывают переходы и граничные значения
+- [x] add KDoc со ссылкой на AAHA 2019 Canine Life Stage Guidelines + McMillan 2024 (Scientific Reports, n=584 734)
+- [x] add `expectedLifespanRange(size: DogSize): ClosedRange<Double>` по §4.1 (6-18 лет в зависимости от размера, McMillan 2024) — возвращает `ClosedFloatingPointRange<Double>` для поддержки `contains()` с Double
+- [x] write tests для `expectedLifespanRange` (4 размера × ожидаемые границы) — 6 тестов: 5 на размеры + 1 биоинвариант "меньше собака → дольше живёт"
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — 112 тестов прошло (предыдущие 59 + 53 новых), ktlint + detekt clean
+- ➕ extracted `internal object DogLifeStageThresholds` (отдельный файл) для табличных порогов senior/endOfLife — следует существующему паттерну `DogSizeTable.kt`; обнаружено в процессе TDD-цикла, что единая формула `endOfLife = lifespanUpperBound − 3` коллапсирует Senior-окно для Medium/Large/Giant (где Senior-фаза короче), поэтому EndOfLife также сделан табличным с обоснованием в KDoc
 
 ### Task 9: :core:calculator — CatAgeCalculator (AAHA/AAFP 2021) TDD
 - [ ] write FAILING test `CatAgeCalculatorTest`:
