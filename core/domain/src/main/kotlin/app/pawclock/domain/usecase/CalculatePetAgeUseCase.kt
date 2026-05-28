@@ -104,6 +104,8 @@ class CalculatePetAgeUseCase(
                 SpeciesParams.Rabbit(size = resolveRabbitSize(pet)) to CalculationMethod.EPIGENETIC
             Species.Hamster ->
                 SpeciesParams.Hamster(type = resolveHamsterType(pet)) to CalculationMethod.EPIGENETIC
+            Species.GuineaPig ->
+                SpeciesParams.GuineaPig to CalculationMethod.EPIGENETIC
             else -> throw UnsupportedSpeciesException(pet.species)
         }
 

@@ -131,4 +131,34 @@ sealed class LifeStage(
             fun all(): List<Hamster> = listOf(Pup, Juvenile, Adult, Senior, VerySenior)
         }
     }
+
+    /**
+     * Стадии жизни морских свинок (Oxbow + Animallama, см. §4.5 спецификации).
+     *
+     * Пороги по возрасту (единые для всех — у морской свинки нет подкатегорий;
+     * «senior с 4 лет» по §4.5):
+     *  - Pup: 0 — ~3 нед. (0–0.058, до отъёма)
+     *  - Juvenile: ~3 нед. — 5 мес. (0.058–0.42, до половой/физической зрелости)
+     *  - Adult: 5 мес. — 4 года (0.42–4.0)
+     *  - Senior: 4 — 6 лет
+     *  - Geriatric: 6+ лет (приближение к верхней границе ЧЖ 5–7)
+     */
+    sealed class GuineaPig(
+        displayKey: String,
+        ordinal: Int,
+    ) : LifeStage(displayKey, ordinal) {
+        data object Pup : GuineaPig(displayKey = "guinea_pig_pup", ordinal = 0)
+
+        data object Juvenile : GuineaPig(displayKey = "guinea_pig_juvenile", ordinal = 1)
+
+        data object Adult : GuineaPig(displayKey = "guinea_pig_adult", ordinal = 2)
+
+        data object Senior : GuineaPig(displayKey = "guinea_pig_senior", ordinal = 3)
+
+        data object Geriatric : GuineaPig(displayKey = "guinea_pig_geriatric", ordinal = 4)
+
+        companion object {
+            fun all(): List<GuineaPig> = listOf(Pup, Juvenile, Adult, Senior, Geriatric)
+        }
+    }
 }

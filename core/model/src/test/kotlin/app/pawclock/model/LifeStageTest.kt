@@ -99,6 +99,41 @@ class LifeStageTest {
     }
 
     @Test
+    fun `GuineaPig life stages all exist`() {
+        val stages = LifeStage.GuineaPig.all()
+        assertEquals(5, stages.size)
+        assertTrue(stages.contains(LifeStage.GuineaPig.Pup))
+        assertTrue(stages.contains(LifeStage.GuineaPig.Juvenile))
+        assertTrue(stages.contains(LifeStage.GuineaPig.Adult))
+        assertTrue(stages.contains(LifeStage.GuineaPig.Senior))
+        assertTrue(stages.contains(LifeStage.GuineaPig.Geriatric))
+    }
+
+    @Test
+    fun `GuineaPig stages have stable displayKeys`() {
+        assertEquals("guinea_pig_pup", LifeStage.GuineaPig.Pup.displayKey)
+        assertEquals("guinea_pig_juvenile", LifeStage.GuineaPig.Juvenile.displayKey)
+        assertEquals("guinea_pig_adult", LifeStage.GuineaPig.Adult.displayKey)
+        assertEquals("guinea_pig_senior", LifeStage.GuineaPig.Senior.displayKey)
+        assertEquals("guinea_pig_geriatric", LifeStage.GuineaPig.Geriatric.displayKey)
+    }
+
+    @Test
+    fun `GuineaPig stages have monotonic ordinals from Pup to Geriatric`() {
+        val expectedOrder =
+            listOf(
+                LifeStage.GuineaPig.Pup,
+                LifeStage.GuineaPig.Juvenile,
+                LifeStage.GuineaPig.Adult,
+                LifeStage.GuineaPig.Senior,
+                LifeStage.GuineaPig.Geriatric,
+            )
+        expectedOrder.zipWithNext().forEach { (a, b) ->
+            assertTrue(a.ordinal < b.ordinal, "${a.displayKey}.ordinal should be < ${b.displayKey}.ordinal")
+        }
+    }
+
+    @Test
     fun `Dog Senior has displayKey dog_senior`() {
         assertEquals("dog_senior", LifeStage.Dog.Senior.displayKey)
     }

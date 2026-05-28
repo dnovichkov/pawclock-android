@@ -217,24 +217,25 @@
 - [x] ➕ refactor (обнаружено): `lifeStageLabelRes` в обоих экранах разбит на диспетчер `when (is LifeStage.X)` + под-функции по виду — цикломатическая сложность вышла за detekt-порог 18 при 21 ветке; теперь масштабируется на Tasks 4–10
 
 ### Task 4: GuineaPigAgeCalculator + life stages (TDD)
-- [ ] write FAILING test `GuineaPigAgeCalculatorTest` (по §4.5):
+- [x] write FAILING test `GuineaPigAgeCalculatorTest` (по §4.5): покрыты 0.058y=6, 0.208y=11.5, 0.42y=20, 1y=24.64, 4y=48.64, 7y=78.64, throws on zero/negative + параметризованная таблица (9 кейсов) + монотонность
   - `3 weeks (0.058 year) ≈ 6 ЧГ` (точка отъёма)
   - `2-3 months ≈ 11.5 ЧГ`
   - `5 months (0.42 year) ≈ 20 ЧГ`
   - `1 year = 20 + 8·(7/12) ≈ 24.7` (после 5 месяцев)
   - `4 years ≈ 20 + 8·(4 − 0.42) ≈ 48.6`
   - `7 years ≈ 48.6 + 10·3 ≈ 78.6`
-- [ ] verify tests fail — **Red**
-- [ ] create `GuineaPigAgeCalculator : AgeCalculator`
-- [ ] implement кусочную формулу по §4.5
-- [ ] add KDoc со ссылкой на Oxbow Animallama + §4.5
-- [ ] add ParameterizedTest
-- [ ] verify — **Green**
-- [ ] add `LifeStage.GuineaPig` sealed подтипы (Pup, Juvenile, Adult, Senior, Geriatric) по §4.5
-- [ ] create `GuineaPigLifeStageCalculator` + tests (senior с 4 лет)
-- [ ] add `expectedLifespanRange()` = 5..7 + tests
-- [ ] update `Species.GuineaPig.isImplemented = true` + `AgeCalculator.forSpecies(GuineaPig)`
-- [ ] run tests
+- [x] verify tests fail — **Red** (написаны до реализации калькулятора)
+- [x] create `GuineaPigAgeCalculator : AgeCalculator`
+- [x] implement кусочную формулу по §4.5 (5 непрерывных сегментов: 3 линейных интерполяции 0→6→11.5→20, затем +8/год до 4 лет, +10/год после — в отличие от §4.3 формула непрерывна на всех стыках)
+- [x] add KDoc со ссылкой на Oxbow Animallama + §4.5
+- [x] add ParameterizedTest
+- [x] verify — **Green**
+- [x] add `LifeStage.GuineaPig` sealed подтипы (Pup, Juvenile, Adult, Senior, Geriatric) по §4.5
+- [x] create `GuineaPigLifeStageCalculator` + tests (senior с 4 лет; Geriatric с 6 лет; пороги Pup<0.058, Juvenile<0.42, Adult<4, Senior<6)
+- [x] add `expectedLifespanRange()` = 5..7 + tests (без параметра — у вида нет подкатегорий)
+- [x] update `Species.GuineaPig.isImplemented = true` + `AgeCalculator.forSpecies(GuineaPig)` + `LifeStageCalculator.forSpecies(GuineaPig)`
+- [x] run tests — must pass before next task (прогнаны `:core:model:test`, `:core:calculator:test`, `:core:domain:test`, `:feature:quickcalc:test`, `:feature:pets:test`, `:app:compileDebugKotlin`, detekt, koverVerify — всё зелёное)
+- [x] ➕ cross-module sync (обнаружено, как в Tasks 2–3): добавлена ветка `GuineaPig` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.GuineaPig` (data object без подкатегории); диспетчер `lifeStageLabelRes` в `PetDetailScreen`/`QuickCalcResultSheet` дополнен веткой GuineaPig + под-функция + строковые ресурсы ru/en; `SpeciesTest` (implemented = 5)/`LifeStageTest` обновлены
 
 ### Task 5: RatAgeCalculator + MouseAgeCalculator + life stages (TDD)
 - [ ] write FAILING test `RatAgeCalculatorTest` (Sengupta 2013):

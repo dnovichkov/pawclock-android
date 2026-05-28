@@ -66,5 +66,10 @@
     <string name="life_stage_hamster_adult">Adult</string>
     <string name="life_stage_hamster_senior">Senior</string>
     <string name="life_stage_hamster_very_senior">Very senior</string>
+    <string name="life_stage_guinea_pig_pup">Pup</string>
+    <string name="life_stage_guinea_pig_juvenile">Juvenile</string>
+    <string name="life_stage_guinea_pig_adult">Adult</string>
+    <string name="life_stage_guinea_pig_senior">Senior</string>
+    <string name="life_stage_guinea_pig_geriatric">Geriatric</string>
 
 </resources>

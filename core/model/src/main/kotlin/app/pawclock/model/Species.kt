@@ -24,7 +24,7 @@ sealed class Species(
 
     data object Hamster : Species(id = "hamster", isImplemented = true)
 
-    data object GuineaPig : Species(id = "guinea_pig", isImplemented = false)
+    data object GuineaPig : Species(id = "guinea_pig", isImplemented = true)
 
     data object Rat : Species(id = "rat", isImplemented = false)
 

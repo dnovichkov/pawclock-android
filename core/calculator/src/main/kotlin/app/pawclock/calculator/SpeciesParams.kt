@@ -61,4 +61,13 @@ sealed interface SpeciesParams {
     data class Hamster(
         val type: HamsterType,
     ) : SpeciesParams
+
+    /**
+     * Параметры морской свинки.
+     *
+     * У морской свинки нет подкатегорий (формула §4.5 едина для всех, размер на расчёт
+     * не влияет), поэтому это `data object` без полей — маркер, передаваемый в
+     * [GuineaPigAgeCalculator] / [GuineaPigLifeStageCalculator]. См. §4.5 спецификации.
+     */
+    data object GuineaPig : SpeciesParams
 }

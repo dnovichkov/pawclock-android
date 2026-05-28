@@ -151,6 +151,7 @@ internal fun lifeStageLabelRes(stage: LifeStage): Int =
         is LifeStage.Cat -> catLifeStageLabelRes(stage)
         is LifeStage.Rabbit -> rabbitLifeStageLabelRes(stage)
         is LifeStage.Hamster -> hamsterLifeStageLabelRes(stage)
+        is LifeStage.GuineaPig -> guineaPigLifeStageLabelRes(stage)
     }
 
 @androidx.annotation.StringRes
@@ -191,6 +192,16 @@ private fun hamsterLifeStageLabelRes(stage: LifeStage.Hamster): Int =
         LifeStage.Hamster.Adult -> R.string.quick_calc_life_stage_hamster_adult
         LifeStage.Hamster.Senior -> R.string.quick_calc_life_stage_hamster_senior
         LifeStage.Hamster.VerySenior -> R.string.quick_calc_life_stage_hamster_very_senior
+    }
+
+@androidx.annotation.StringRes
+private fun guineaPigLifeStageLabelRes(stage: LifeStage.GuineaPig): Int =
+    when (stage) {
+        LifeStage.GuineaPig.Pup -> R.string.quick_calc_life_stage_guinea_pig_pup
+        LifeStage.GuineaPig.Juvenile -> R.string.quick_calc_life_stage_guinea_pig_juvenile
+        LifeStage.GuineaPig.Adult -> R.string.quick_calc_life_stage_guinea_pig_adult
+        LifeStage.GuineaPig.Senior -> R.string.quick_calc_life_stage_guinea_pig_senior
+        LifeStage.GuineaPig.Geriatric -> R.string.quick_calc_life_stage_guinea_pig_geriatric
     }
 
 private const val SHEET_PADDING_DP: Int = 16
