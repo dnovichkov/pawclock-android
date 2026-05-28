@@ -347,22 +347,22 @@
 - [x] ➕ cross-module sync (обнаружено, как в Tasks 2–9): добавлена ветка `Fish` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Fish(type)` (дефолт `FishType.Goldfish`); диспетчеры `lifeStageLabelRes` в `LifeStageLabels.kt`/`QuickCalcResultSheet` дополнены `fishLifeStageLabelRes` + ветка объяснения метода (PetMD scalar) + строковые ресурсы ru/en. Поскольку Fish — последний нереализованный вид, `forSpecies`/`resolveParams` стали исчерпывающими `when` (убран `else`); тесты-«unsupported species» в `CalculatePetAgeUseCaseTest`/`SavePetUseCaseTest` переключены на end-to-end Fish + добавлен прямой `UnsupportedSpeciesExceptionTest`; `SpeciesTest`/`LifeStageTest`/`AgeCalculatorTest`/`LifeStageCalculatorTest` обновлены (implemented = 12)
 
 ### Task 11: Property-based tests for all new species (Kotest)
-- [ ] write `RabbitAgeCalculatorPropertyTest`:
+- [x] write `RabbitAgeCalculatorPropertyTest`:
   - monotonically increasing in age
-  - continuity at piecewise boundaries (age=1/3, age=1)
+  - continuity at piecewise boundaries (age=1/3, age=1) — ⚠️ формула §4.3 намеренно разрывна на стыках (привязка к опорным точкам 12/21 ЧГ); как и отмечено в Task 2, «continuity» переформулирована в **bounded-jump** (скачок положителен и ограничен ≤ 4.5 ЧГ) + глобальная монотонность
   - positivity for positive input
   - upper bound 200 ЧГ for age ≤ 30
-- [ ] write similar property tests для `HamsterAgeCalculator`, `GuineaPigAgeCalculator`, `FerretAgeCalculator` (continuity на piecewise boundaries)
-- [ ] write `RatAgeCalculatorPropertyTest` (linear → trivial monotonicity)
-- [ ] write `MouseAgeCalculatorPropertyTest` (continuity на 4 границах: 42дн, 180дн, 365дн, 730дн)
-- [ ] write `BirdAgeCalculatorPropertyTest` (∀ BirdType: monotonicity; 1.3× correction continuity на age=0.5)
-- [ ] write `ReptileAgeCalculatorPropertyTest` (∀ ReptileType: monotonicity, ratio к lifespan = 80/lifespan)
-- [ ] write `HorseAgeCalculatorPropertyTest` (continuity на 3 границах: 1y, 2y, 3y, 4y)
-- [ ] write `FishAgeCalculatorPropertyTest` (∀ FishType: monotonicity, ratio invariant)
-- [ ] write `LifeStageCalculatorPropertyTest` для всех новых видов (если `age1 < age2` тогда `stage(age1).ordinal ≤ stage(age2).ordinal`)
-- [ ] run `./gradlew :core:calculator:test --no-daemon`
-- [ ] verify coverage `:core:calculator` ≥ 95%: `./gradlew :core:calculator:koverHtmlReport && koverVerify`
-- [ ] must pass before next task
+- [x] write similar property tests для `HamsterAgeCalculator`, `GuineaPigAgeCalculator`, `FerretAgeCalculator` (continuity на piecewise boundaries — все три непрерывны: проверка `|f(b−ε) − f(b+ε)| < tol`)
+- [x] write `RatAgeCalculatorPropertyTest` (linear → trivial monotonicity + affine-invariant slope = 13.8)
+- [x] write `MouseAgeCalculatorPropertyTest` (continuity на 4 границах: 42дн, 180дн, 365дн, 730дн — границы берутся из internal-констант `PHASE_*_END / DAYS_PER_YEAR`)
+- [x] write `BirdAgeCalculatorPropertyTest` (∀ BirdType: monotonicity **по обе стороны порога 0.5** — глобальная монотонность нарушена намеренным скачком вниз ×1.3; отдельный тест проверяет `f(0.5−ε)/f(0.5+ε) → 1.3`)
+- [x] write `ReptileAgeCalculatorPropertyTest` (∀ ReptileType: monotonicity, ratio к lifespan = 80/lifespan)
+- [x] write `HorseAgeCalculatorPropertyTest` (continuity на 1y, 2y, 3y + 4y — точка 4 г. внутри одного сегмента, разрыва нет)
+- [x] write `FishAgeCalculatorPropertyTest` (∀ FishType: monotonicity, ratio invariant)
+- [x] write `LifeStageCalculatorPropertyTest` для всех новых видов (если `age1 < age2` тогда `stage(age1).ordinal ≤ stage(age2).ordinal`) — расширен существующий файл: список `newSpeciesCalculators` (10 видов) + monotonicity-ordinal + throws-on-nonpositive через унифицированный `determine(age, params)`
+- [x] run `./gradlew :core:calculator:test --no-daemon` — зелёное
+- [x] verify coverage `:core:calculator` ≥ 95%: `./gradlew :core:calculator:koverHtmlReport && koverVerify` — koverVerify (minBound=95) прошёл
+- [x] must pass before next task — detekt + koverVerify зелёные
 
 ### Task 12: Database migration + PetMapper expansion
 - [ ] write FAILING test `PetMapperTest` для каждого нового subcategory type:

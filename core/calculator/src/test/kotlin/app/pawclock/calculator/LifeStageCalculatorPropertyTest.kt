@@ -2,8 +2,14 @@
 
 package app.pawclock.calculator
 
+import app.pawclock.model.BirdType
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
+import app.pawclock.model.FishType
+import app.pawclock.model.HamsterType
+import app.pawclock.model.HorseType
+import app.pawclock.model.RabbitSize
+import app.pawclock.model.ReptileType
 import io.kotest.property.Arb
 import io.kotest.property.PropTestConfig
 import io.kotest.property.arbitrary.double
@@ -33,6 +39,61 @@ class LifeStageCalculatorPropertyTest {
     private val catCalculator = CatLifeStageCalculator
 
     private val config = PropTestConfig(iterations = PROPERTY_ITERATIONS)
+
+    /**
+     * Все калькуляторы стадий жизни, добавленные в Plan 2, с репрезентативным набором параметров.
+     * Для видов с подкатегориями берём один тип (границы стадий от подкатегории не зависят —
+     * см. KDoc каждого калькулятора; у Bird/Reptile/Fish стадии задаются долей от видовой ЧЖ,
+     * но монотонность ordinal от выбора типа не зависит).
+     */
+    private val newSpeciesCalculators: List<Pair<LifeStageCalculator, SpeciesParams>> =
+        listOf(
+            RabbitLifeStageCalculator to SpeciesParams.Rabbit(RabbitSize.Medium),
+            HamsterLifeStageCalculator to SpeciesParams.Hamster(HamsterType.Syrian),
+            GuineaPigLifeStageCalculator to SpeciesParams.GuineaPig,
+            RatLifeStageCalculator to SpeciesParams.Rat,
+            MouseLifeStageCalculator to SpeciesParams.Mouse,
+            FerretLifeStageCalculator to SpeciesParams.Ferret,
+            BirdLifeStageCalculator to SpeciesParams.Bird(BirdType.Macaw),
+            ReptileLifeStageCalculator to SpeciesParams.Reptile(ReptileType.BoxTurtle),
+            HorseLifeStageCalculator to SpeciesParams.Horse(HorseType.LightHorse),
+            FishLifeStageCalculator to SpeciesParams.Fish(FishType.Koi),
+        )
+
+    @Test
+    fun `new species life stage ordinal is monotonically non-decreasing in age`() =
+        runBlocking {
+            newSpeciesCalculators.forEach { (calculator, params) ->
+                checkAll(
+                    config,
+                    Arb.double(MIN_AGE, MAX_NEW_SPECIES_AGE),
+                    Arb.double(MIN_AGE, MAX_NEW_SPECIES_AGE),
+                ) { a, b ->
+                    val (lo, hi) = if (a <= b) a to b else b to a
+                    val loStage = calculator.determine(lo, params)
+                    val hiStage = calculator.determine(hi, params)
+                    assertTrue(
+                        loStage.ordinal <= hiStage.ordinal,
+                        "${calculator.species}: stage went backward " +
+                            "f($lo)=$loStage[${loStage.ordinal}] > f($hi)=$hiStage[${hiStage.ordinal}]",
+                    )
+                }
+            }
+        }
+
+    @Test
+    fun `new species life stage determine throws on zero or negative ages`() =
+        runBlocking {
+            newSpeciesCalculators.forEach { (calculator, params) ->
+                checkAll(config, Arb.double(-MAX_NEW_SPECIES_AGE, 0.0)) { age ->
+                    val result = runCatching { calculator.determine(age, params) }
+                    assertTrue(
+                        result.isFailure && result.exceptionOrNull() is IllegalArgumentException,
+                        "${calculator.species} age=$age: expected IAE, got $result",
+                    )
+                }
+            }
+        }
 
     @Test
     fun `dog life stage ordinal is monotonically non-decreasing in age for every size`() =
@@ -137,5 +198,8 @@ class LifeStageCalculatorPropertyTest {
         private const val MIN_AGE = 0.01
         private const val MAX_DOG_AGE = 25.0
         private const val MAX_CAT_AGE = 25.0
+
+        // Верхняя граница для новых видов: покрывает долгоживущих (черепаха/кои/попугай ≈ 50 лет).
+        private const val MAX_NEW_SPECIES_AGE = 60.0
     }
 }
