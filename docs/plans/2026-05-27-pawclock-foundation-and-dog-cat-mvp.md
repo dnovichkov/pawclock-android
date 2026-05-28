@@ -548,31 +548,33 @@
 - ➕ `MainNavigationTest` использует contentDescription «Назад» для тапа по back IconButton (`stringResource(R.string.pet_editor_back)` в PetEditorScreen.kt) — этот же locator работает в Maestro flow'ах через `tapOn:` без явной testTag-обвязки, единый словарь между Compose-test и Maestro
 
 ### Task 24: Documentation pass — docs/ARCHITECTURE.md, TESTING.md, CONTRIBUTING.md, RELEASE.md
-- [ ] write `docs/ARCHITECTURE.md`:
-  - high-level diagram модулей
-  - clean architecture слои (data/domain/presentation)
-  - MVI explanation
-  - dependency rules (только onion)
-- [ ] write `docs/TESTING.md`:
-  - test pyramid из §11.2
-  - как запускать каждый level (unit, integration, Compose, Maestro)
-  - coverage requirements из §11.4
-  - TDD-cycle example на DogAgeCalculator (можно cite §11.5)
-- [ ] write `docs/CONTRIBUTING.md`:
-  - Conventional Commits (§8.3)
-  - GitHub Flow branching (§8.2)
-  - PR checklist
-  - code style: ktlint + detekt
-  - как добавлять новый вид животного (TDD walkthrough)
-- [ ] write `docs/RELEASE.md`:
-  - семвер по §8.10
-  - формула versionCode = MAJOR*10000 + MINOR*100 + PATCH
-  - процесс tag → release.yml workflow
-  - publish to Google Play (manual promote)
-  - F-Droid checklist (отложено на Plan 2)
-- [ ] add `CHANGELOG.md` с разделом `## [Unreleased]` для будущих изменений
-- [ ] add `LICENSE` (Apache 2.0 standard text)
-- [ ] verify тестом: `scripts/verify-docs.sh` проверяет существование всех документов и наличие в каждом обязательных секций
+- [x] write `docs/ARCHITECTURE.md`:
+  - high-level diagram модулей — ASCII-диаграмма 12 модулей сгруппированных по слоям (app / presentation / domain / data / ui-shared / testing) + таблица с Android-зависимостями per module
+  - clean architecture слои (data/domain/presentation) — три концептуальных слоя (упрощённый clean architecture: Domain в центре без Android-API, Data как тонкие адаптеры в `:app/data/`, Presentation = `:feature:*` модули)
+  - MVI explanation — однонаправленный поток UI ← StateFlow → ViewModel ← Event ← UI; разделение stateful `*Screen` + stateless `*Content`; navigation через колбэки, не через ViewModel
+  - dependency rules (только onion) — таблица "может зависеть от / НЕ может зависеть от" для каждого модуля; явное обоснование почему `:core:domain` использует port-and-adapter pattern (PetRepository, SettingsReader как интерфейсы в domain, реализации в `:app/data/`); раздел "Чем НЕ является эта архитектура" для предотвращения over-engineering
+- [x] write `docs/TESTING.md`:
+  - test pyramid из §11.2 — ASCII pyramid + объяснение enforcement через типы Gradle-плагинов (kotlin("jvm") для `:core:calculator`/`:core:domain`)
+  - как запускать каждый level (unit, integration, Compose, Maestro) — конкретные `./gradlew` команды per layer; пример stateless Composable test через `createComposeRule()`
+  - coverage requirements из §11.4 — таблица с порогами и способом проверки (koverVerify minBound)
+  - TDD-cycle example на DogAgeCalculator (можно cite §11.5) — полный 6-шаговый пример (Red → Green → Параметризовать → Edge cases → Refactor → Property-based) с реальными код-фрагментами из Task 6, плюс краткая чек-листа цикла
+  - бонус: расширенная Maestro секция (унаследована из Task 23), локализационные тесты, контроль качества тестов
+- [x] write `docs/CONTRIBUTING.md`:
+  - Conventional Commits (§8.3) — полная таблица типов с триггерами semver bump'ов, scope-конвенция (без core:/feature: префиксов), правила subject line, breaking changes
+  - GitHub Flow branching (§8.2) — main/feature/fix/chore/docs ветки, squash & merge
+  - PR checklist — 4 секции (TDD, Source attribution, Quality gates, Privacy & safety) из PR template
+  - code style: ktlint + detekt — команды + правила использования `@Suppress` с обязательным комментарием
+  - как добавлять новый вид животного (TDD walkthrough) — 9-шаговый пример для кролика: open issue → TDD цикл калькулятора → life stages → расширить domain → care assets → UI → localization → Maestro → PR
+- [x] write `docs/RELEASE.md`:
+  - семвер по §8.10 — таблица "когда MAJOR/MINOR/PATCH" с примерами
+  - формула versionCode = MAJOR*10000 + MINOR*100 + PATCH — таблица versionName → versionCode + ограничения формулы (MINOR<100, PATCH<100, hot-fix considerations)
+  - процесс tag → release.yml workflow — happy-path 8 шагов от подготовки коммитов до Google Play promotion; описание что делает release.yml внутри (decode keystore, bundleRelease, verify-bundle-size, gh release create, optional Google Play upload)
+  - publish to Google Play (manual promote) — staged rollout internal → alpha → beta → production
+  - F-Droid checklist (отложено на Plan 2) — chek-list с reproducible builds, fastlane metadata, fdroiddata MR
+  - бонус: GitHub Secrets описаны таблицей; раздел про hot-fix и rollback processes
+- [x] add `CHANGELOG.md` с разделом `## [Unreleased]` для будущих изменений — Keep a Changelog 1.1.0 format, секция `## [Unreleased]` со списком всех 12 модулей и Task 1-23 deliverables, готов к перемещению в первый версионный раздел `## [1.0.0]` при тегировании
+- [x] add `LICENSE` (Apache 2.0 standard text) — полный стандартный текст Apache License 2.0 + appendix boilerplate с copyright "2026 Dmitriy Novichkov and PawClock contributors"
+- [x] verify тестом: `scripts/verify-docs.sh` проверяет существование всех документов и наличие в каждом обязательных секций — bash скрипт с case-insensitive grep'ами для каждой обязательной секции (RU+EN альтернативы); проверяет 6 файлов + 21 sections; запуск: `bash scripts/verify-docs.sh` — все проверки прошли (verify-adrs.sh регрессия не задета)
 
 ### Task 25: README.md + final acceptance verification
 - [ ] write `README.md` по §8.12:
