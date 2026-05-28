@@ -8,6 +8,7 @@ import app.pawclock.model.Gender
 import app.pawclock.model.Pet
 import app.pawclock.model.Species
 import java.time.LocalDate
+import java.time.format.DateTimeParseException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -151,8 +152,9 @@ class PetMapperTest {
                 photoPath = null,
             )
 
-        // java.time.format.DateTimeParseException наследуется от RuntimeException
-        assertThrows<RuntimeException> {
+        // Точный тип фиксирует контракт: malformed ISO-дата → DateTimeParseException,
+        // не любая RuntimeException. Иначе тест пройдёт даже на NPE из-за регрессии.
+        assertThrows<DateTimeParseException> {
             PetMapper.toDomain(entity)
         }
     }

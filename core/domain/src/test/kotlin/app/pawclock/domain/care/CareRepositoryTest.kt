@@ -5,6 +5,7 @@ import app.pawclock.model.Species
 import java.io.ByteArrayInputStream
 import java.io.InputStream
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.SerializationException
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
@@ -185,7 +186,9 @@ class CareRepositoryTest {
             val source = FakeAssetSource("care/dog/puppy/ru.json" to "{ not valid json")
             val repository = CareRepositoryImpl(source)
 
-            assertThrows<Exception> {
+            // Точный тип важен: контракт CareRepository обещает SerializationException
+            // для повреждённых ассетов; assertThrows<Exception> ловил бы любые баги.
+            assertThrows<SerializationException> {
                 repository.load(Species.Dog, LifeStage.Dog.Puppy, "ru")
             }
         }
@@ -193,12 +196,13 @@ class CareRepositoryTest {
     @Test
     fun `JSON missing required field throws on deserialization`() =
         runTest {
-            // Нет обязательного поля nutrition — kotlinx.serialization выбросит MissingFieldException.
+            // Нет обязательного поля nutrition — kotlinx.serialization выбросит MissingFieldException
+            // (subclass SerializationException).
             val incomplete = """{ "stage_description": "x" }"""
             val source = FakeAssetSource("care/dog/puppy/ru.json" to incomplete)
             val repository = CareRepositoryImpl(source)
 
-            assertThrows<Exception> {
+            assertThrows<SerializationException> {
                 repository.load(Species.Dog, LifeStage.Dog.Puppy, "ru")
             }
         }

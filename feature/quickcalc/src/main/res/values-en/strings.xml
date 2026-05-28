@@ -41,6 +41,7 @@
     <string name="quick_calc_error_birth_date_required">Please enter a birth date</string>
     <string name="quick_calc_error_birth_date_in_future">Birth date cannot be in the future</string>
     <string name="quick_calc_error_unsupported_species">This species is not supported yet</string>
+    <string name="quick_calc_error_unexpected">Could not calculate the age. Please try again.</string>
 
     <!-- Result sheet -->
     <string name="quick_calc_result_age_descriptor">Calendar age</string>

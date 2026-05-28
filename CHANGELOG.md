@@ -42,4 +42,4 @@
 - Запрет INTERNET permission через `<uses-permission tools:node="remove">`
   (см. ADR-0005). Data Safety на Google Play — "No data collected".
 
-[Unreleased]: https://github.com/dnovichkov/pawclock-android/compare/HEAD...HEAD
+[Unreleased]: https://github.com/dnovichkov/pawclock-android/commits/main

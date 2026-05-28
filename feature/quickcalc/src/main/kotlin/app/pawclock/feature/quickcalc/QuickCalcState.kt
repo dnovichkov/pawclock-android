@@ -98,4 +98,5 @@ enum class QuickCalcValidationError(
     BirthDateRequired(messageKey = "quick_calc_error_birth_date_required"),
     BirthDateInFuture(messageKey = "quick_calc_error_birth_date_in_future"),
     UnsupportedSpecies(messageKey = "quick_calc_error_unsupported_species"),
+    UnexpectedError(messageKey = "quick_calc_error_unexpected"),
 }

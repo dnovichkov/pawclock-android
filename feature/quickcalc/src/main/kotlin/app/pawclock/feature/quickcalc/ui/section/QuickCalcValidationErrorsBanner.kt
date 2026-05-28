@@ -56,6 +56,7 @@ private fun errorMessageRes(error: QuickCalcValidationError): Int =
         QuickCalcValidationError.BirthDateRequired -> R.string.quick_calc_error_birth_date_required
         QuickCalcValidationError.BirthDateInFuture -> R.string.quick_calc_error_birth_date_in_future
         QuickCalcValidationError.UnsupportedSpecies -> R.string.quick_calc_error_unsupported_species
+        QuickCalcValidationError.UnexpectedError -> R.string.quick_calc_error_unexpected
     }
 
 private const val BANNER_PADDING_DP: Int = 12

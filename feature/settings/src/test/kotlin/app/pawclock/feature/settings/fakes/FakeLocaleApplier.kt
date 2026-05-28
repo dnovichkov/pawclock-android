@@ -16,7 +16,14 @@ class FakeLocaleApplier : LocaleApplier {
     val appliedTags: List<String?> get() = _appliedTags.toList()
 
     val applyCount: Int get() = _appliedTags.size
-    val lastTag: String? get() = _appliedTags.last()
+
+    /**
+     * Возвращает последний применённый language tag или `null`, если applier ещё не вызывался.
+     *
+     * Использует [List.lastOrNull] вместо [List.last], чтобы тест-кейсы, проверяющие
+     * "applier не был вызван", могли безопасно обратиться к [lastTag] без NoSuchElementException.
+     */
+    val lastTag: String? get() = _appliedTags.lastOrNull()
 
     override fun applyLanguageTag(tag: String?) {
         _appliedTags += tag

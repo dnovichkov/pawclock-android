@@ -45,6 +45,7 @@
     <string name="quick_calc_error_birth_date_required">Укажите дату рождения</string>
     <string name="quick_calc_error_birth_date_in_future">Дата рождения не может быть в будущем</string>
     <string name="quick_calc_error_unsupported_species">Этот вид пока не поддерживается</string>
+    <string name="quick_calc_error_unexpected">Не удалось рассчитать возраст. Попробуйте ещё раз.</string>
 
     <!-- Result sheet -->
     <string name="quick_calc_result_age_descriptor">Календарный возраст</string>

@@ -162,7 +162,13 @@ class QuickCalcViewModel
                     QuickCalcResult.ValidationError(
                         listOf(QuickCalcValidationError.BirthDateInFuture),
                     )
-                else -> throw throwable
+                else ->
+                    // Любое неожиданное исключение (например, IO-сбой при загрузке care-ассетов)
+                    // не должно крашить приложение из viewModelScope. Превращаем в общий
+                    // validation error — UI отобразит безопасный fallback вместо краша.
+                    QuickCalcResult.ValidationError(
+                        listOf(QuickCalcValidationError.UnexpectedError),
+                    )
             }
 
         private fun defaultSubcategoryFor(species: Species): String =
