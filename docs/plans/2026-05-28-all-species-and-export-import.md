@@ -280,33 +280,24 @@
 - [x] ➕ cross-module sync (обнаружено, как в Tasks 2–5): добавлена ветка `Ferret` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Ferret` (data object без подкатегории); диспетчер `lifeStageLabelRes` в `PetDetailScreen`/`QuickCalcResultSheet` дополнен веткой Ferret + под-функция + строковые ресурсы ru/en; `SpeciesTest` (implemented = 8)/`LifeStageTest` обновлены; null-примеры в `AgeCalculatorTest`/`LifeStageCalculatorTest` переключены с Ferret на Reptile; добавлен end-to-end domain-тест Ferret (восстановление kover ≥90%)
 
 ### Task 7: ScalarRatioFormula helper + BirdAgeCalculator + life stages (TDD)
-- [ ] write FAILING test `ScalarRatioFormulaTest` (helper для Bird/Reptile/Fish):
-  - `scalarRatio(age=1, lifespan=80) = 1` (baseline)
-  - `scalarRatio(age=10, lifespan=80) = 10`
-  - `scalarRatio(age=5, lifespan=40) = 10` (formula: age · 80 / lifespan)
-  - `throws on non-positive lifespan`
-- [ ] verify tests fail — **Red**
-- [ ] create `internal object ScalarRatioFormula { fun compute(age: Double, lifespan: Double): Double = age * 80.0 / lifespan }`
-- [ ] verify — **Green**
-- [ ] add KDoc со ссылкой на §4.8, §4.9, §4.11
-- [ ] write FAILING test `BirdAgeCalculatorTest` (по §4.8):
-  - Budgerigar (lifespan 7y): 1y = 11.4 ЧГ; 3y = 34.3
-  - Cockatiel (lifespan 15): 5y = 26.7
-  - Macaw / Amazon (lifespan 50): 10y = 16
-  - Canary (lifespan 10): 2y = 16
-  - Возраст < 6 месяцев → результат × 1.3 (`6 weeks budgerigar = 0.115 · 11.4 · 1.3 ≈ 1.7`)
-  - `throws on negative age`
-- [ ] verify tests fail — **Red**
-- [ ] create `BirdType` enum в `:core:model` (Budgerigar, Cockatiel, Canary, Lovebird, Conure, Amazon, AfricanGrey, Cockatoo, Macaw, Pigeon — 10 видов по §4.8) + stable `id` + per-type `averageLifespanYears` (Budgerigar=7, Cockatiel=15, Canary=10, ...)
-- [ ] create `BirdAgeCalculator : AgeCalculator` использующий `ScalarRatioFormula.compute(age, type.averageLifespanYears)` + 1.3× для age < 0.5y
-- [ ] add KDoc со ссылкой на AAV «Care for Senior Parrots» + Lafeber Vet + §4.8
-- [ ] add ParameterizedTest с 5+ видами птиц
-- [ ] verify — **Green**
-- [ ] add `LifeStage.Bird` подтипы (Hatchling, Juvenile, Adult, Senior, Geriatric) по §4.8
-- [ ] create `BirdLifeStageCalculator` + tests (фракция от average lifespan: hatchling <5%, juvenile <20%, adult 20-70%, senior 70-90%, geriatric >90%)
-- [ ] add `expectedLifespanRange(type: BirdType)` (5-10 для волнистых, до 49 для амазонов) + tests
-- [ ] update `Species.Bird.isImplemented = true` + `AgeCalculator.forSpecies()`
-- [ ] run tests
+- [x] write FAILING test `ScalarRatioFormulaTest` (helper для Bird/Reptile/Fish): 6 кейсов (baseline 1:1, линейность, короткая ЧЖ ускоряет, инвариант ratio=80/lifespan, throws на zero/negative lifespan)
+- [x] verify tests fail — **Red** (написаны до реализации)
+- [x] create `internal object ScalarRatioFormula { fun compute(age: Double, lifespan: Double): Double = age * 80.0 / lifespan }` (с `require(lifespan > 0)` + константой `HUMAN_REFERENCE_LIFESPAN`)
+- [x] verify — **Green**
+- [x] add KDoc со ссылкой на §4.8, §4.9, §4.11 (общий helper для Bird/Reptile/Fish — Tasks 7/8/10)
+- [x] write FAILING test `BirdAgeCalculatorTest` (по §4.8): покрыты budgerigar 1y=11.43, 3y=34.29, cockatiel 5y=26.67, macaw 10y=16, canary 2y=16, 6 недель=1.71 (×1.3), стык 0.5 (отключение множителя), throws zero/negative + параметризованная таблица (7 видов/возрастов) + монотонность
+- [x] verify tests fail — **Red**
+- [x] create `BirdType` enum в `:core:model` (10 видов по §4.8) + stable `id` + per-type `averageLifespanYears` (Budgerigar=7, Cockatiel=15, Canary=10, Macaw/Amazon/AfricanGrey/Cockatoo=50, …) + `BirdTypeTest`
+- [x] create `BirdAgeCalculator : AgeCalculator` использующий `ScalarRatioFormula.compute(age, type.averageLifespanYears)` + 1.3× для age < 0.5y (поправка ускоренного взросления птенцов)
+- [x] add KDoc со ссылкой на AAV «Care for Senior Parrots» + Lafeber Vet + §4.8
+- [x] add ParameterizedTest с 7 видами/возрастами птиц
+- [x] verify — **Green**
+- [x] add `LifeStage.Bird` подтипы (Hatchling, Juvenile, Adult, Senior, Geriatric) по §4.8 + `LifeStageTest`
+- [x] create `BirdLifeStageCalculator` + tests (фракция от average lifespan: hatchling <5%, juvenile <20%, adult 20-70%, senior 70-90%, geriatric >90%; границы тестов подобраны внутри полос во избежание IEEE-754 неоднозначности на стыке доли)
+- [x] add `expectedLifespanRange(type: BirdType)` (5-10 для волнистых, до 40-60 для ара/какаду) + tests
+- [x] update `Species.Bird.isImplemented = true` + `AgeCalculator.forSpecies(Bird)` + `LifeStageCalculator.forSpecies(Bird)`
+- [x] run tests (прогнаны `:core:model:test`, `:core:calculator:test`, `:core:domain:test`, `:feature:quickcalc:test`, `:feature:pets:test`, `:app:compileDebugKotlin`, detekt, `:core:calculator:koverVerify`, `:core:domain:koverVerify` — всё зелёное)
+- [x] ➕ cross-module sync (обнаружено, как в Tasks 2–6): добавлена ветка `Bird` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Bird(type)` (дефолт `BirdType.Budgerigar`); диспетчеры `lifeStageLabelRes` в `PetDetailScreen`/`QuickCalcResultSheet` дополнены `birdLifeStageLabelRes` + ветка объяснения метода (AAV scalar) + строковые ресурсы ru/en; `SpeciesTest` (implemented = 9)/`LifeStageTest`/`AgeCalculatorTest` (null-список → Reptile/Horse/Fish) обновлены; добавлены end-to-end domain-тесты Bird (default Budgerigar + macaw subcategory — восстановление kover ≥90%)
 
 ### Task 8: ReptileAgeCalculator + life stages (TDD)
 - [ ] write FAILING test `ReptileAgeCalculatorTest` (по §4.9):

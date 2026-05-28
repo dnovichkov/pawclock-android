@@ -59,17 +59,17 @@ class SpeciesTest {
         assertTrue(Species.Rat.isImplemented)
         assertTrue(Species.Mouse.isImplemented)
         assertTrue(Species.Ferret.isImplemented)
-        // Ещё не реализованные виды (будут включаться в Tasks 7–10):
-        assertFalse(Species.Bird.isImplemented)
+        assertTrue(Species.Bird.isImplemented)
+        // Ещё не реализованные виды (будут включаться в Tasks 8–10):
         assertFalse(Species.Reptile.isImplemented)
         assertFalse(Species.Horse.isImplemented)
         assertFalse(Species.Fish.isImplemented)
     }
 
     @Test
-    fun `implemented returns Dog, Cat, Rabbit, Hamster, GuineaPig, Rat, Mouse and Ferret`() {
+    fun `implemented returns the nine species realised through Task 7`() {
         val implemented = Species.implemented()
-        assertEquals(8, implemented.size)
+        assertEquals(9, implemented.size)
         assertTrue(implemented.contains(Species.Dog))
         assertTrue(implemented.contains(Species.Cat))
         assertTrue(implemented.contains(Species.Rabbit))
@@ -78,6 +78,7 @@ class SpeciesTest {
         assertTrue(implemented.contains(Species.Rat))
         assertTrue(implemented.contains(Species.Mouse))
         assertTrue(implemented.contains(Species.Ferret))
+        assertTrue(implemented.contains(Species.Bird))
     }
 
     @Test

@@ -51,6 +51,7 @@ sealed interface AgeCalculator {
                 Species.Rat -> RatAgeCalculator
                 Species.Mouse -> MouseAgeCalculator
                 Species.Ferret -> FerretAgeCalculator
+                Species.Bird -> BirdAgeCalculator
                 else -> null
             }
     }

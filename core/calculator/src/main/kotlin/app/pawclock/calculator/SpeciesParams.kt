@@ -1,5 +1,6 @@
 package app.pawclock.calculator
 
+import app.pawclock.model.BirdType
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
@@ -97,4 +98,15 @@ sealed interface SpeciesParams {
      * [FerretLifeStageCalculator]. См. §4.7 спецификации.
      */
     data object Ferret : SpeciesParams
+
+    /**
+     * Параметры птицы.
+     *
+     * @param type вид птицы. В отличие от большинства видов, [type] **влияет на формулу**
+     *   расчёта возраста: скалярная формула §4.8 масштабируется по [BirdType.averageLifespanYears]
+     *   (см. [BirdAgeCalculator] / [BirdLifeStageCalculator]). См. §4.8 спецификации.
+     */
+    data class Bird(
+        val type: BirdType,
+    ) : SpeciesParams
 }

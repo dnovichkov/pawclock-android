@@ -249,4 +249,36 @@ sealed class LifeStage(
             fun all(): List<Ferret> = listOf(Kit, Juvenile, Adult, Senior, Geriatric)
         }
     }
+
+    /**
+     * Стадии жизни птиц (AAV «Care for Senior Parrots» + Lafeber Vet, см. §4.8 спецификации).
+     *
+     * В отличие от млекопитающих, границы стадий птицы задаются **долей от видовой
+     * продолжительности жизни** ([BirdType.averageLifespanYears]), а не абсолютным
+     * возрастом — у волнистого попугая (ЧЖ 7 лет) и ара (ЧЖ 50 лет) «взрослость»
+     * наступает в очень разном календарном возрасте. Пороги (доля от ЧЖ):
+     *  - Hatchling: 0–5 %
+     *  - Juvenile: 5–20 %
+     *  - Adult: 20–70 %
+     *  - Senior: 70–90 %
+     *  - Geriatric: 90 %+
+     */
+    sealed class Bird(
+        displayKey: String,
+        ordinal: Int,
+    ) : LifeStage(displayKey, ordinal) {
+        data object Hatchling : Bird(displayKey = "bird_hatchling", ordinal = 0)
+
+        data object Juvenile : Bird(displayKey = "bird_juvenile", ordinal = 1)
+
+        data object Adult : Bird(displayKey = "bird_adult", ordinal = 2)
+
+        data object Senior : Bird(displayKey = "bird_senior", ordinal = 3)
+
+        data object Geriatric : Bird(displayKey = "bird_geriatric", ordinal = 4)
+
+        companion object {
+            fun all(): List<Bird> = listOf(Hatchling, Juvenile, Adult, Senior, Geriatric)
+        }
+    }
 }

@@ -86,5 +86,11 @@
     <string name="life_stage_ferret_adult">Adult</string>
     <string name="life_stage_ferret_senior">Senior</string>
     <string name="life_stage_ferret_geriatric">Geriatric</string>
+    <string name="life_stage_bird_hatchling">Hatchling</string>
+    <string name="life_stage_bird_juvenile">Juvenile</string>
+    <string name="life_stage_bird_adult">Adult</string>
+    <string name="life_stage_bird_senior">Senior</string>
+    <string name="life_stage_bird_geriatric">Geriatric</string>
+    <string name="pet_detail_calc_bird">Method: AAV + Lafeber Vet. Scalar formula: human years = age · 80 / species average lifespan. For chicks under 6 months a ×1.3 correction applies.</string>
 
 </resources>

@@ -93,5 +93,11 @@
     <string name="quick_calc_life_stage_ferret_adult">Adult</string>
     <string name="quick_calc_life_stage_ferret_senior">Senior</string>
     <string name="quick_calc_life_stage_ferret_geriatric">Geriatric</string>
+    <string name="quick_calc_life_stage_bird_hatchling">Hatchling</string>
+    <string name="quick_calc_life_stage_bird_juvenile">Juvenile</string>
+    <string name="quick_calc_life_stage_bird_adult">Adult</string>
+    <string name="quick_calc_life_stage_bird_senior">Senior</string>
+    <string name="quick_calc_life_stage_bird_geriatric">Geriatric</string>
+    <string name="quick_calc_result_explanation_bird">AAV + Lafeber Vet method: human years = age · 80 / species average lifespan. Long-lived parrots age more slowly in human years.</string>
 
 </resources>

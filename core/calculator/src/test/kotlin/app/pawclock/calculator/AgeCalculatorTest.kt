@@ -39,8 +39,8 @@ class AgeCalculatorTest {
     @Test
     fun `forSpecies returns null for not-yet-implemented species`() {
         assertNull(AgeCalculator.forSpecies(Species.Reptile))
-        assertNull(AgeCalculator.forSpecies(Species.Bird))
         assertNull(AgeCalculator.forSpecies(Species.Horse))
+        assertNull(AgeCalculator.forSpecies(Species.Fish))
     }
 
     @Test

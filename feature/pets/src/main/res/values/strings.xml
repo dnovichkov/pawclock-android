@@ -90,5 +90,11 @@
     <string name="life_stage_ferret_adult">Взрослый</string>
     <string name="life_stage_ferret_senior">Пожилой</string>
     <string name="life_stage_ferret_geriatric">Старческий</string>
+    <string name="life_stage_bird_hatchling">Птенец</string>
+    <string name="life_stage_bird_juvenile">Молодая особь</string>
+    <string name="life_stage_bird_adult">Взрослая</string>
+    <string name="life_stage_bird_senior">Пожилая</string>
+    <string name="life_stage_bird_geriatric">Старческая</string>
+    <string name="pet_detail_calc_bird">Метод: AAV + Lafeber Vet. Скалярная формула: человеческие годы = возраст · 80 / средняя продолжительность жизни вида. Для птенцов младше 6 месяцев — поправка ×1.3.</string>
 
 </resources>
