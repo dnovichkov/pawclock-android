@@ -34,7 +34,10 @@ appId: app.pawclock.debug
 # Подкатегория «Средняя» (default для собак — см. QuickCalcViewModel).
 - assertVisible: "Средняя"
 
-# Указать дату рождения (тап по полю → ОК).
+# Указать дату рождения (тап по полю → ОК). QuickCalcBirthDateField
+# устанавливает initialSelectedDateMillis = "1 год назад" когда value=null
+# (см. fallback в QuickCalcBirthDateField.kt) — этого достаточно для smoke E2E:
+# дата валидна, расчёт пройдёт.
 - tapOn:
     id: "quick_calc_birth_date_field"
 - tapOn: "ОК"

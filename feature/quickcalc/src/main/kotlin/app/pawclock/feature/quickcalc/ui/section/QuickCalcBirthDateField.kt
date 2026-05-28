@@ -39,10 +39,23 @@ internal fun QuickCalcBirthDateField(
     modifier: Modifier = Modifier,
 ) {
     var showDialog by remember { mutableStateOf(false) }
+    // Fallback на "1 год назад" см. BirthDateField (editor). Без этого
+    // Material 3 picker открывается без selection → tap "ОК" не передаёт дату,
+    // и E2E quick_calc_dog.yaml-flow не может выполнить Calculate.
+    val defaultInitialMillis =
+        remember {
+            LocalDate
+                .now()
+                .minusYears(1)
+                .atStartOfDay(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli()
+        }
     val datePickerState =
         rememberDatePickerState(
             initialSelectedDateMillis =
-                value?.atStartOfDay(ZoneId.of("UTC"))?.toInstant()?.toEpochMilli(),
+                value?.atStartOfDay(ZoneId.of("UTC"))?.toInstant()?.toEpochMilli()
+                    ?: defaultInitialMillis,
         )
 
     Box(

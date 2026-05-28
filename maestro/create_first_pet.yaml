@@ -42,8 +42,10 @@ appId: app.pawclock.debug
 # SelectSpecies(Cat); явный tap нужен только если пользователь хочет другую).
 - assertVisible: "Домашняя короткошёрстная"
 
-# Открыть DatePicker и подтвердить (initial selected = текущая дата,
-# что для теста означает age=0 → Kitten, и этого достаточно для smoke E2E).
+# Открыть DatePicker и подтвердить. BirthDateField устанавливает
+# initialSelectedDateMillis = "1 год назад" когда value=null (см. fallback
+# в BirthDateField.kt) — этого достаточно для smoke E2E: дата валидна для
+# SavePetUseCase (past, не unrealistic), age ≈ 1 год → Kitten для кошки.
 - tapOn:
     id: "pet_editor_birth_date_field"
 - tapOn: "ОК"

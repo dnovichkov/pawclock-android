@@ -40,10 +40,26 @@ internal fun BirthDateField(
     modifier: Modifier = Modifier,
 ) {
     var showDialog by remember { mutableStateOf(false) }
+    // Fallback на "1 год назад", если value == null. Без этого Material 3 DatePicker
+    // открывается БЕЗ выделенной даты → selectedDateMillis = null → tap "ОК" не
+    // вызывает onChange (см. confirmButton ниже: `if (millis != null)`), и E2E-флоу
+    // (maestro create_first_pet) не может сохранить питомца без явной навигации
+    // по календарю. "1 год назад" — разумный стартовый якорь (типичный возраст
+    // молодого питомца) и гарантированно валидная past-дата для SavePetUseCase.
+    val defaultInitialMillis =
+        remember {
+            LocalDate
+                .now()
+                .minusYears(1)
+                .atStartOfDay(ZoneId.of("UTC"))
+                .toInstant()
+                .toEpochMilli()
+        }
     val datePickerState =
         rememberDatePickerState(
             initialSelectedDateMillis =
-                value?.atStartOfDay(ZoneId.of("UTC"))?.toInstant()?.toEpochMilli(),
+                value?.atStartOfDay(ZoneId.of("UTC"))?.toInstant()?.toEpochMilli()
+                    ?: defaultInitialMillis,
         )
 
     // OutlinedTextField сам не ловит таппинг в read-only режиме, поэтому

@@ -228,9 +228,17 @@ private fun HeroBlock(
             stage = calculated.lifeStage,
             label = stringResource(lifeStageLabelRes(calculated.lifeStage)),
         )
-        if (pet.weightKg != null) {
+        val weightKg = pet.weightKg
+        if (weightKg != null) {
+            // Используем format1() (Locale.getDefault()-aware), а не toString():
+            // Double.toString() ВСЕГДА выдаёт en-десятичный разделитель ("5.5"),
+            // и на ru-локали это смотрелось бы рассогласованно рядом с возрастом
+            // "5,2 ЧГ", который форматируется через format1().
+            // Smart-cast pet.weightKg напрямую невозможен — Pet объявлен в другом
+            // модуле (:core:model), Kotlin не гарантирует stability публичного
+            // поля → копируем в локальную val.
             Text(
-                text = stringResource(R.string.pet_detail_weight, pet.weightKg.toString()),
+                text = stringResource(R.string.pet_detail_weight, weightKg.format1()),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
