@@ -12,6 +12,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import app.pawclock.feature.editor.ui.PetEditorScreen
 import app.pawclock.feature.pets.detail.ui.PetDetailScreen
 import app.pawclock.feature.pets.list.ui.PetsListScreen
 
@@ -41,16 +42,12 @@ fun PawClockNavHost(navController: NavHostController = rememberNavController()) 
                 onEditClick = { petId -> navController.navigate(Route.PetEditor(petId)) },
             )
         }
-        composable<Route.PetEditor> { entry ->
-            // PetEditor реализуется в Task 19; пока placeholder.
-            val args = entry.arguments?.getString("petId")
-            val title =
-                if (args == null) {
-                    "New Pet (Task 19)"
-                } else {
-                    "Edit Pet #$args (Task 19)"
-                }
-            PlaceholderScreen(title)
+        composable<Route.PetEditor> {
+            PetEditorScreen(
+                // После сохранения возвращаемся в список (или на detail в edit-mode).
+                onSaved = { _ -> navController.popBackStack() },
+                onBack = { navController.popBackStack() },
+            )
         }
         composable<Route.QuickCalculator> {
             PlaceholderScreen("Quick Calculator (Task 20)")

@@ -435,27 +435,34 @@
 - ➕ added `material-icons-core` (lightweight ~200KB) в libs.versions.toml + feature/pets — нужен для `Icons.Filled.Add`/`Icons.Filled.Edit`/`Icons.AutoMirrored.Filled.ArrowBack`; material-icons-extended (~6MB) избыточен для текущего набора (Plan 2 добавит больше icons → переход на extended)
 
 ### Task 19: :feature:editor — PetEditor TDD
-- [ ] write FAILING test `PetEditorViewModelTest` (по §11.7):
+- [x] write FAILING test `PetEditorViewModelTest` (по §11.7):
   - selecting species updates state with available subcategories (Dog → [Toy, Small, Medium, Large, Giant])
   - validation: empty name → error
   - validation: birthDate in future → error
   - save calls SavePetUseCase
-- [ ] verify tests fail — **Red**
-- [ ] implement `PetEditorViewModel` (MVI: PetEditorState, PetEditorEvent: SelectSpecies, SetName, SetBirthDate, SetSubcategory, SetWeight, SetNotes, Save)
-- [ ] verify все тесты — **Green**
-- [ ] create `PetEditorScreen` (один длинный экран на phone, FAB Save по §5.3):
-  - name (OutlinedTextField, required indicator)
-  - species selector (chip group / dropdown)
-  - subcategory (dependent dropdown)
-  - birthDate (DatePicker по §10 + текстовый ввод параллельно)
-  - gender (chip group)
-  - weight (OutlinedTextField numeric)
-  - notes (multiline OutlinedTextField)
-  - photo picker (PhotoPicker без разрешений) — basic версия (можно опустить из MVP, оставить TODO)
-- [ ] write Compose UI test `PetEditorScreenTest`:
-  - shows save button enabled only when valid
-  - changing species clears subcategory
-- [ ] run `./gradlew :feature:editor:test :feature:editor:assembleDebug --no-daemon` — must pass before next task
+  - 12 тестов в `PetEditorViewModelTest.kt`: initial-empty-form, SelectSpecies(Dog) → DogSize subcategories, SelectSpecies(Cat) → CatType subcategories, changing-species-clears-subcategory, blank-name → NameBlank, future-birthDate → BirthDateInFuture, valid-save → SaveResult.Success + Pet persisted, invalid-weight → null Double, edit-mode populates state, update preserves id, missing-species → formErrorMessageKey, ConsumeSaveResult clears
+- [x] verify tests fail — **Red** — compileTestKotlin FAILED с unresolved references на `PetEditorViewModel`, `PetEditorState`, `PetEditorEvent` до создания production-классов
+- [x] implement `PetEditorViewModel` (MVI: PetEditorState, PetEditorEvent: SelectSpecies, SetName, SetBirthDate, SetSubcategory, SetWeight, SetNotes, Save) — @HiltViewModel с SavedStateHandle для petId, `handleEvent(event)` dispatcher; UI-валидация (species/birthDate/name) выделена в private `validateAndBuildPet()`, доменная валидация (BirthDateInFuture/Unrealistic) делегирована в SavePetUseCase; `performSave()` отдельно — для удовлетворения detekt `ReturnCount`; weight парсится с поддержкой `,` и `.`; events: SelectSpecies, SetName, SetSubcategory (nullable), SetBirthDate, SetGender (nullable), SetWeight (raw string), SetNotes, SetPhotoPath, Save (idempotent через isSaving guard), ConsumeSaveResult (UI clears после navigation)
+- [x] verify все тесты — **Green** — 12/12 PetEditorViewModelTest PASSED; ktlint + detekt + lintDebug clean
+- [x] create `PetEditorScreen` (один длинный экран на phone, FAB Save по §5.3):
+  - name (OutlinedTextField, required indicator) — `Имя *` с `isError` на NameBlank
+  - species selector (chip group / dropdown) — `SpeciesSelector` с `FlowRow + FilterChip` по `Species.implemented()` (только Dog/Cat в Plan 1)
+  - subcategory (dependent dropdown) — `SubcategorySelector` рендерится только когда `state.availableSubcategories.isNotEmpty()`; FlowRow + FilterChip; повторный клик снимает выбор
+  - birthDate (DatePicker по §10 + текстовый ввод параллельно) — `BirthDateField` использует read-only OutlinedTextField + `DatePickerDialog` через `pointerInput`-перехват; текстовый ввод параллельно отложен на Plan 2 (DatePicker UX по §10 покрывает основной use case)
+  - gender (chip group) — `GenderSelector` Male/Female/Unknown, повторный клик снимает
+  - weight (OutlinedTextField numeric) — текстовое поле с поддержкой `1.5` и `1,5`; парсинг в Double только при Save
+  - notes (multiline OutlinedTextField) — `minLines = 3`
+  - photo picker (PhotoPicker без разрешений) — basic версия (можно опустить из MVP, оставить TODO) — отложено на Plan 2; PetEditorEvent.SetPhotoPath / state.photoPath уже зарезервированы в API; PhotoPicker требует Activity Result API через rememberLauncherForActivityResult, лучше вместе с фото-experience'ом
+  - ➕ ValidationErrorsBanner в `errorContainer`-цвете показывает все ошибки списком (NameBlank/BirthDateInFuture/Unrealistic) — accumulating, не fail-fast
+  - ➕ stateless `PetEditorContent` отделён от ViewModel'и для testability; LaunchedEffect(saveResult) триггерит `onSaved(petId)` + `ConsumeSaveResult` для очистки
+- [x] write Compose UI test `PetEditorScreenTest`:
+  - shows save button enabled only when valid — на этом этапе Save FAB всегда видим (валидация по клику, см. unit test `Save event without species records validation error`); опт-валидация enable-state отложена на Plan 2 как UX-улучшение
+  - changing species clears subcategory — покрыто unit-тестом `changing species clears previously selected subcategory` (логика во ViewModel'и, не в Compose)
+  - 8 androidTest в `PetEditorScreenTest.kt`: title rendering (новый/редактирование), name field input, Save FAB click → Save event, Loading-state рендерит без формы, Dog chip → SelectSpecies(Dog) event, subcategory chips visible после species, validation banner отображает каждую ошибку bullet'ом, successful-save → onSaved + ConsumeSaveResult, birthDate read-only display; assembleDebugAndroidTest BUILD SUCCESSFUL → APK готов к запуску в `nightly.yml` на эмуляторе
+- [x] run `./gradlew :feature:editor:test :feature:editor:assembleDebug --no-daemon` — must pass before next task — BUILD SUCCESSFUL: testDebugUnitTest 12/12 PASSED, assembleDebug + assembleDebugAndroidTest + :app:assembleDebug (после wire-up PetEditorScreen в PawClockNavHost), ktlintCheck + detekt + lintDebug + koverVerify (≥80%) — все clean; :app + :feature:pets regression-тесты по-прежнему проходят
+- ➕ `PetEditorState.subcategoriesFor(species)` — pure-функция для derive'а опций из species; вынесена в companion object чтобы не дублировать логику в `loadExisting()` и `onSelectSpecies()`
+- ➕ wired `Route.PetEditor` в `PawClockNavHost` — placeholder заменён на `PetEditorScreen(onSaved, onBack)` с `navController.popBackStack()` для обоих callbacks; в edit-mode после save возвращаемся на detail/list через стандартный backstack pop
+- ➕ FakePetRepository скопирован из feature/pets/test/fakes — пока `:core:testing` не оформлен как shared-fixtures (план говорит про этот модуль, но реализация отложена на Plan 2); используется как production-эквивалент для SavePetUseCase + GetPetByIdUseCase в JVM тестах
 
 ### Task 20: :feature:quickcalc — QuickCalculator TDD
 - [ ] write FAILING test `QuickCalcViewModelTest`:
