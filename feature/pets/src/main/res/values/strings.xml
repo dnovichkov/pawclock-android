@@ -96,5 +96,10 @@
     <string name="life_stage_bird_senior">Пожилая</string>
     <string name="life_stage_bird_geriatric">Старческая</string>
     <string name="pet_detail_calc_bird">Метод: AAV + Lafeber Vet. Скалярная формула: человеческие годы = возраст · 80 / средняя продолжительность жизни вида. Для птенцов младше 6 месяцев — поправка ×1.3.</string>
+    <string name="life_stage_reptile_hatchling">Детёныш</string>
+    <string name="life_stage_reptile_juvenile">Молодая особь</string>
+    <string name="life_stage_reptile_adult">Взрослая</string>
+    <string name="life_stage_reptile_senior">Пожилая</string>
+    <string name="pet_detail_calc_reptile">Метод: PetPlace + Reptile Centre. Скалярная формула: человеческие годы = возраст · 80 / средняя продолжительность жизни вида. Долгоживущие черепахи стареют медленнее в человеческих годах.</string>
 
 </resources>

@@ -331,6 +331,7 @@ private fun CalculationDetailsBlock(
                 )
             Species.Cat -> stringResource(R.string.pet_detail_calc_cat)
             Species.Bird -> stringResource(R.string.pet_detail_calc_bird)
+            Species.Reptile -> stringResource(R.string.pet_detail_calc_reptile)
             else -> stringResource(R.string.pet_detail_calc_unsupported)
         }
     Text(
@@ -362,6 +363,7 @@ internal fun lifeStageLabelRes(stage: LifeStage): Int =
         is LifeStage.Mouse -> mouseLifeStageLabelRes(stage)
         is LifeStage.Ferret -> ferretLifeStageLabelRes(stage)
         is LifeStage.Bird -> birdLifeStageLabelRes(stage)
+        is LifeStage.Reptile -> reptileLifeStageLabelRes(stage)
     }
 
 @androidx.annotation.StringRes
@@ -452,6 +454,15 @@ private fun birdLifeStageLabelRes(stage: LifeStage.Bird): Int =
         LifeStage.Bird.Adult -> R.string.life_stage_bird_adult
         LifeStage.Bird.Senior -> R.string.life_stage_bird_senior
         LifeStage.Bird.Geriatric -> R.string.life_stage_bird_geriatric
+    }
+
+@androidx.annotation.StringRes
+private fun reptileLifeStageLabelRes(stage: LifeStage.Reptile): Int =
+    when (stage) {
+        LifeStage.Reptile.Hatchling -> R.string.life_stage_reptile_hatchling
+        LifeStage.Reptile.Juvenile -> R.string.life_stage_reptile_juvenile
+        LifeStage.Reptile.Adult -> R.string.life_stage_reptile_adult
+        LifeStage.Reptile.Senior -> R.string.life_stage_reptile_senior
     }
 
 // Локаль-зависимое форматирование. Используем Locale.getDefault() явно вместо

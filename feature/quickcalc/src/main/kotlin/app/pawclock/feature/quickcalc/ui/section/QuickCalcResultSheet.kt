@@ -135,6 +135,7 @@ private fun explanationTextRes(
     when (species) {
         Species.Cat -> R.string.quick_calc_result_explanation_aafp
         Species.Bird -> R.string.quick_calc_result_explanation_bird
+        Species.Reptile -> R.string.quick_calc_result_explanation_reptile
         else ->
             when (method) {
                 CalculationMethod.EPIGENETIC -> R.string.quick_calc_result_explanation_epigenetic
@@ -157,6 +158,7 @@ internal fun lifeStageLabelRes(stage: LifeStage): Int =
         is LifeStage.Mouse -> mouseLifeStageLabelRes(stage)
         is LifeStage.Ferret -> ferretLifeStageLabelRes(stage)
         is LifeStage.Bird -> birdLifeStageLabelRes(stage)
+        is LifeStage.Reptile -> reptileLifeStageLabelRes(stage)
     }
 
 @androidx.annotation.StringRes
@@ -247,6 +249,15 @@ private fun birdLifeStageLabelRes(stage: LifeStage.Bird): Int =
         LifeStage.Bird.Adult -> R.string.quick_calc_life_stage_bird_adult
         LifeStage.Bird.Senior -> R.string.quick_calc_life_stage_bird_senior
         LifeStage.Bird.Geriatric -> R.string.quick_calc_life_stage_bird_geriatric
+    }
+
+@androidx.annotation.StringRes
+private fun reptileLifeStageLabelRes(stage: LifeStage.Reptile): Int =
+    when (stage) {
+        LifeStage.Reptile.Hatchling -> R.string.quick_calc_life_stage_reptile_hatchling
+        LifeStage.Reptile.Juvenile -> R.string.quick_calc_life_stage_reptile_juvenile
+        LifeStage.Reptile.Adult -> R.string.quick_calc_life_stage_reptile_adult
+        LifeStage.Reptile.Senior -> R.string.quick_calc_life_stage_reptile_senior
     }
 
 private const val SHEET_PADDING_DP: Int = 16

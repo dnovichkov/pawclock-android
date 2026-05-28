@@ -300,23 +300,19 @@
 - [x] ➕ cross-module sync (обнаружено, как в Tasks 2–6): добавлена ветка `Bird` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Bird(type)` (дефолт `BirdType.Budgerigar`); диспетчеры `lifeStageLabelRes` в `PetDetailScreen`/`QuickCalcResultSheet` дополнены `birdLifeStageLabelRes` + ветка объяснения метода (AAV scalar) + строковые ресурсы ru/en; `SpeciesTest` (implemented = 9)/`LifeStageTest`/`AgeCalculatorTest` (null-список → Reptile/Horse/Fish) обновлены; добавлены end-to-end domain-тесты Bird (default Budgerigar + macaw subcategory — восстановление kover ≥90%)
 
 ### Task 8: ReptileAgeCalculator + life stages (TDD)
-- [ ] write FAILING test `ReptileAgeCalculatorTest` (по §4.9):
-  - Tortoise / sea turtle (lifespan 40): 5y = 10 ЧГ
-  - Snake corn (lifespan 20): 3y = 12
-  - Iguana (lifespan 20): 5y = 20
-  - Gecko leopard (lifespan 15): 2y = 10.7
-  - `throws on negative age`
-- [ ] verify tests fail — **Red**
-- [ ] create `ReptileType` enum в `:core:model` (BoxTurtle, RedEaredSlider, BeardedDragon, BallPython, CornSnake, GreenIguana, LeopardGecko, CrestedGecko — 8 видов по §4.9) + stable `id` + per-type `averageLifespanYears`
-- [ ] create `ReptileAgeCalculator : AgeCalculator` через `ScalarRatioFormula`
-- [ ] add KDoc со ссылкой на PetPlace + Reptile Centre + A-Z Animals + §4.9
-- [ ] add ParameterizedTest
-- [ ] verify — **Green**
-- [ ] add `LifeStage.Reptile` подтипы (Hatchling, Juvenile, Adult, Senior) — 4 фазы по §4.9
-- [ ] create `ReptileLifeStageCalculator` + tests
-- [ ] add `expectedLifespanRange(type: ReptileType)` + tests
-- [ ] update `Species.Reptile.isImplemented = true` + `AgeCalculator.forSpecies()`
-- [ ] run tests
+- [x] write FAILING test `ReptileAgeCalculatorTest` (по §4.9): покрыты box_turtle 5y=10, corn_snake 3y=12, green_iguana 5y=20, leopard_gecko 2y=10.7, throws on zero/negative + параметризованная таблица (7 кейсов) + монотонность + инвариант ratio=80/lifespan
+- [x] verify tests fail — **Red** (написаны до реализации калькулятора)
+- [x] create `ReptileType` enum в `:core:model` (BoxTurtle, RedEaredSlider, BeardedDragon, BallPython, CornSnake, GreenIguana, LeopardGecko, CrestedGecko — 8 видов по §4.9) + stable `id` + per-type `averageLifespanYears` (+ `ReptileTypeTest`)
+- [x] create `ReptileAgeCalculator : AgeCalculator` через `ScalarRatioFormula` (без поправки молодняка, в отличие от §4.8 птицы — рептилии не дают резкого ускорения взросления)
+- [x] add KDoc со ссылкой на PetPlace + Reptile Centre + A-Z Animals + §4.9
+- [x] add ParameterizedTest
+- [x] verify — **Green**
+- [x] add `LifeStage.Reptile` подтипы (Hatchling, Juvenile, Adult, Senior) — 4 фазы по §4.9
+- [x] create `ReptileLifeStageCalculator` + tests (доля от видовой ЧЖ: Hatchling <5%, Juvenile <20%, Adult <75%, Senior 75%+; границы тестов внутри полос во избежание IEEE-754 неоднозначности)
+- [x] add `expectedLifespanRange(type: ReptileType)` (10-20 гекконы, 40-60 черепахи) + tests
+- [x] update `Species.Reptile.isImplemented = true` + `AgeCalculator.forSpecies(Reptile)` + `LifeStageCalculator.forSpecies(Reptile)`
+- [x] run tests (прогнаны `:core:model:test`, `:core:calculator:test`, `:core:domain:test`, `:feature:quickcalc:test`, `:feature:pets:test`, `:app:compileDebugKotlin`, detekt, `:core:calculator:koverVerify`, `:core:domain:koverVerify` — всё зелёное)
+- [x] ➕ cross-module sync (обнаружено, как в Tasks 2–7): добавлена ветка `Reptile` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Reptile(type)` (дефолт `ReptileType.BeardedDragon`); диспетчеры `lifeStageLabelRes` в `PetDetailScreen`/`QuickCalcResultSheet` дополнены `reptileLifeStageLabelRes` + ветка объяснения метода (PetPlace scalar) + строковые ресурсы ru/en; `SpeciesTest` (implemented = 10)/`LifeStageTest`/`AgeCalculatorTest`/`LifeStageCalculatorTest` (null-список → Horse/Fish) обновлены; добавлены end-to-end domain-тесты Reptile (default BeardedDragon + box turtle subcategory — восстановление kover ≥90%)
 
 ### Task 9: HorseAgeCalculator + life stages (TDD)
 - [ ] write FAILING test `HorseAgeCalculatorTest` (по §4.10):

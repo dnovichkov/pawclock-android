@@ -43,6 +43,7 @@ sealed interface LifeStageCalculator {
                 Species.Mouse -> MouseLifeStageCalculator
                 Species.Ferret -> FerretLifeStageCalculator
                 Species.Bird -> BirdLifeStageCalculator
+                Species.Reptile -> ReptileLifeStageCalculator
                 else -> null
             }
     }

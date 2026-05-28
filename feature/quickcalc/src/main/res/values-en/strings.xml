@@ -99,5 +99,10 @@
     <string name="quick_calc_life_stage_bird_senior">Senior</string>
     <string name="quick_calc_life_stage_bird_geriatric">Geriatric</string>
     <string name="quick_calc_result_explanation_bird">AAV + Lafeber Vet method: human years = age · 80 / species average lifespan. Long-lived parrots age more slowly in human years.</string>
+    <string name="quick_calc_life_stage_reptile_hatchling">Hatchling</string>
+    <string name="quick_calc_life_stage_reptile_juvenile">Juvenile</string>
+    <string name="quick_calc_life_stage_reptile_adult">Adult</string>
+    <string name="quick_calc_life_stage_reptile_senior">Senior</string>
+    <string name="quick_calc_result_explanation_reptile">PetPlace + Reptile Centre method: human years = age · 80 / species average lifespan. Long-lived turtles age more slowly in human years.</string>
 
 </resources>

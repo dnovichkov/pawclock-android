@@ -6,6 +6,7 @@ import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
 import app.pawclock.model.HamsterType
 import app.pawclock.model.RabbitSize
+import app.pawclock.model.ReptileType
 
 /**
  * Параметры расчёта возраста/стадии жизни, специфичные для каждого вида.
@@ -108,5 +109,16 @@ sealed interface SpeciesParams {
      */
     data class Bird(
         val type: BirdType,
+    ) : SpeciesParams
+
+    /**
+     * Параметры рептилии.
+     *
+     * @param type вид рептилии. Как и у птицы, [type] **влияет на формулу** расчёта возраста:
+     *   скалярная формула §4.9 масштабируется по [ReptileType.averageLifespanYears]
+     *   (см. [ReptileAgeCalculator] / [ReptileLifeStageCalculator]). См. §4.9 спецификации.
+     */
+    data class Reptile(
+        val type: ReptileType,
     ) : SpeciesParams
 }

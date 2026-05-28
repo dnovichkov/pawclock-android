@@ -34,7 +34,7 @@ sealed class Species(
 
     data object Bird : Species(id = "bird", isImplemented = true)
 
-    data object Reptile : Species(id = "reptile", isImplemented = false)
+    data object Reptile : Species(id = "reptile", isImplemented = true)
 
     data object Horse : Species(id = "horse", isImplemented = false)
 

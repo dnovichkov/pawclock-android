@@ -13,6 +13,7 @@ import app.pawclock.model.DogSize
 import app.pawclock.model.HamsterType
 import app.pawclock.model.Pet
 import app.pawclock.model.RabbitSize
+import app.pawclock.model.ReptileType
 import app.pawclock.model.Species
 import java.time.Clock
 import java.time.LocalDate
@@ -39,6 +40,7 @@ import kotlinx.coroutines.flow.first
  *  - Rabbit → [RabbitSize.Medium] (срединная категория)
  *  - Hamster → [HamsterType.Syrian] (самый распространённый вид)
  *  - Bird → [BirdType.Budgerigar] (волнистый попугай — самый распространённый вид)
+ *  - Reptile → [ReptileType.BeardedDragon] (бородатая агама — самая распространённая «стартовая» рептилия)
  *
  * Калькуляторы — `data object`-синглтоны (stateless), поэтому больше не инжектируются:
  * UseCase обращается к ним напрямую через фабрики. Это убирает разрастающийся
@@ -116,6 +118,8 @@ class CalculatePetAgeUseCase(
                 SpeciesParams.Ferret to CalculationMethod.EPIGENETIC
             Species.Bird ->
                 SpeciesParams.Bird(type = resolveBirdType(pet)) to CalculationMethod.EPIGENETIC
+            Species.Reptile ->
+                SpeciesParams.Reptile(type = resolveReptileType(pet)) to CalculationMethod.EPIGENETIC
             else -> throw UnsupportedSpeciesException(pet.species)
         }
 
@@ -130,6 +134,9 @@ class CalculatePetAgeUseCase(
 
     private fun resolveBirdType(pet: Pet): BirdType =
         pet.subcategory?.let(BirdType::fromId) ?: BirdType.Budgerigar
+
+    private fun resolveReptileType(pet: Pet): ReptileType =
+        pet.subcategory?.let(ReptileType::fromId) ?: ReptileType.BeardedDragon
 
     private fun calendarAgeInYears(
         birthDate: LocalDate,

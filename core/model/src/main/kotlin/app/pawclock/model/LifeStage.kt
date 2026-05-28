@@ -281,4 +281,32 @@ sealed class LifeStage(
             fun all(): List<Bird> = listOf(Hatchling, Juvenile, Adult, Senior, Geriatric)
         }
     }
+
+    /**
+     * Стадии жизни рептилий (PetPlace + Reptile Centre + A-Z Animals, см. §4.9 спецификации).
+     *
+     * Как и у птиц, границы стадий заданы **долей от видовой ЧЖ** ([ReptileType.averageLifespanYears]),
+     * а не абсолютным возрастом — у геккона (ЧЖ 15) и черепахи (ЧЖ 40) «взрослость» наступает
+     * в очень разном календарном возрасте. В отличие от млекопитающих — 4 фазы (§4.9):
+     *  - Hatchling: 0–5 %
+     *  - Juvenile: 5–20 %
+     *  - Adult: 20–75 %
+     *  - Senior: 75 %+
+     */
+    sealed class Reptile(
+        displayKey: String,
+        ordinal: Int,
+    ) : LifeStage(displayKey, ordinal) {
+        data object Hatchling : Reptile(displayKey = "reptile_hatchling", ordinal = 0)
+
+        data object Juvenile : Reptile(displayKey = "reptile_juvenile", ordinal = 1)
+
+        data object Adult : Reptile(displayKey = "reptile_adult", ordinal = 2)
+
+        data object Senior : Reptile(displayKey = "reptile_senior", ordinal = 3)
+
+        companion object {
+            fun all(): List<Reptile> = listOf(Hatchling, Juvenile, Adult, Senior)
+        }
+    }
 }

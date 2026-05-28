@@ -103,5 +103,10 @@
     <string name="quick_calc_life_stage_bird_senior">Пожилая</string>
     <string name="quick_calc_life_stage_bird_geriatric">Старческая</string>
     <string name="quick_calc_result_explanation_bird">Метод AAV + Lafeber Vet: человеческие годы = возраст · 80 / средняя продолжительность жизни вида. Долгоживущие попугаи стареют медленнее в человеческих годах.</string>
+    <string name="quick_calc_life_stage_reptile_hatchling">Детёныш</string>
+    <string name="quick_calc_life_stage_reptile_juvenile">Молодая особь</string>
+    <string name="quick_calc_life_stage_reptile_adult">Взрослая</string>
+    <string name="quick_calc_life_stage_reptile_senior">Пожилая</string>
+    <string name="quick_calc_result_explanation_reptile">Метод PetPlace + Reptile Centre: человеческие годы = возраст · 80 / средняя продолжительность жизни вида. Долгоживущие черепахи стареют медленнее в человеческих годах.</string>
 
 </resources>
