@@ -54,7 +54,7 @@ jobs:
           java-version: '17'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Enable KVM (required for hardware acceleration)
         run: |
@@ -132,7 +132,7 @@ jobs:
 
       - name: Set up Gradle
         if: steps.detect_flows.outputs.has_flows == 'true'
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Enable KVM
         if: steps.detect_flows.outputs.has_flows == 'true'
