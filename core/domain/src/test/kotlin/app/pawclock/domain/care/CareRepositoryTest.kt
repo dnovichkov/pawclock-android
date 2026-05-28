@@ -181,6 +181,44 @@ class CareRepositoryTest {
         }
 
     @Test
+    fun `loads rabbit infancy ru (new Plan 2 species path resolution)`() =
+        runTest {
+            // Stage segment для Rabbit.Infancy = "infancy" (displayKey "rabbit_infancy" без префикса).
+            val source = FakeAssetSource("care/rabbit/infancy/ru.json" to newSpeciesJson("Кролик, младенчество"))
+            val repository = CareRepositoryImpl(source)
+
+            val result = repository.load(Species.Rabbit, LifeStage.Rabbit.Infancy, "ru")
+
+            assertNotNull(result, "rabbit/infancy/ru must resolve to the generated asset")
+            assertEquals("Кролик, младенчество", result?.stageDescription)
+        }
+
+    @Test
+    fun `loads bird hatchling en (new Plan 2 species path resolution)`() =
+        runTest {
+            val source = FakeAssetSource("care/bird/hatchling/en.json" to newSpeciesJson("Bird, hatchling"))
+            val repository = CareRepositoryImpl(source)
+
+            val result = repository.load(Species.Bird, LifeStage.Bird.Hatchling, "en")
+
+            assertNotNull(result, "bird/hatchling/en must resolve to the generated asset")
+            assertEquals("Bird, hatchling", result?.stageDescription)
+        }
+
+    @Test
+    fun `loads horse foal ru then falls back to en when ru missing`() =
+        runTest {
+            // Только en присутствует — проверяем, что новый вид участвует в ru → en fallback.
+            val source = FakeAssetSource("care/horse/foal/en.json" to newSpeciesJson("Horse, foal"))
+            val repository = CareRepositoryImpl(source)
+
+            val result = repository.load(Species.Horse, LifeStage.Horse.Foal, "ru")
+
+            assertNotNull(result, "horse/foal must fall back ru → en")
+            assertEquals("Horse, foal", result?.stageDescription)
+        }
+
+    @Test
     fun `malformed JSON throws SerializationException`() =
         runTest {
             val source = FakeAssetSource("care/dog/puppy/ru.json" to "{ not valid json")
@@ -236,6 +274,21 @@ class CareRepositoryTest {
             // этот тест нужно будет обновить (но в Plan 1 каждый load = свежий read).
             assertEquals(3, source.callCount)
         }
+
+    /** Минимальный валидный care-JSON для проверки path-resolution новых видов (Plan 2). */
+    private fun newSpeciesJson(stageDescription: String): String =
+        """
+        {
+          "stage_description": "$stageDescription",
+          "nutrition": "TODO(content-pass-after-plan-2): питание.",
+          "activity": "TODO(content-pass-after-plan-2): активность.",
+          "veterinary_check_frequency": "TODO(content-pass-after-plan-2): осмотры.",
+          "warning_signs": "TODO(content-pass-after-plan-2): симптомы.",
+          "source_url": "https://example.org/",
+          "source_name": "Placeholder source",
+          "disclaimer": "Информация носит ознакомительный характер и не заменяет консультацию ветеринарного врача."
+        }
+        """.trimIndent()
 
     /** In-memory реализация [AssetSource] для тестов. Хранит пути → содержимое. */
     private class FakeAssetSource(

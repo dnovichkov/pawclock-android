@@ -379,23 +379,23 @@
 - [x] must pass before next task — `:core:database:test` + `assembleDebugAndroidTest` + `detekt` зелёные (⚠️ `:core:database:koverVerify` структурно недостижим на JVM ≥80%: DAO/DI/Room-обвязка покрывается instrumented androidTest, который kover JVM не измеряет — реальное покрытие достигается в nightly.yml; koverVerify для database намеренно НЕ в гейте Task 12)
 
 ### Task 13: Care recommendations placeholder JSON для всех 10 видов
-- [ ] create asset directory structure для каждого вида: `:app/src/main/assets/care/{species}/{stage}/{ru,en}.json`
-- [ ] create JSON files с placeholder контентом (поля по `CareRecommendation` модели: `stage_description`, `nutrition`, `activity`, `veterinary_check_frequency`, `dental_care`, `warning_signs`, `source_url`, `source_name`, `disclaimer`)
-- [ ] для каждого файла:
-  - `stage_description` = `"TODO(content-pass): описание стадии {species} {stage}"`
-  - `nutrition`/`activity` = коротки placeholder
-  - `source_url` = соответствующий URL из §14 spec (House Rabbit Society, RVC, Sengupta, AAV, AAEP и т.д.)
-  - `disclaimer` = "Информация носит ознакомительный характер..." из §3.3
-- [ ] write FAILING test `CareRepositoryTest` для каждого нового вида:
-  - `loads rabbit infancy ru`
-  - `loads bird hatchling en`
-  - и т.д. для всех 10 видов × 5 стадий × 2 локали (sample проверки, не каждый файл)
-- [ ] verify load работает через расширения существующего CareRepository (без изменений в коде — только новые assets)
-- [ ] verify — **Green**
-- [ ] add `scripts/verify-care-assets.sh` — проверяет, что для каждого `Species.implemented()` существуют JSON-файлы для каждой LifeStage × {ru,en}; завершает с ошибкой если отсутствует файл
-- [ ] run script → all green
-- [ ] update care content tracker в `docs/CARE_CONTENT.md` (новый файл) — список всех placeholder файлов с status "TODO" для content-pass после Plan 2
-- [ ] run tests
+- [x] create asset directory structure для каждого вида: `:app/src/main/assets/care/{species}/{stage}/{ru,en}.json` — созданы 48 стадий × 2 локали = 96 новых файлов (10 видов; всего с Plan 1 dog/cat — 58 стадий × 2 = 116 файлов)
+- [x] create JSON files с placeholder контентом (поля по `CareRecommendation` модели: `stage_description`, `nutrition`, `activity`, `veterinary_check_frequency`, `dental_care`, `warning_signs`, `source_url`, `source_name`, `disclaimer`) — ⚠️ у `fish` поле `dental_care` опущено намеренно (неприменимо; `CareRecommendation.dentalCare` nullable)
+- [x] для каждого файла:
+  - `stage_description` = `"TODO(content-pass-after-plan-2): описание стадии «{stage}» для вида «{species}»."` (ru) / en-аналог
+  - `nutrition`/`activity` = короткий placeholder с маркером `TODO(content-pass-after-plan-2)`
+  - `source_url` = соответствующий URL из §14 spec (rabbit.org, RVC VetCompass, PMC3733029/Sengupta, lafeber.com/AAV, aaep.org и т.д.)
+  - `disclaimer` = "Информация носит ознакомительный характер и не заменяет консультацию ветеринарного врача." (ru) / en-аналог из §3.3
+- [x] write FAILING test `CareRepositoryTest` для каждого нового вида:
+  - `loads rabbit infancy ru` (добавлен)
+  - `loads bird hatchling en` (добавлен)
+  - `loads horse foal ru` (добавлен, через ru→en fallback) — sample-проверки path-resolution через FakeAssetSource
+- [x] verify load работает через расширения существующего CareRepository (без изменений в коде — только новые assets) — добавлен `CareAssetsIntegrityTest`: реальный `CareRepositoryImpl` поверх файлов на диске, 116 dynamic-тестов (каждый implemented вид × стадия × {ru,en}) проверяют наличие + десериализацию + непустые поля + дисклеймер. Был бы Red до Task 13, стал Green без правок production-кода
+- [x] verify — **Green** (`:core:domain:test` — CareAssetsIntegrityTest 116/0/0, CareRepositoryTest 15/0/0, весь модуль зелёный)
+- [x] add `scripts/verify-care-assets.sh` — проверяет наличие + непустоту + обязательные поля + JSON-валидность (node) для каждого вида × стадии × {ru,en}; маппинг species→stages зеркалит `LifeStage.*.all()`
+- [x] run script → all green (`✅ All 116 care assets present and well-formed.`)
+- [x] update care content tracker в `docs/CARE_CONTENT.md` (новый файл) — таблица статусов всех видов (TODO), content-pass checklist, инструкции по `grep`/скрипту/тесту
+- [x] run tests — `:core:domain:test` + `:core:domain:detekt` + `:core:domain:koverVerify` (minBound=90) зелёные
 
 ### Task 14: Stylized species icons (vector drawables, §5.6)
 - [ ] research/select SVG-иконки для всех 12 видов в стиле Phosphor / Lucide (моно-линейные, 48dp viewBox); либо нарисовать собственные простые

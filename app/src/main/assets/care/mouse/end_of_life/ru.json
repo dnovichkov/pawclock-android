@@ -1,0 +1,11 @@
+{
+  "stage_description": "TODO(content-pass-after-plan-2): описание стадии «конец жизни» для вида «мышь».",
+  "nutrition": "TODO(content-pass-after-plan-2): рекомендации по питанию.",
+  "activity": "TODO(content-pass-after-plan-2): активность и обогащение среды.",
+  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): частота ветеринарных осмотров.",
+  "dental_care": "TODO(content-pass-after-plan-2): уход за зубами.",
+  "warning_signs": "TODO(content-pass-after-plan-2): тревожные симптомы.",
+  "source_url": "https://doi.org/10.1016/j.lfs.2015.10.025",
+  "source_name": "Dutta & Sengupta 2016, Life Sciences 152:244-248",
+  "disclaimer": "Информация носит ознакомительный характер и не заменяет консультацию ветеринарного врача."
+}
