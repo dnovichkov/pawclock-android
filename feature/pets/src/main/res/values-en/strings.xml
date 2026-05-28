@@ -61,5 +61,10 @@
     <string name="life_stage_rabbit_young_adult">Young adult</string>
     <string name="life_stage_rabbit_adult">Adult</string>
     <string name="life_stage_rabbit_senior">Senior</string>
+    <string name="life_stage_hamster_pup">Pup</string>
+    <string name="life_stage_hamster_juvenile">Juvenile</string>
+    <string name="life_stage_hamster_adult">Adult</string>
+    <string name="life_stage_hamster_senior">Senior</string>
+    <string name="life_stage_hamster_very_senior">Very senior</string>
 
 </resources>

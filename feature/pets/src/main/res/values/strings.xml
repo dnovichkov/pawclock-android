@@ -65,5 +65,10 @@
     <string name="life_stage_rabbit_young_adult">Молодой взрослый</string>
     <string name="life_stage_rabbit_adult">Взрослый</string>
     <string name="life_stage_rabbit_senior">Старший</string>
+    <string name="life_stage_hamster_pup">Детёныш</string>
+    <string name="life_stage_hamster_juvenile">Подросток</string>
+    <string name="life_stage_hamster_adult">Взрослый</string>
+    <string name="life_stage_hamster_senior">Пожилой</string>
+    <string name="life_stage_hamster_very_senior">Очень пожилой</string>
 
 </resources>

@@ -102,4 +102,33 @@ sealed class LifeStage(
             fun all(): List<Rabbit> = listOf(Infancy, Adolescence, YoungAdult, Adult, Senior)
         }
     }
+
+    /**
+     * Стадии жизни хомяков (RVC VetCompass + Animallama, см. §4.4 спецификации).
+     *
+     * Пороги по возрасту (единые для всех видов; «старость с 1.5 лет» по §4.4):
+     *  - Pup: 0 — ~3 нед.
+     *  - Juvenile: ~3 нед. — 2 мес.
+     *  - Adult: 2 мес. — 1 год
+     *  - Senior: 1 — 1.5 года
+     *  - VerySenior: 1.5+ года
+     */
+    sealed class Hamster(
+        displayKey: String,
+        ordinal: Int,
+    ) : LifeStage(displayKey, ordinal) {
+        data object Pup : Hamster(displayKey = "hamster_pup", ordinal = 0)
+
+        data object Juvenile : Hamster(displayKey = "hamster_juvenile", ordinal = 1)
+
+        data object Adult : Hamster(displayKey = "hamster_adult", ordinal = 2)
+
+        data object Senior : Hamster(displayKey = "hamster_senior", ordinal = 3)
+
+        data object VerySenior : Hamster(displayKey = "hamster_very_senior", ordinal = 4)
+
+        companion object {
+            fun all(): List<Hamster> = listOf(Pup, Juvenile, Adult, Senior, VerySenior)
+        }
+    }
 }

@@ -195,24 +195,26 @@
 - [x] ➕ cross-module sync (обнаружено): добавлена ветка `Rabbit` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Rabbit(size)`; exhaustive `when (lifeStage)` в `PetDetailScreen`/`QuickCalcResultSheet` дополнены ветками Rabbit + строковые ресурсы ru/en (предварительная локализация, финал — Task 22); domain-тесты «unsupported species» переключены с Rabbit на Fish; `SpeciesTest`/`LifeStageTest` обновлены
 
 ### Task 3: HamsterAgeCalculator + life stages (TDD)
-- [ ] write FAILING test `HamsterAgeCalculatorTest` (по §4.4):
+- [x] write FAILING test `HamsterAgeCalculatorTest` (по §4.4): покрыты 1мес≈7.5, 2мес=18, 6мес=30, 12мес=48, 18мес=66, 24мес=90, throws on zero/negative + параметризованная таблица (9 кейсов) + монотонность
   - `1 month (0.083 year) ≈ 7.6 ЧГ` (0-1 мес: 1 ЧГ за каждые 4 дня → 30/4 ≈ 7.5)
   - `2 months ≈ 18 ЧГ`
   - `6 months ≈ 30 ЧГ`
   - `18 months ≈ 30 + 3·12 = 66 ЧГ`
   - `24 months ≈ 66 + 4·6 = 90 ЧГ`
-- [ ] verify tests fail — **Red**
-- [ ] create `HamsterType` enum в `:core:model` (Syrian, Dwarf, Roborovski, Chinese, WinterWhite — 5 видов по §4.4) + stable `id` + per-type `averageLifespanYears`
-- [ ] create `HamsterAgeCalculator : AgeCalculator`
-- [ ] implement кусочную формулу по §4.4
-- [ ] add KDoc со ссылкой на RVC VetCompass + Animallama + §4.4
-- [ ] add ParameterizedTest
-- [ ] verify — **Green**
-- [ ] add `LifeStage.Hamster` sealed подтипы (Pup, Juvenile, Adult, Senior, VerySenior) по §4.4
-- [ ] create `HamsterLifeStageCalculator` + tests
-- [ ] add `expectedLifespanRange(type: HamsterType)` (Syrian 2-3, Dwarf 1.5-2, etc.) + tests
-- [ ] update `Species.Hamster.isImplemented = true` + `AgeCalculator.forSpecies(Hamster)`
-- [ ] run tests — must pass before next task
+- [x] verify tests fail — **Red**
+- [x] create `HamsterType` enum в `:core:model` (Syrian, Dwarf, Roborovski, Chinese, WinterWhite — 5 видов по §4.4) + stable `id` + per-type `averageLifespanYears` (+ `HamsterTypeTest`)
+- [x] create `HamsterAgeCalculator : AgeCalculator`
+- [x] implement кусочную формулу по §4.4 (в месяцах; сегменты 2–6 и 6–18 мес. объединены — оба +3 ЧГ/мес.; формула **непрерывна** на всех стыках 1/2/18 мес., в отличие от §4.3)
+- [x] add KDoc со ссылкой на RVC VetCompass + Animallama + §4.4
+- [x] add ParameterizedTest
+- [x] verify — **Green**
+- [x] add `LifeStage.Hamster` sealed подтипы (Pup, Juvenile, Adult, Senior, VerySenior) по §4.4
+- [x] create `HamsterLifeStageCalculator` + tests (Pup <3нед, Juvenile <2мес, Adult <1г, Senior <1.5г, VerySenior 1.5+ — «старость с 1.5 лет»)
+- [x] add `expectedLifespanRange(type: HamsterType)` (Syrian/Chinese 2-3, Roborovski 3-3.5, Dwarf/WinterWhite 1.5-2) + tests
+- [x] update `Species.Hamster.isImplemented = true` + `AgeCalculator.forSpecies(Hamster)` + `LifeStageCalculator.forSpecies(Hamster)`
+- [x] run tests — must pass before next task (прогнаны `:core:model:test`, `:core:calculator:test`, `:core:domain:test`, `:feature:quickcalc:test`, `:feature:pets:test`, `:app:compileDebugKotlin`, detekt, koverVerify — всё зелёное)
+- [x] ➕ cross-module sync (обнаружено, как в Task 2): добавлена ветка `Hamster` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Hamster(type)` (дефолт `HamsterType.Syrian`); exhaustive `when (lifeStage)` в `PetDetailScreen`/`QuickCalcResultSheet` дополнены ветками Hamster + строковые ресурсы ru/en; `SpeciesTest`/`LifeStageTest` обновлены (implemented = 4)
+- [x] ➕ refactor (обнаружено): `lifeStageLabelRes` в обоих экранах разбит на диспетчер `when (is LifeStage.X)` + под-функции по виду — цикломатическая сложность вышла за detekt-порог 18 при 21 ветке; теперь масштабируется на Tasks 4–10
 
 ### Task 4: GuineaPigAgeCalculator + life stages (TDD)
 - [ ] write FAILING test `GuineaPigAgeCalculatorTest` (по §4.5):

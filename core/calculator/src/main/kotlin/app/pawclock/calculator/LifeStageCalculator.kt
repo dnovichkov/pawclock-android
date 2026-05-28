@@ -37,6 +37,7 @@ sealed interface LifeStageCalculator {
                 Species.Dog -> DogLifeStageCalculator
                 Species.Cat -> CatLifeStageCalculator
                 Species.Rabbit -> RabbitLifeStageCalculator
+                Species.Hamster -> HamsterLifeStageCalculator
                 else -> null
             }
     }

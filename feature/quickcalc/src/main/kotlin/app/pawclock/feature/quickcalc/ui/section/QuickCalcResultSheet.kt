@@ -141,24 +141,56 @@ private fun explanationTextRes(
             }
     }
 
+// Маппинг стадии жизни в строковый ресурс разбит по виду (диспетчер + под-функции),
+// чтобы цикломатическая сложность каждой функции оставалась в пределах detekt-порога
+// по мере добавления новых видов (Plan 2, Tasks 4–10).
 @androidx.annotation.StringRes
 internal fun lifeStageLabelRes(stage: LifeStage): Int =
+    when (stage) {
+        is LifeStage.Dog -> dogLifeStageLabelRes(stage)
+        is LifeStage.Cat -> catLifeStageLabelRes(stage)
+        is LifeStage.Rabbit -> rabbitLifeStageLabelRes(stage)
+        is LifeStage.Hamster -> hamsterLifeStageLabelRes(stage)
+    }
+
+@androidx.annotation.StringRes
+private fun dogLifeStageLabelRes(stage: LifeStage.Dog): Int =
     when (stage) {
         LifeStage.Dog.Puppy -> R.string.quick_calc_life_stage_dog_puppy
         LifeStage.Dog.YoungAdult -> R.string.quick_calc_life_stage_dog_young_adult
         LifeStage.Dog.MatureAdult -> R.string.quick_calc_life_stage_dog_mature_adult
         LifeStage.Dog.Senior -> R.string.quick_calc_life_stage_dog_senior
         LifeStage.Dog.EndOfLife -> R.string.quick_calc_life_stage_dog_end_of_life
+    }
+
+@androidx.annotation.StringRes
+private fun catLifeStageLabelRes(stage: LifeStage.Cat): Int =
+    when (stage) {
         LifeStage.Cat.Kitten -> R.string.quick_calc_life_stage_cat_kitten
         LifeStage.Cat.YoungAdult -> R.string.quick_calc_life_stage_cat_young_adult
         LifeStage.Cat.MatureAdult -> R.string.quick_calc_life_stage_cat_mature_adult
         LifeStage.Cat.Senior -> R.string.quick_calc_life_stage_cat_senior
         LifeStage.Cat.EndOfLife -> R.string.quick_calc_life_stage_cat_end_of_life
+    }
+
+@androidx.annotation.StringRes
+private fun rabbitLifeStageLabelRes(stage: LifeStage.Rabbit): Int =
+    when (stage) {
         LifeStage.Rabbit.Infancy -> R.string.quick_calc_life_stage_rabbit_infancy
         LifeStage.Rabbit.Adolescence -> R.string.quick_calc_life_stage_rabbit_adolescence
         LifeStage.Rabbit.YoungAdult -> R.string.quick_calc_life_stage_rabbit_young_adult
         LifeStage.Rabbit.Adult -> R.string.quick_calc_life_stage_rabbit_adult
         LifeStage.Rabbit.Senior -> R.string.quick_calc_life_stage_rabbit_senior
+    }
+
+@androidx.annotation.StringRes
+private fun hamsterLifeStageLabelRes(stage: LifeStage.Hamster): Int =
+    when (stage) {
+        LifeStage.Hamster.Pup -> R.string.quick_calc_life_stage_hamster_pup
+        LifeStage.Hamster.Juvenile -> R.string.quick_calc_life_stage_hamster_juvenile
+        LifeStage.Hamster.Adult -> R.string.quick_calc_life_stage_hamster_adult
+        LifeStage.Hamster.Senior -> R.string.quick_calc_life_stage_hamster_senior
+        LifeStage.Hamster.VerySenior -> R.string.quick_calc_life_stage_hamster_very_senior
     }
 
 private const val SHEET_PADDING_DP: Int = 16

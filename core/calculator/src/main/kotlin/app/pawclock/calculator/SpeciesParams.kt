@@ -3,6 +3,7 @@ package app.pawclock.calculator
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
+import app.pawclock.model.HamsterType
 import app.pawclock.model.RabbitSize
 
 /**
@@ -48,5 +49,16 @@ sealed interface SpeciesParams {
      */
     data class Rabbit(
         val size: RabbitSize,
+    ) : SpeciesParams
+
+    /**
+     * Параметры хомяка.
+     *
+     * @param type вид хомяка. На формулу расчёта возраста не влияет (она едина для всех
+     *   видов — RVC VetCompass), используется только для оценки ожидаемой продолжительности
+     *   жизни. См. [HamsterType] и §4.4 спецификации.
+     */
+    data class Hamster(
+        val type: HamsterType,
     ) : SpeciesParams
 }

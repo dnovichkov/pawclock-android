@@ -46,6 +46,7 @@ sealed interface AgeCalculator {
                 Species.Dog -> DogAgeCalculator
                 Species.Cat -> CatAgeCalculator
                 Species.Rabbit -> RabbitAgeCalculator
+                Species.Hamster -> HamsterAgeCalculator
                 else -> null
             }
     }
