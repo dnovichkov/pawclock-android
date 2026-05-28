@@ -486,27 +486,34 @@
 - ➕ result sheet содержит method toggle inline (Wang/SizeBased) — пользователь может переключать метод и видеть мгновенный пересчёт, что реализует UX-цель §3.2 "educational angle" о разнице методов; для кошек toggle не показывается (AAFP — единственный применимый метод)
 
 ### Task 21: :feature:settings — Settings + About TDD
-- [ ] write FAILING test `SettingsViewModelTest`:
+- [x] write FAILING test `SettingsViewModelTest`:
   - reads current settings from SettingsRepository
   - changing theme persists через SettingsRepository
   - changing language persists
   - toggling dynamicColor persists
-- [ ] verify tests fail — **Red**
-- [ ] implement `SettingsViewModel`
-- [ ] verify все тесты — **Green**
-- [ ] create `SettingsScreen` (ListItems с switches по §5.3):
-  - theme (Light / Dark / System)
-  - dynamic colors (Android 12+) switch
-  - language (system / ru / en)
-  - default dog calculation method
-- [ ] create `AboutScreen`:
-  - PawClock version (из BuildConfig)
-  - Apache 2.0 license текст
-  - link на GitHub repo (https://github.com/dnovichkov/pawclock-android)
-  - дисклеймер: "Информация носит ознакомительный характер..."
-  - список источников из §14 спецификации (через коротко)
-- [ ] write Compose UI tests
-- [ ] run `./gradlew :feature:settings:test :feature:settings:assembleDebug --no-daemon` — must pass before next task
+  - 9 тестов в `SettingsViewModelTest.kt`: initial-defaults, initial-custom-state (Dark+ru+SizeBased), SetThemeMode-persists, SetThemeMode-updates-Flow, SetLanguageTag-non-null/null, SetDynamicColor-toggle, SetDefaultCalculationMethod, multiple-events-independent (через Turbine для проверки реактивных эмиссий)
+- [x] verify tests fail — **Red** — confirmed compileTestKotlin FAILED с unresolved references на `SettingsViewModel`, `SettingsEvent`, `themeMode`, `dynamicColor` до создания production-классов
+- [x] implement `SettingsViewModel` — @HiltViewModel с одной зависимостью на `SettingsRepository`; `state` derived из `repository.observe().map { it.toSettingsState() }.stateIn(WhileSubscribed(5_000), initialValue = Default)`; `handleEvent` делегирует в suspend setter'ы через `viewModelScope.launch { }` (fire-and-forget); explicit `SettingsState` data class изолирует feature-слой от datastore-типов (Hexagonal port-and-adapter); `SettingsEvent` — sealed interface с 4 data class'ами
+- [x] verify все тесты — **Green** — 9/9 SettingsViewModelTest + 6/6 AboutSourcesTest = 15 тестов прошли с первой попытки после исправления JUnit5 параметр-порядка (expected, actual, message)
+- [x] create `SettingsScreen` (ListItems с switches по §5.3):
+  - theme (Light / Dark / System) — `ThemeModeSelector` через radio-group с `selectableGroup()` + `Role.RadioButton`, full-row tap-area
+  - dynamic colors (Android 12+) switch — `DynamicColorSwitch` через `ListItem` + trailing `Switch`; на API < 31 показывается disabled с supporting-текстом "Доступно с Android 12"
+  - language (system / ru / en) — `LanguageSelector` через radio-group; `LanguageOption` enum маппит UI-label на BCP 47 tag (null = "как в системе"); реальное переключение локали через `AppCompatDelegate.setApplicationLocales` отложено на Task 22
+  - default dog calculation method — `CalculationMethodSelector` через radio-group с supporting-описаниями каждого метода (Wang/Size); только для собак (для кошек — единый AAFP-метод, см. ADR-0006)
+  - SettingsScreen разделён на `SettingsScreen` (stateful через `hiltViewModel()`) + `SettingsContent` (stateless для testability); секции группированы через `SettingsSectionHeader` + `HorizontalDivider`; "О приложении" — ListItem с full-row clickable + chevron
+- [x] create `AboutScreen`:
+  - PawClock version (из BuildConfig) — `AboutScreen(appVersion: String)` параметром, чтобы модуль `:feature:settings` не зависел напрямую от `:app/BuildConfig`; передача из `PawClockNavHost` через `BuildConfig.VERSION_NAME`
+  - Apache 2.0 license текст — отдельный `LicenseBlock` с заголовком, названием лицензии и кратким объяснением + URL apache.org/licenses/LICENSE-2.0
+  - link на GitHub repo (https://github.com/dnovichkov/pawclock-android) — `RepositoryBlock` с текстом ссылки в primary-цвете; clickable URL-launching отложен на Plan 2 (Android Intent.ACTION_VIEW требует context-launching, который проще добавить вместе с Maestro E2E flow)
+  - дисклеймер: "Информация носит ознакомительный характер..." — `DisclaimerBlock` с полным текстом из §3.3 спецификации
+  - список источников из §14 спецификации — `AboutSource` data class + `AboutSources.all` (4 источника: Wang 2020 DOI 10.1016/j.cels.2020.06.006, AAHA 2019 Canine, AAHA/AAFP 2021 Feline DOI 10.1177/1098612X21993657, McMillan 2024 Scientific Reports); каждый рендерится через `SourceItem` с title (medium-weight) + authors+year + reference
+  - AboutScreen — pure Composable без ViewModel'и (статичные данные, нет state'а для сохранения при rotation)
+- [x] write Compose UI tests — 7 androidTest в `SettingsScreenTest.kt` (title, theme/language/method radio-events, About row click, back button) + 9 androidTest в `AboutScreenTest.kt` (title rendering, version с testTag, license, GitHub link, disclaimer, sources header, Wang/AAFP DOI обязательные, back button через contentDescription); assembleDebugAndroidTest BUILD SUCCESSFUL → APK готов к запуску в `nightly.yml` workflow
+- [x] run `./gradlew :feature:settings:test :feature:settings:assembleDebug --no-daemon` — must pass before next task — BUILD SUCCESSFUL: testDebugUnitTest 15/15 PASSED (9 SettingsViewModelTest + 6 AboutSourcesTest), assembleDebug + assembleDebugAndroidTest, ktlintCheck (после ktlintFormat авто-чинки `chain-method-continuation` warnings + ручного fix для `backing-property-naming` `_state` → `internalState` в FakeSettingsRepository) + detekt + lintDebug + koverVerify (≥80%) — все clean; :app:assembleDebug + :app:testDebugUnitTest + ktlint/detekt/lint по-прежнему проходят после wire-up'а SettingsScreen и AboutScreen в `PawClockNavHost`
+- ➕ added `FakeSettingsRepository` в `feature/settings/src/test/.../fakes/` — in-memory реализация для JVM unit-тестов с `writes`-журналом для assertion'ов на fire-and-forget модель; не используется `SettingsRepositoryImpl` напрямую, потому что Real-DataStore требует `Context` или `PreferenceDataStoreFactory.create()` setup'а, что для unit-тестов ViewModel'и излишне
+- ➕ wired `Route.Settings` и `Route.About` в `PawClockNavHost` — placeholder'ы заменены на реальные экраны; навигация: Settings.onBack → popBackStack, Settings.onOpenAbout → navigate(Route.About), About.onBack → popBackStack; удалён `PlaceholderScreen` helper и неиспользуемые импорты (Box/fillMaxSize/padding/Text/Alignment/Modifier/dp) после удаления placeholder'ов
+- ➕ added `AboutSourcesTest` (6 JVM unit-тестов) — защита от случайного удаления критичных научных ссылок (Wang DOI 10.1016/j.cels.2020.06.006, AAFP DOI 10.1177/1098612X21993657, AAHA 2019 Canine, McMillan 2024); также удовлетворяет koverVerify ≥80% threshold для `.about` пакета (без тестов покрытие было ~59%); year-bound `1990..2100` ловит регрессии типа typo в году
+- ➕ создан `feature/settings/src/main/AndroidManifest.xml` (пустой `<manifest/>`) — AGP 8.7+ требует AndroidManifest даже для namespace-only library-модулей; без него `processDebugManifest` падает
 
 ### Task 22: Localization — strings.xml ru (default) + en + plurals + LocaleConfig
 - [ ] create `:app/src/main/res/values/strings.xml` (русский) со всеми строками используемыми в feature-модулях
