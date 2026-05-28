@@ -332,6 +332,7 @@ private fun CalculationDetailsBlock(
             Species.Bird -> stringResource(R.string.pet_detail_calc_bird)
             Species.Reptile -> stringResource(R.string.pet_detail_calc_reptile)
             Species.Horse -> stringResource(R.string.pet_detail_calc_horse)
+            Species.Fish -> stringResource(R.string.pet_detail_calc_fish)
             else -> stringResource(R.string.pet_detail_calc_unsupported)
         }
     Text(

@@ -355,20 +355,38 @@ class CalculatePetAgeUseCaseTest {
         }
 
     @Test
-    fun `unsupported species throws UnsupportedSpeciesException`() =
+    fun `fish 5 years with null subcategory falls back to Goldfish`() =
         runTest {
             val pet =
                 Pet(
-                    id = 1L,
+                    id = 12L,
                     name = "Nemo",
                     species = Species.Fish,
-                    birthDate = fixedToday.minusYears(2),
+                    birthDate = fixedToday.minusYears(5),
                 )
-            val ex =
-                assertFailsWith<app.pawclock.domain.pet.UnsupportedSpeciesException> {
-                    useCase().invoke(pet)
-                }
-            assertEquals(Species.Fish, ex.species)
+            val result = useCase().invoke(pet)
+            assertEquals(5.0, result.ageInYears, absoluteTolerance = 0.01)
+            // Goldfish ЧЖ 15: 5·80/15 ≈ 26.67; доля 5/15 ≈ 0.33 → Adult
+            assertEquals(26.67, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Fish.Adult, result.lifeStage)
+            assertEquals(CalculationMethod.EPIGENETIC, result.method)
+        }
+
+    @Test
+    fun `fish honours koi subcategory for slower ageing`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 13L,
+                    name = "Splash",
+                    species = Species.Fish,
+                    subcategory = "koi",
+                    birthDate = fixedToday.minusYears(27),
+                )
+            val result = useCase().invoke(pet)
+            // Koi ЧЖ 30: 27·80/30 = 72; доля 27/30 = 0.90 → Senior
+            assertEquals(72.0, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Fish.Senior, result.lifeStage)
         }
 
     // ─── Calendar age computation ─────────────────────────────────────────

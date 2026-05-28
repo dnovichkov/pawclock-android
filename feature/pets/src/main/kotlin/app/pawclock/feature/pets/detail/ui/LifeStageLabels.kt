@@ -21,6 +21,7 @@ internal fun lifeStageLabelRes(stage: LifeStage): Int =
         is LifeStage.Bird -> birdLifeStageLabelRes(stage)
         is LifeStage.Reptile -> reptileLifeStageLabelRes(stage)
         is LifeStage.Horse -> horseLifeStageLabelRes(stage)
+        is LifeStage.Fish -> fishLifeStageLabelRes(stage)
     }
 
 @androidx.annotation.StringRes
@@ -130,4 +131,13 @@ private fun horseLifeStageLabelRes(stage: LifeStage.Horse): Int =
         LifeStage.Horse.YoungAdult -> R.string.life_stage_horse_young_adult
         LifeStage.Horse.Adult -> R.string.life_stage_horse_adult
         LifeStage.Horse.Senior -> R.string.life_stage_horse_senior
+    }
+
+@androidx.annotation.StringRes
+private fun fishLifeStageLabelRes(stage: LifeStage.Fish): Int =
+    when (stage) {
+        LifeStage.Fish.Fry -> R.string.life_stage_fish_fry
+        LifeStage.Fish.Juvenile -> R.string.life_stage_fish_juvenile
+        LifeStage.Fish.Adult -> R.string.life_stage_fish_adult
+        LifeStage.Fish.Senior -> R.string.life_stage_fish_senior
     }

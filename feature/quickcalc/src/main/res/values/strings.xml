@@ -114,5 +114,10 @@
     <string name="quick_calc_life_stage_horse_adult">Взрослая</string>
     <string name="quick_calc_life_stage_horse_senior">Пожилая</string>
     <string name="quick_calc_result_explanation_horse">Метод AAEP + PetMD: 3-фазная формула — 1 год = 6.5 ЧГ, 2 год = 13, 3 год = 18, 4 год = 20.5, далее +2.5 ЧГ/год.</string>
+    <string name="quick_calc_life_stage_fish_fry">Малёк</string>
+    <string name="quick_calc_life_stage_fish_juvenile">Молодая особь</string>
+    <string name="quick_calc_life_stage_fish_adult">Взрослая</string>
+    <string name="quick_calc_life_stage_fish_senior">Пожилая</string>
+    <string name="quick_calc_result_explanation_fish">Метод PetMD + AquariumStoreDepot: человеческие годы = возраст · 80 / средняя продолжительность жизни вида. Долгоживущие кои стареют медленнее в человеческих годах.</string>
 
 </resources>

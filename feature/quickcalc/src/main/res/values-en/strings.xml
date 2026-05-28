@@ -110,5 +110,10 @@
     <string name="quick_calc_life_stage_horse_adult">Adult</string>
     <string name="quick_calc_life_stage_horse_senior">Senior</string>
     <string name="quick_calc_result_explanation_horse">AAEP + PetMD method: 3-phase formula — year 1 = 6.5 HY, year 2 = 13, year 3 = 18, year 4 = 20.5, then +2.5 HY/year.</string>
+    <string name="quick_calc_life_stage_fish_fry">Fry</string>
+    <string name="quick_calc_life_stage_fish_juvenile">Juvenile</string>
+    <string name="quick_calc_life_stage_fish_adult">Adult</string>
+    <string name="quick_calc_life_stage_fish_senior">Senior</string>
+    <string name="quick_calc_result_explanation_fish">PetMD + AquariumStoreDepot method: human years = age · 80 / species average lifespan. Long-lived koi age more slowly in human years.</string>
 
 </resources>

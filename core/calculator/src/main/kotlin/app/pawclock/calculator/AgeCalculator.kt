@@ -35,11 +35,13 @@ sealed interface AgeCalculator {
 
     companion object {
         /**
-         * Возвращает калькулятор для заданного вида или `null`, если вид ещё не реализован.
+         * Возвращает калькулятор для заданного вида.
          *
-         * Контракт `null` (а не исключение) намеренный: вызывающий слой
-         * (`CalculatePetAgeUseCase`) сам решает, как реагировать на нереализованный вид
-         * (бросает `UnsupportedSpeciesException`).
+         * После Plan 2 Task 10 реализованы все 12 видов, поэтому `when` ниже исчерпывающий и
+         * фактически всегда возвращает не-null. Nullable-тип контракта сохранён намеренно:
+         * вызывающий слой (`CalculatePetAgeUseCase`) исторически реагировал на `null` бросанием
+         * `UnsupportedSpeciesException`, и эта защитная ветка остаётся на случай добавления
+         * нового вида-stub в будущем.
          */
         fun forSpecies(species: Species): AgeCalculator? =
             when (species) {
@@ -54,7 +56,7 @@ sealed interface AgeCalculator {
                 Species.Bird -> BirdAgeCalculator
                 Species.Reptile -> ReptileAgeCalculator
                 Species.Horse -> HorseAgeCalculator
-                else -> null
+                Species.Fish -> FishAgeCalculator
             }
     }
 }

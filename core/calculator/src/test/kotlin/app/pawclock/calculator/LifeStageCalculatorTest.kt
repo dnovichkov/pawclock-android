@@ -8,7 +8,6 @@ import app.pawclock.model.Species
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
-import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
@@ -30,20 +29,17 @@ class LifeStageCalculatorTest {
     }
 
     @Test
-    fun `forSpecies returns null for not-yet-implemented species`() {
-        assertNull(LifeStageCalculator.forSpecies(Species.Fish))
+    fun `forSpecies returns the FishLifeStageCalculator data object`() {
+        assertSame(FishLifeStageCalculator, LifeStageCalculator.forSpecies(Species.Fish))
     }
 
     @Test
-    fun `forSpecies returns non-null exactly for implemented species`() {
+    fun `forSpecies returns a non-null calculator for every species after Task 10`() {
+        // После Task 10 реализованы все 12 видов — null больше не ожидается.
         Species.all().forEach { species ->
             val calculator = LifeStageCalculator.forSpecies(species)
-            if (species.isImplemented) {
-                assertTrue(calculator != null, "expected calculator for implemented $species")
-                assertEquals(species, calculator.species)
-            } else {
-                assertNull(calculator, "expected null for unimplemented $species")
-            }
+            assertTrue(calculator != null, "expected calculator for $species")
+            assertEquals(species, calculator.species)
         }
     }
 

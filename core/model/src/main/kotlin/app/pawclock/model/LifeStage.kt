@@ -339,4 +339,33 @@ sealed class LifeStage(
             fun all(): List<Horse> = listOf(Foal, Yearling, YoungAdult, Adult, Senior)
         }
     }
+
+    /**
+     * Стадии жизни рыб (PetMD + Kodama Koi Farm + AquariumStoreDepot, см. §4.11 спецификации).
+     *
+     * Как и у птиц и рептилий, границы стадий заданы **долей от видовой ЧЖ**
+     * ([FishType.averageLifespanYears]), а не абсолютным возрастом — у гуппи (ЧЖ 2) и кои (ЧЖ 30)
+     * «взрослость» наступает в очень разном календарном возрасте. В отличие от млекопитающих —
+     * 4 фазы (§4.11):
+     *  - Fry: 0–5 %
+     *  - Juvenile: 5–20 %
+     *  - Adult: 20–75 %
+     *  - Senior: 75 %+
+     */
+    sealed class Fish(
+        displayKey: String,
+        ordinal: Int,
+    ) : LifeStage(displayKey, ordinal) {
+        data object Fry : Fish(displayKey = "fish_fry", ordinal = 0)
+
+        data object Juvenile : Fish(displayKey = "fish_juvenile", ordinal = 1)
+
+        data object Adult : Fish(displayKey = "fish_adult", ordinal = 2)
+
+        data object Senior : Fish(displayKey = "fish_senior", ordinal = 3)
+
+        companion object {
+            fun all(): List<Fish> = listOf(Fry, Juvenile, Adult, Senior)
+        }
+    }
 }

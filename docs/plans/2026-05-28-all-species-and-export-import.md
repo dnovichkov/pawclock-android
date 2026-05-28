@@ -332,24 +332,19 @@
 - [x] ➕ refactor (обнаружено): кластер `lifeStageLabelRes` + 11 под-функций вынесен из `PetDetailScreen.kt` в новый файл `LifeStageLabels.kt` — file-level `TooManyFunctions` detekt-порог (25) был превышен при добавлении ветки Horse; вынос масштабируется на Task 10 (Fish)
 
 ### Task 10: FishAgeCalculator + life stages (TDD)
-- [ ] write FAILING test `FishAgeCalculatorTest` (по §4.11):
-  - Guppy (lifespan 2): 1y = 40 ЧГ
-  - Betta (lifespan 5): 3y = 48
-  - Goldfish (lifespan 15): 5y = 26.7
-  - Koi (lifespan 30): 10y = 26.7
-  - Tropical neon (lifespan 8): 2y = 20
-  - `throws on negative age`
-- [ ] verify tests fail — **Red**
-- [ ] create `FishType` enum в `:core:model` (Goldfish, Koi, Betta, Guppy, AngelFish, NeonTetra, Tropical, Discus — 8 видов по §4.11) + stable `id` + per-type `averageLifespanYears`
-- [ ] create `FishAgeCalculator : AgeCalculator` через `ScalarRatioFormula`
-- [ ] add KDoc со ссылкой на PetMD + Kodama Koi Farm + AquariumStoreDepot + §4.11
-- [ ] add ParameterizedTest
-- [ ] verify — **Green**
-- [ ] add `LifeStage.Fish` подтипы (Fry, Juvenile, Adult, Senior) по §4.11
-- [ ] create `FishLifeStageCalculator` + tests
-- [ ] add `expectedLifespanRange(type: FishType)` (2 для guppy, 35+ для koi) + tests
-- [ ] update `Species.Fish.isImplemented = true` + `AgeCalculator.forSpecies()`
-- [ ] run tests
+- [x] write FAILING test `FishAgeCalculatorTest` (по §4.11): покрыты guppy 1y=40, betta 3y=48, goldfish 5y=26.67, koi 10y=26.67, neon_tetra 2y=20, throws on zero/negative + параметризованная таблица (7 кейсов) + монотонность + инвариант ratio=80/lifespan
+- [x] verify tests fail — **Red** (написаны до реализации калькулятора)
+- [x] create `FishType` enum в `:core:model` (Goldfish=15, Koi=30, Betta=5, Guppy=2, AngelFish=10, NeonTetra=8, Tropical=5, Discus=10 — 8 видов по §4.11) + stable `id` + per-type `averageLifespanYears` + `FishTypeTest`
+- [x] create `FishAgeCalculator : AgeCalculator` через `ScalarRatioFormula` (без поправки молодняка, как §4.9 рептилия)
+- [x] add KDoc со ссылкой на PetMD + Kodama Koi Farm + AquariumStoreDepot + §4.11
+- [x] add ParameterizedTest
+- [x] verify — **Green**
+- [x] add `LifeStage.Fish` подтипы (Fry, Juvenile, Adult, Senior) — 4 фазы по §4.11 + `LifeStageTest`
+- [x] create `FishLifeStageCalculator` + tests (доля от видовой ЧЖ: Fry <5%, Juvenile <20%, Adult <75%, Senior 75%+; границы тестов внутри полос во избежание IEEE-754 неоднозначности)
+- [x] add `expectedLifespanRange(type: FishType)` (guppy 1–3, koi 25–40) + tests
+- [x] update `Species.Fish.isImplemented = true` + `AgeCalculator.forSpecies(Fish)` + `LifeStageCalculator.forSpecies(Fish)`
+- [x] run tests (прогнаны `:core:model:test`, `:core:calculator:test`, `:core:domain:test`, `:feature:quickcalc:test`, `:feature:pets:test`, `:app:compileDebugKotlin`, detekt, `:core:calculator:koverVerify`, `:core:domain:koverVerify` — всё зелёное)
+- [x] ➕ cross-module sync (обнаружено, как в Tasks 2–9): добавлена ветка `Fish` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Fish(type)` (дефолт `FishType.Goldfish`); диспетчеры `lifeStageLabelRes` в `LifeStageLabels.kt`/`QuickCalcResultSheet` дополнены `fishLifeStageLabelRes` + ветка объяснения метода (PetMD scalar) + строковые ресурсы ru/en. Поскольку Fish — последний нереализованный вид, `forSpecies`/`resolveParams` стали исчерпывающими `when` (убран `else`); тесты-«unsupported species» в `CalculatePetAgeUseCaseTest`/`SavePetUseCaseTest` переключены на end-to-end Fish + добавлен прямой `UnsupportedSpeciesExceptionTest`; `SpeciesTest`/`LifeStageTest`/`AgeCalculatorTest`/`LifeStageCalculatorTest` обновлены (implemented = 12)
 
 ### Task 11: Property-based tests for all new species (Kotest)
 - [ ] write `RabbitAgeCalculatorPropertyTest`:

@@ -4,6 +4,7 @@ import app.pawclock.model.BirdType
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
+import app.pawclock.model.FishType
 import app.pawclock.model.HamsterType
 import app.pawclock.model.HorseType
 import app.pawclock.model.RabbitSize
@@ -132,5 +133,16 @@ sealed interface SpeciesParams {
      */
     data class Horse(
         val type: HorseType,
+    ) : SpeciesParams
+
+    /**
+     * Параметры рыбы.
+     *
+     * @param type вид рыбы. Как и у птицы/рептилии, [type] **влияет на формулу** расчёта возраста:
+     *   скалярная формула §4.11 масштабируется по [FishType.averageLifespanYears]
+     *   (см. [FishAgeCalculator] / [FishLifeStageCalculator]). См. §4.11 спецификации.
+     */
+    data class Fish(
+        val type: FishType,
     ) : SpeciesParams
 }
