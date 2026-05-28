@@ -15,91 +15,84 @@ import app.pawclock.domain.usecase.GetCareRecommendationsUseCase
 import app.pawclock.domain.usecase.GetPetByIdUseCase
 import app.pawclock.domain.usecase.GetPetsUseCase
 import app.pawclock.domain.usecase.SavePetUseCase
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 /**
- * Placeholder фабрика UseCase-слоя (Task 15 / Plan 1).
+ * Hilt-модуль для доменного слоя — UseCase'ы и калькуляторы (Task 17 / Plan 1).
  *
- * В Plan 1 `:app` ещё не имеет `@HiltAndroidApp` (см. Task 17 в плане) и не подключает
- * Hilt-runtime. Поэтому DI собран как простая объект-фабрика по аналогии с
- * [app.pawclock.data.care.di.CareModule].
+ * Используется `@Provides` (а не `@Binds` с `@Inject constructor`), чтобы оставить
+ * `:core:domain` и `:core:calculator` чистыми pure-Kotlin модулями без зависимости
+ * на `javax.inject`. UseCase'ы и калькуляторы — обычные классы; Hilt их инстанцирует
+ * через factory-методы ниже.
  *
- * В Task 17 этот файл будет переписан в `@Module @InstallIn(SingletonComponent::class)`
- * следующим образом:
+ * SettingsReader — adapter поверх `SettingsRepository` из `:core:datastore`,
+ * изолирующий domain от знания о DataStore (port-and-adapter pattern).
  *
- * ```
- * @Module @InstallIn(SingletonComponent::class)
- * object DomainModule {
- *   @Provides fun provideSettingsReader(settingsRepository: SettingsRepository): SettingsReader =
- *     DataStoreSettingsReader(settingsRepository)
+ * Калькуляторы предоставляются как `@Singleton` (stateless, дёшево держать), UseCase'ы —
+ * без скоупа (новый instance на @Inject point, минимальный footprint).
  *
- *   @Provides fun provideCalculatePetAgeUseCase(...): CalculatePetAgeUseCase =
- *     CalculatePetAgeUseCase(...)
- *
- *   // и т.д. для каждого UseCase
- * }
- * ```
- *
- * Все UseCase'ы — простые классы без аннотаций (`@Inject constructor` не используется),
- * поэтому Hilt-миграция в Task 17 — чисто механическое добавление `@Provides`-методов
- * без изменений production-кода.
- *
- * До Task 17 — UseCase'ы создаются вручную через [createUseCases] (либо отдельные create-методы
- * для интеграционных тестов, которым нужен подмножество UseCase'ов).
+ * Зависимость на [PetRepository] разрешается в [app.pawclock.data.pet.di.PetModule]
+ * (создаётся в Task 18 вместе с Room-backed реализацией). До тех пор Hilt-граф
+ * валиден: ни один `@HiltViewModel` пока не запрашивает UseCase'ы, требующие
+ * PetRepository, поэтому отсутствие binding'а не приводит к compile-time ошибке.
  */
+@Module
+@InstallIn(SingletonComponent::class)
 object DomainModule {
-    /**
-     * Создаёт production-готовый адаптер [SettingsReader] поверх DataStore-репозитория.
-     *
-     * Используется как для production wire-up, так и для интеграционных тестов
-     * `:app:testDebugUnitTest`, которым нужен полный реактивный поток.
-     */
-    fun createSettingsReader(settingsRepository: SettingsRepository): SettingsReader =
+    @Provides
+    @Singleton
+    fun provideDogAgeCalculator(): DogAgeCalculator = DogAgeCalculator()
+
+    @Provides
+    @Singleton
+    fun provideDogLifeStageCalculator(): DogLifeStageCalculator = DogLifeStageCalculator()
+
+    @Provides
+    @Singleton
+    fun provideCatAgeCalculator(): CatAgeCalculator = CatAgeCalculator()
+
+    @Provides
+    @Singleton
+    fun provideCatLifeStageCalculator(): CatLifeStageCalculator = CatLifeStageCalculator()
+
+    @Provides
+    @Singleton
+    fun provideSettingsReader(settingsRepository: SettingsRepository): SettingsReader =
         DataStoreSettingsReader(settingsRepository)
 
-    /**
-     * Создаёт полный набор UseCase'ов для production-DI.
-     *
-     * @param petRepository production-реализация репозитория питомцев (будет создана
-     *   в более поздней задаче, использующей Room — см. Task 18 в плане).
-     * @param careRepository production-реализация care-репозитория (см. Task 14 + [app.pawclock.data.care.di.CareModule]).
-     * @param settingsRepository репозиторий настроек (создаётся в DataStoreModule).
-     */
-    fun createUseCases(
-        petRepository: PetRepository,
-        careRepository: CareRepository,
-        settingsRepository: SettingsRepository,
-    ): UseCases {
-        val settingsReader = createSettingsReader(settingsRepository)
-        return UseCases(
-            calculatePetAge =
-                CalculatePetAgeUseCase(
-                    dogAgeCalculator = DogAgeCalculator(),
-                    dogLifeStageCalculator = DogLifeStageCalculator(),
-                    catAgeCalculator = CatAgeCalculator(),
-                    catLifeStageCalculator = CatLifeStageCalculator(),
-                    settingsReader = settingsReader,
-                ),
-            getPets = GetPetsUseCase(petRepository),
-            getPetById = GetPetByIdUseCase(petRepository),
-            savePet = SavePetUseCase(petRepository),
-            deletePet = DeletePetUseCase(petRepository),
-            getCareRecommendations = GetCareRecommendationsUseCase(careRepository),
+    @Provides
+    fun provideCalculatePetAgeUseCase(
+        dogAgeCalculator: DogAgeCalculator,
+        dogLifeStageCalculator: DogLifeStageCalculator,
+        catAgeCalculator: CatAgeCalculator,
+        catLifeStageCalculator: CatLifeStageCalculator,
+        settingsReader: SettingsReader,
+    ): CalculatePetAgeUseCase =
+        CalculatePetAgeUseCase(
+            dogAgeCalculator = dogAgeCalculator,
+            dogLifeStageCalculator = dogLifeStageCalculator,
+            catAgeCalculator = catAgeCalculator,
+            catLifeStageCalculator = catLifeStageCalculator,
+            settingsReader = settingsReader,
         )
-    }
 
-    /**
-     * Пакет UseCase'ов, возвращаемый из [createUseCases] для удобного wire-up.
-     *
-     * До Task 17 (Hilt) ViewModel'и в feature-модулях создаются вручную; этот контейнер
-     * избавляет от длинных параметр-списков в фабриках. После Task 17 — заменяется на
-     * прямую инъекцию `@Inject` в ViewModel-конструкторы.
-     */
-    data class UseCases(
-        val calculatePetAge: CalculatePetAgeUseCase,
-        val getPets: GetPetsUseCase,
-        val getPetById: GetPetByIdUseCase,
-        val savePet: SavePetUseCase,
-        val deletePet: DeletePetUseCase,
-        val getCareRecommendations: GetCareRecommendationsUseCase,
-    )
+    @Provides
+    fun provideGetPetsUseCase(petRepository: PetRepository): GetPetsUseCase = GetPetsUseCase(petRepository)
+
+    @Provides
+    fun provideGetPetByIdUseCase(petRepository: PetRepository): GetPetByIdUseCase = GetPetByIdUseCase(petRepository)
+
+    @Provides
+    fun provideSavePetUseCase(petRepository: PetRepository): SavePetUseCase = SavePetUseCase(petRepository)
+
+    @Provides
+    fun provideDeletePetUseCase(petRepository: PetRepository): DeletePetUseCase = DeletePetUseCase(petRepository)
+
+    @Provides
+    fun provideGetCareRecommendationsUseCase(careRepository: CareRepository): GetCareRecommendationsUseCase =
+        GetCareRecommendationsUseCase(careRepository)
 }

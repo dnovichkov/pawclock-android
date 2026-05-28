@@ -2,19 +2,33 @@
 # Kotlin & build
 kotlin = "2.0.21"
 ksp = "2.0.21-1.0.28"
-agp = "8.5.2"
+# Task 17: bumped AGP 8.5.2 → 8.7.3 — AndroidX libraries 1.16.0+/1.11.1+/2.9.4+
+# (которые приходят с compose-bom 2026.05.00) требуют AGP ≥ 8.6.0. Версия 8.7.3
+# доступна в offline cache, совместима с Gradle 8.14.3 (>= 8.9 требование AGP 8.7).
+agp = "8.7.3"
 javaToolchain = "17"
 
 # AndroidX core
-androidxCore = "1.15.0"
-androidxLifecycle = "2.8.7"
-androidxActivity = "1.9.3"
+# Task 17: bumped androidxCore 1.15.0 → 1.16.0 to drop transitive constraint on lifecycle 2.8.7
+# (not in offline cache); core 1.16.0 requires only lifecycle 2.6.2 (cached).
+androidxCore = "1.16.0"
+# Task 17: bumped 2.8.7 → 2.9.0 — only 2.9.x cached offline. Lifecycle 2.9 is API-compatible
+# with 2.8.x for our usage (lifecycle-runtime-ktx, viewmodel-compose) и Activity 1.10 совместим.
+androidxLifecycle = "2.9.0"
+# Task 17: bumped 1.9.3 → 1.10.0 для alignment с lifecycle 2.9 (1.9.3 requires lifecycle 2.8.x).
+androidxActivity = "1.10.0"
 androidxAppcompat = "1.7.0"
 
 # Compose
-composeBom = "2024.12.01"
-composeMaterial3 = "1.3.1"
-composeNavigation = "2.8.4"
+# Task 17: bumped 2024.12.01 → 2026.05.00 — единственная компонент-BOM с полным offline cache.
+# BOM 2024.12 имеет только metadata, fetch jar'ов в offline mode невозможен. BOM 2026.05.00
+# управляет Compose UI 1.11.1 + Material3 1.4.0, оба полностью в cache.
+composeBom = "2026.05.00"
+# Task 17: bumped 1.3.1 → 1.4.0 для alignment с BOM 2026.05.00.
+composeMaterial3 = "1.4.0"
+# Task 17: bumped 2.8.4 → 2.9.0 — 2.8.4 отсутствует в offline cache. 2.9.0 поддерживает
+# typesafe routes через kotlinx.serialization (требуется для Route.kt).
+composeNavigation = "2.9.0"
 composeHiltNavigation = "1.2.0"
 
 # Hilt
@@ -31,7 +45,10 @@ datastore = "1.1.1"
 
 # Coroutines / serialization
 coroutines = "1.9.0"
-serialization = "1.7.3"
+# Task 17: bumped 1.7.3 → 1.8.1 — Room 2.8.4 room-migration-jvm pom requires
+# kotlinx-serialization-json-jvm 1.8.1; on 1.7.3 the bundle $$serializer classes
+# crashed with AbstractMethodError on typeParametersSerializers() in KSP schema export.
+serialization = "1.8.1"
 
 # Testing
 junit5 = "5.11.3"

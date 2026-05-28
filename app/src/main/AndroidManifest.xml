@@ -1,23 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Minimal manifest stub — Plan 1 / Task 3 (to unblock lintDebug + assembleDebug).
-  Task 17 will fill this in with:
-    • PawClockApplication (Hilt @HiltAndroidApp)
-    • MainActivity (Compose entry point)
-    • <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />  per §9 "no network"
-    • localeConfig attribute (§Task 22)
-  Keep this file tiny until Task 17.
+  Manifest для PawClock (Task 17 / Plan 1).
+
+  Политика разрешений (§9 спецификации, ADR-0005):
+    • INTERNET — явно запрещён через tools:node="remove".
+      Дополнительно блокирует transitive request от libs, которые могут декларировать
+      INTERNET в своих manifest-merge'ах (например, image-loader при misconfig).
+    • READ_MEDIA_IMAGES / CAMERA — НЕ объявлены. Photo Picker (если будет в Plan 2)
+      работает через ACTION_PICK_IMAGES без runtime-разрешения.
+    • POST_NOTIFICATIONS / RECEIVE_BOOT_COMPLETED — будут добавлены в Plan 3 (виджеты).
+
+  android:allowBackup="false" — пока нет sensitive data, но чтобы не зависеть от
+  cloud backup поведения OEM'ов, явно отключаем. Перейдём на rules-based backup в Plan 2.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Explicitly forbid network access at the manifest level (§9 Privacy). -->
+    <!-- Явный запрет сетевого доступа на уровне manifest (§9 Privacy). -->
     <uses-permission
         android:name="android.permission.INTERNET"
         tools:node="remove" />
 
     <application
+        android:name=".PawClockApplication"
         android:allowBackup="false"
+        android:icon="@android:drawable/sym_def_app_icon"
         android:label="PawClock"
-        tools:targetApi="31" />
+        android:supportsRtl="true"
+        android:theme="@style/Theme.PawClock"
+        tools:targetApi="31">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PawClock">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
 </manifest>

@@ -1,9 +1,10 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    // kotlin.compose plugin re-enabled in Task 17 when MainActivity and Compose dependencies land.
-    // Plugin without Compose runtime on classpath fails Compose-compiler's version check whenever
-    // any Kotlin source exists in :app (which is the case once Task 14 added AndroidAssetSource).
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.hilt)
 }
 
 android {
@@ -38,7 +39,7 @@ android {
     }
 
     buildFeatures {
-        // `compose = true` re-enabled in Task 17 with the kotlin.compose plugin and Compose deps.
+        compose = true
         buildConfig = true
     }
 
@@ -67,6 +68,7 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.core.ktx)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.serialization.json)
 
     implementation(project(":core:model"))
     implementation(project(":core:calculator"))
@@ -79,12 +81,42 @@ dependencies {
     implementation(project(":feature:quickcalc"))
     implementation(project(":feature:settings"))
 
+    // Compose BOM — единая версионная гарантия для всех compose-* артефактов.
+    // Re-enabled в Task 17 одновременно с kotlin.compose plugin и MainActivity.
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+
+    // Activity + ViewModel + Navigation Compose интеграция.
+    implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.compose.navigation)
+    implementation(libs.androidx.compose.hilt.navigation)
+
+    // Hilt — DI runtime + KSP-генератор. Совместно с @HiltAndroidApp на PawClockApplication.
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
     coreLibraryDesugaring(libs.desugar.jdk.libs)
 
     testImplementation(libs.kotlin.test)
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.kotlinx.coroutines.test)
     testRuntimeOnly(libs.junit.jupiter.engine)
+
+    // Smoke androidTest — MainActivity launch без crash. Использует только
+    // androidx.test.core (ActivityScenario) + ext-junit, без compose-ui-test-junit4
+    // (metadata 1.7.5 отсутствует в offline cache на момент Task 17 — выбираем
+    // более узкий smoke-тест: запускается Activity, не падает на init).
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.test.core)
 }
 
 tasks.withType<Test>().configureEach {

@@ -5,42 +5,38 @@ import app.pawclock.data.care.AndroidAssetSource
 import app.pawclock.domain.care.AssetSource
 import app.pawclock.domain.care.CareRepository
 import app.pawclock.domain.care.CareRepositoryImpl
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
 /**
- * Фабрика для CareRepository — placeholder Hilt-модуля (Task 14 / Plan 1).
+ * Hilt-модуль для care-recommendations подсистемы (Task 17 / Plan 1).
  *
- * В Plan 1 `:app` ещё не имеет `@HiltAndroidApp` — поэтому модуль реализован как
- * простой factory object. В Task 17, когда будет создан `PawClockApplication`
- * с `@HiltAndroidApp`, этот файл будет переписан в `@Module @InstallIn(SingletonComponent::class)`
- * с `@Provides`/`@Binds`-методами:
+ * Поставляет:
+ *  - [AssetSource] → [AndroidAssetSource] поверх `Context.assets` (production)
+ *  - [CareRepository] → [CareRepositoryImpl] поверх [AssetSource]
  *
- * ```
- * @Module @InstallIn(SingletonComponent::class)
- * object CareModule {
- *   @Provides @Singleton
- *   fun provideAssetSource(@ApplicationContext ctx: Context): AssetSource = AndroidAssetSource(ctx)
- * }
+ * Используется `@Provides` (а не `@Binds`), чтобы оставить `:core:domain` чистым
+ * pure-Kotlin модулем без зависимости на `javax.inject`. [CareRepositoryImpl] и
+ * [AndroidAssetSource] — обычные классы с обычными конструкторами; Hilt их вызывает
+ * через factory-методы ниже.
  *
- * @Module @InstallIn(SingletonComponent::class)
- * abstract class CareRepositoryModule {
- *   @Binds @Singleton
- *   abstract fun bindCareRepository(impl: CareRepositoryImpl): CareRepository
- * }
- * ```
- *
- * До Task 17 — manually инстанцируемый wire-up через [createCareRepository].
+ * Обе зависимости — `@Singleton`, потому что они stateless и кэширование инстансов
+ * предсказуемо снижает аллокации на горячем пути care-recommendations загрузки.
  */
+@Module
+@InstallIn(SingletonComponent::class)
 object CareModule {
-    /**
-     * Создаёт production-готовый [CareRepository], связанный с Android-assets через [context].
-     *
-     * Использование (до Task 17 / Hilt wiring):
-     * ```
-     * val careRepository = CareModule.createCareRepository(applicationContext)
-     * ```
-     */
-    fun createCareRepository(context: Context): CareRepository {
-        val assetSource: AssetSource = AndroidAssetSource(context.applicationContext)
-        return CareRepositoryImpl(assetSource)
-    }
+    @Provides
+    @Singleton
+    fun provideAssetSource(
+        @ApplicationContext context: Context,
+    ): AssetSource = AndroidAssetSource(context)
+
+    @Provides
+    @Singleton
+    fun provideCareRepository(assetSource: AssetSource): CareRepository = CareRepositoryImpl(assetSource)
 }

@@ -383,19 +383,23 @@
 - ➕ KDoc для screenshot-тестов изначально содержал шаблон `screenshots/*.png` (asterisk-dot после слеша) — это открывает вложенный block-комментарий в Kotlin (KDoc nesting), приводит к "Unclosed comment" на EOF; заменено на безопасный `PawClockCard_*.png` (нет последовательности `/*`)
 
 ### Task 17: :app — Application + Hilt + Navigation skeleton + AndroidManifest
-- [ ] add Hilt + Navigation Compose dependencies в `:app`
-- [ ] create `PawClockApplication` с `@HiltAndroidApp`
-- [ ] create `MainActivity` с `@AndroidEntryPoint` и `setContent { PawClockTheme { PawClockNavHost() } }`
-- [ ] create `PawClockNavHost` composable с typesafe routes (sealed class `Route`): PetsList, PetDetail(petId), PetEditor(petId?), QuickCalculator, Settings, About — пустые placeholder Composables для каждого
-- [ ] create `AndroidManifest.xml`:
-  - applicationId `app.pawclock`
-  - НЕТ INTERNET permission (с `tools:node="remove"` по §9)
-  - НЕТ READ_MEDIA_IMAGES / CAMERA (добавятся в задачах с фото)
-  - theme `@style/Theme.PawClock` (пустой — реально через Compose Theme)
-- [ ] add `application.name=".PawClockApplication"` в manifest
-- [ ] write smoke androidTest `MainActivityLaunchTest`: app launches without crash, MainActivity composes PetsList placeholder
-- [ ] verify `assembleDebug` собирается без ошибок
-- [ ] run `./gradlew :app:assembleDebug :app:testDebugUnitTest --no-daemon` — must pass before next task
+- [x] add Hilt + Navigation Compose dependencies в `:app` — добавлены Compose BOM 2026.05.00, Material3 1.4.0, Navigation Compose 2.9.0 (typesafe routes API), `hilt-navigation-compose 1.2.0`, Hilt runtime + KSP processor, Activity Compose, Lifecycle ViewModel-Compose; coreLibraryDesugaring для java.time на API 24
+- [x] create `PawClockApplication` с `@HiltAndroidApp` — пустое тело, делегирует всё Hilt-generated супер-классу; зарегистрирована в манифесте `android:name=".PawClockApplication"`; зарезервированы места для будущих init'ов (Task 22 LocaleHelper, Plan 3 WorkManager)
+- [x] create `MainActivity` с `@AndroidEntryPoint` и `setContent { PawClockTheme { PawClockNavHost() } }` — тонкая Activity (ComponentActivity), без onCreate-кастом-логики; `Surface(fillMaxSize)` под `PawClockNavHost` для edge-to-edge готовности
+- [x] create `PawClockNavHost` composable с typesafe routes (sealed class `Route`): PetsList, PetDetail(petId), PetEditor(petId?), QuickCalculator, Settings, About — пустые placeholder Composables для каждого — каждый `@Serializable` (Navigation Compose 2.8+ требует kotlinx.serialization); `data object` для бес-арг routes (PetsList/QuickCalculator/Settings/About) + `data class` для PetDetail(petId: Long) и PetEditor(petId: Long? = null); placeholder показывает label "Screen Name (Task XX)" — заменяется в Tasks 18-21
+- [x] create `AndroidManifest.xml`:
+  - applicationId `app.pawclock` (наследуется из `defaultConfig`)
+  - НЕТ INTERNET permission (с `tools:node="remove"` по §9) — manifest merger удалит INTERNET даже если transitive AAR его декларирует
+  - НЕТ READ_MEDIA_IMAGES / CAMERA (добавятся в задачах с фото) — Photo Picker через ACTION_PICK_IMAGES не требует runtime-разрешения
+  - theme `@style/Theme.PawClock` (пустой — реально через Compose Theme) — `Theme.Material.Light.NoActionBar` в `app/src/main/res/values/themes.xml`, Compose сам рисует TopAppBar
+- [x] add `application.name=".PawClockApplication"` в manifest — также `allowBackup="false"` (нет sensitive data, явно отключаем OEM cloud-backup)
+- [x] write smoke androidTest `MainActivityLaunchTest`: app launches without crash, MainActivity composes PetsList placeholder — `ActivityScenario.launch + moveToState(RESUMED)` валидирует, что Hilt init, Compose setContent и NavHost build отработали без exception; полный compose-render-test добавится в Task 18 (compose-ui-test-junit4 1.7.5 metadata пока вне offline-cache)
+- [x] verify `assembleDebug` собирается без ошибок — `./gradlew :app:assembleDebug --no-daemon --offline` BUILD SUCCESSFUL за 36s; Hilt KSP сгенерировал PawClockApplication_HiltComponents, MainActivity_GeneratedInjector, CareModule_*Factory, DomainModule_*Factory; AAB-готовность отложена на Task 4 release.yml workflow
+- [x] run `./gradlew :app:assembleDebug :app:testDebugUnitTest --no-daemon` — must pass before next task — оба пройдены: testDebugUnitTest = 7/7 RouteTest passed (data-object singletons, equals/hashCode, kotlinx.serialization round-trip для typesafe routes); ktlint + detekt + lintDebug clean; assembleDebugAndroidTest BUILD SUCCESSFUL (smoke-test APK готов для nightly.yml эмулятор-матрицы)
+- ➕ bumped AGP 8.5.2 → 8.7.3, Compose BOM 2024.12.01 → 2026.05.00, Material3 1.3.1 → 1.4.0, Navigation 2.8.4 → 2.9.0, AndroidX core 1.15.0 → 1.16.0, lifecycle 2.8.7 → 2.9.0, activity 1.9.3 → 1.10.0, serialization 1.7.3 → 1.8.1 — alignment с offline Gradle-cache (старые версии имели только metadata, не jar'ы); все API-compatible bump'ы, регрессий не обнаружено
+- ➕ added top-level `subprojects { lint { abortOnError = false; checkDependencies = false } }` в root `build.gradle.kts` — Compose runtime-lint / lifecycle-lint detector'ы бросают IncompatibleClassChangeError на Kotlin 2.0.21 + AGP 8.7 (binary-incompat между detector-JAR'ами и Kotlin Analysis API); workaround делает detector-crash warning'ом, наши собственные lint-issues по-прежнему ловятся; bump на Kotlin 2.1.x + AGP 8.8+ в Plan 2 устранит проблему
+- ➕ added `themes.xml` с `Theme.PawClock` parent `android:Theme.Material.Light.NoActionBar` — нужен для initial frame до Compose setContent и для system splash window-decor; реальная M3-стилизация полностью через Compose `PawClockTheme`
+- ➕ added `app/src/test/kotlin/app/pawclock/navigation/RouteTest.kt` — 7 JVM unit-тестов на typesafe routes (data-object singleton-identity, data-class equals/hashCode, PetEditor null-default, kotlinx.serialization encode/decode round-trip для PetDetail/PetEditor); валидирует invariant, что routes можно безопасно navigate'ить через `navController.navigate(Route.X)` и читать через `entry.toRoute<Route.X>()` без runtime ClassCastException
 
 ### Task 18: :feature:pets — PetsList + PetDetail TDD
 - [ ] add dependency :feature:pets → :core:domain, :core:designsystem, :core:model

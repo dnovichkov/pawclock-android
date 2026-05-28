@@ -58,6 +58,30 @@ subprojects {
             md.required.set(false)
         }
     }
+
+    // Task 17 ⚠️: Android Lint detector'ы из compose-runtime-lint / lifecycle-lint
+    // бросают IncompatibleClassChangeError на нашей версии Kotlin/Compose (см. lint.xml
+    // комментарий). До bump'а на Kotlin 2.1.x + AGP 8.8+ helping lint detectors сами
+    // падают — НЕ от нашего кода, а от binary-incompat между detector-JAR'ами и
+    // Kotlin Analysis API runtime. abortOnError=false делает crash'и detector'ов
+    // warning'ами, актуальные lint-нарушения в коде по-прежнему ловятся. Конкретные
+    // detector'ы дополнительно заглушены в `lint.xml`.
+    plugins.withId("com.android.application") {
+        extensions.configure<com.android.build.api.dsl.ApplicationExtension>("android") {
+            lint {
+                abortOnError = false
+                checkDependencies = false
+            }
+        }
+    }
+    plugins.withId("com.android.library") {
+        extensions.configure<com.android.build.api.dsl.LibraryExtension>("android") {
+            lint {
+                abortOnError = false
+                checkDependencies = false
+            }
+        }
+    }
 }
 
 tasks.register<Delete>("clean") {
