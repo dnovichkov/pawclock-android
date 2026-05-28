@@ -104,5 +104,11 @@
     <string name="quick_calc_life_stage_reptile_adult">Adult</string>
     <string name="quick_calc_life_stage_reptile_senior">Senior</string>
     <string name="quick_calc_result_explanation_reptile">PetPlace + Reptile Centre method: human years = age · 80 / species average lifespan. Long-lived turtles age more slowly in human years.</string>
+    <string name="quick_calc_life_stage_horse_foal">Foal</string>
+    <string name="quick_calc_life_stage_horse_yearling">Yearling</string>
+    <string name="quick_calc_life_stage_horse_young_adult">Young horse</string>
+    <string name="quick_calc_life_stage_horse_adult">Adult</string>
+    <string name="quick_calc_life_stage_horse_senior">Senior</string>
+    <string name="quick_calc_result_explanation_horse">AAEP + PetMD method: 3-phase formula — year 1 = 6.5 HY, year 2 = 13, year 3 = 18, year 4 = 20.5, then +2.5 HY/year.</string>
 
 </resources>

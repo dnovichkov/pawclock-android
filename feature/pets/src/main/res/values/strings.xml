@@ -101,5 +101,11 @@
     <string name="life_stage_reptile_adult">Взрослая</string>
     <string name="life_stage_reptile_senior">Пожилая</string>
     <string name="pet_detail_calc_reptile">Метод: PetPlace + Reptile Centre. Скалярная формула: человеческие годы = возраст · 80 / средняя продолжительность жизни вида. Долгоживущие черепахи стареют медленнее в человеческих годах.</string>
+    <string name="life_stage_horse_foal">Жеребёнок</string>
+    <string name="life_stage_horse_yearling">Годовик</string>
+    <string name="life_stage_horse_young_adult">Молодая лошадь</string>
+    <string name="life_stage_horse_adult">Взрослая</string>
+    <string name="life_stage_horse_senior">Пожилая</string>
+    <string name="pet_detail_calc_horse">Метод: AAEP + PetMD. 3-фазная формула: 1 год = 6.5 ЧГ, 2 год = 13, 3 год = 18, 4 год = 20.5, далее +2.5 ЧГ/год.</string>
 
 </resources>

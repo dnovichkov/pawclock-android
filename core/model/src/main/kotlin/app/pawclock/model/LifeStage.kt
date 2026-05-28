@@ -309,4 +309,34 @@ sealed class LifeStage(
             fun all(): List<Reptile> = listOf(Hatchling, Juvenile, Adult, Senior)
         }
     }
+
+    /**
+     * Стадии жизни лошадей (AAEP Vaccination/Senior Horse Care + PetMD, см. §4.10 спецификации).
+     *
+     * Пороги по возрасту (единые для всех типов — формула AAEP не зависит от породы;
+     * «senior с ~15 лет» по AAEP Senior Horse Care):
+     *  - Foal: 0–1 год (жеребёнок до отъёма/первого года)
+     *  - Yearling: 1–2 года (годовик)
+     *  - YoungAdult: 2–4 года (молодая лошадь, период заездки/созревания)
+     *  - Adult: 4–15 лет (зрелость, рабочий/племенной возраст)
+     *  - Senior: 15+ лет (приближение к верхней границе ЧЖ 25–30)
+     */
+    sealed class Horse(
+        displayKey: String,
+        ordinal: Int,
+    ) : LifeStage(displayKey, ordinal) {
+        data object Foal : Horse(displayKey = "horse_foal", ordinal = 0)
+
+        data object Yearling : Horse(displayKey = "horse_yearling", ordinal = 1)
+
+        data object YoungAdult : Horse(displayKey = "horse_young_adult", ordinal = 2)
+
+        data object Adult : Horse(displayKey = "horse_adult", ordinal = 3)
+
+        data object Senior : Horse(displayKey = "horse_senior", ordinal = 4)
+
+        companion object {
+            fun all(): List<Horse> = listOf(Foal, Yearling, YoungAdult, Adult, Senior)
+        }
+    }
 }

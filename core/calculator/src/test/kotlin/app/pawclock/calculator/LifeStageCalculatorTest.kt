@@ -31,7 +31,6 @@ class LifeStageCalculatorTest {
 
     @Test
     fun `forSpecies returns null for not-yet-implemented species`() {
-        assertNull(LifeStageCalculator.forSpecies(Species.Horse))
         assertNull(LifeStageCalculator.forSpecies(Species.Fish))
     }
 

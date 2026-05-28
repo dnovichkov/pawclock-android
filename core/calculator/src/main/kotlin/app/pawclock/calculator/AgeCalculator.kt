@@ -53,6 +53,7 @@ sealed interface AgeCalculator {
                 Species.Ferret -> FerretAgeCalculator
                 Species.Bird -> BirdAgeCalculator
                 Species.Reptile -> ReptileAgeCalculator
+                Species.Horse -> HorseAgeCalculator
                 else -> null
             }
     }

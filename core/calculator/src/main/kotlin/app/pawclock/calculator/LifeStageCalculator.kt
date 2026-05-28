@@ -44,6 +44,7 @@ sealed interface LifeStageCalculator {
                 Species.Ferret -> FerretLifeStageCalculator
                 Species.Bird -> BirdLifeStageCalculator
                 Species.Reptile -> ReptileLifeStageCalculator
+                Species.Horse -> HorseLifeStageCalculator
                 else -> null
             }
     }

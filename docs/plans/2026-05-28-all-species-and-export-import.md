@@ -315,26 +315,21 @@
 - [x] ➕ cross-module sync (обнаружено, как в Tasks 2–7): добавлена ветка `Reptile` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Reptile(type)` (дефолт `ReptileType.BeardedDragon`); диспетчеры `lifeStageLabelRes` в `PetDetailScreen`/`QuickCalcResultSheet` дополнены `reptileLifeStageLabelRes` + ветка объяснения метода (PetPlace scalar) + строковые ресурсы ru/en; `SpeciesTest` (implemented = 10)/`LifeStageTest`/`AgeCalculatorTest`/`LifeStageCalculatorTest` (null-список → Horse/Fish) обновлены; добавлены end-to-end domain-тесты Reptile (default BeardedDragon + box turtle subcategory — восстановление kover ≥90%)
 
 ### Task 9: HorseAgeCalculator + life stages (TDD)
-- [ ] write FAILING test `HorseAgeCalculatorTest` (по §4.10):
-  - `1 year = 6.5 ЧГ`
-  - `2 years = 13 ЧГ`
-  - `3 years = 18 ЧГ`
-  - `4 years = 20.5 ЧГ`
-  - `10 years = 20.5 + 2.5·6 = 35.5 ЧГ`
-  - `25 years = 20.5 + 2.5·21 = 73 ЧГ`
-  - `throws on negative age`
-- [ ] verify tests fail — **Red**
-- [ ] create `HorseType` enum в `:core:model` (Pony, LightHorse, DraftHorse, Thoroughbred — упрощённо по §4.10) + stable `id` + per-type `averageLifespanYears`
-- [ ] create `HorseAgeCalculator : AgeCalculator`
-- [ ] implement 3-фазную формулу (1y=6.5, 2y=13, 3y=18, 4y=20.5, далее +2.5/год)
-- [ ] add KDoc со ссылкой на AAEP Vaccination Guidelines + PetMD (Kaela Schraer DVM) + §4.10
-- [ ] add ParameterizedTest
-- [ ] verify — **Green**
-- [ ] add `LifeStage.Horse` подтипы (Foal, Yearling, YoungAdult, Adult, Senior) по §4.10
-- [ ] create `HorseLifeStageCalculator` + tests
-- [ ] add `expectedLifespanRange(type: HorseType)` (25-30 base) + tests
-- [ ] update `Species.Horse.isImplemented = true` + `AgeCalculator.forSpecies()`
-- [ ] run tests
+- [x] write FAILING test `HorseAgeCalculatorTest` (по §4.10): покрыты 1y=6.5, 2y=13, 3y=18, 4y=20.5, 10y=35.5, 25y=73, throws on zero/negative + параметризованная таблица (10 кейсов) + непрерывность на стыках 1/2/3 + монотонность
+- [x] verify tests fail — **Red** (написаны до реализации калькулятора)
+- [x] create `HorseType` enum в `:core:model` (Pony, LightHorse, DraftHorse, Thoroughbred) + stable `id` + per-type `averageLifespanYears` (Pony 30, Light/Thoroughbred 28, Draft 25) + `HorseTypeTest`
+- [x] create `HorseAgeCalculator : AgeCalculator`
+- [x] implement 3-фазную формулу (1y=6.5, 2y=13, 3y=18, далее +2.5/год; сегменты «4-й год» и «>4 лет» из §4.10 имеют одинаковый наклон +2.5 → объединены в `age>3`; формула непрерывна на стыках 1/2/3)
+- [x] add KDoc со ссылкой на AAEP Vaccination/Senior Horse Care + PetMD (Kaela Schraer DVM) + §4.10
+- [x] add ParameterizedTest
+- [x] verify — **Green**
+- [x] add `LifeStage.Horse` подтипы (Foal, Yearling, YoungAdult, Adult, Senior) по §4.10 + `LifeStageTest`
+- [x] create `HorseLifeStageCalculator` + tests (Foal<1, Yearling<2, YoungAdult<4, Adult<15, Senior 15+ — «senior с ~15 лет» по AAEP Senior Horse Care)
+- [x] add `expectedLifespanRange(type: HorseType)` (база 25–30; Pony 25–35, Draft 20–25) + tests
+- [x] update `Species.Horse.isImplemented = true` + `AgeCalculator.forSpecies(Horse)` + `LifeStageCalculator.forSpecies(Horse)`
+- [x] run tests (прогнаны `:core:model:test`, `:core:calculator:test`, `:core:domain:test`, `:feature:quickcalc:test`, `:feature:pets:test`, `:app:compileDebugKotlin`, detekt, `:core:calculator:koverVerify`, `:core:domain:koverVerify` — всё зелёное)
+- [x] ➕ cross-module sync (обнаружено, как в Tasks 2–8): добавлена ветка `Horse` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Horse(type)` (дефолт `HorseType.LightHorse`); диспетчеры `lifeStageLabelRes` в `PetDetailScreen`/`QuickCalcResultSheet` дополнены `horseLifeStageLabelRes` + ветка объяснения метода (AAEP 3-фаза) + строковые ресурсы ru/en; `SpeciesTest` (implemented = 11)/`LifeStageTest`/`AgeCalculatorTest`/`LifeStageCalculatorTest` (null-список → только Fish) обновлены; добавлены end-to-end domain-тесты Horse (default LightHorse + pony subcategory — восстановление kover ≥90%)
+- [x] ➕ refactor (обнаружено): кластер `lifeStageLabelRes` + 11 под-функций вынесен из `PetDetailScreen.kt` в новый файл `LifeStageLabels.kt` — file-level `TooManyFunctions` detekt-порог (25) был превышен при добавлении ветки Horse; вынос масштабируется на Task 10 (Fish)
 
 ### Task 10: FishAgeCalculator + life stages (TDD)
 - [ ] write FAILING test `FishAgeCalculatorTest` (по §4.11):

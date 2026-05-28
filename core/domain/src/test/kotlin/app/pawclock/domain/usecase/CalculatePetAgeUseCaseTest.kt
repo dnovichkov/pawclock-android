@@ -306,6 +306,41 @@ class CalculatePetAgeUseCaseTest {
         }
 
     @Test
+    fun `horse 10 years with null subcategory falls back to LightHorse`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 10L,
+                    name = "Spirit",
+                    species = Species.Horse,
+                    birthDate = fixedToday.minusYears(10),
+                )
+            val result = useCase().invoke(pet)
+            assertEquals(10.0, result.ageInYears, absoluteTolerance = 0.01)
+            // AAEP: 20.5 + 2.5·6 = 35.5; 10 лет в полосе Adult (4–15)
+            assertEquals(35.5, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Horse.Adult, result.lifeStage)
+            assertEquals(CalculationMethod.EPIGENETIC, result.method)
+        }
+
+    @Test
+    fun `horse 20 years pony subcategory is Senior`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 11L,
+                    name = "Thunder",
+                    species = Species.Horse,
+                    subcategory = "pony",
+                    birthDate = fixedToday.minusYears(20),
+                )
+            val result = useCase().invoke(pet)
+            // AAEP формула не зависит от породы: 20.5 + 2.5·16 = 60.5
+            assertEquals(60.5, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Horse.Senior, result.lifeStage)
+        }
+
+    @Test
     fun `birthDate in future throws IllegalArgumentException`() =
         runTest {
             val pet = dog(birthDate = fixedToday.plusDays(1))

@@ -5,6 +5,7 @@ import app.pawclock.model.CalculationMethod
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
 import app.pawclock.model.HamsterType
+import app.pawclock.model.HorseType
 import app.pawclock.model.RabbitSize
 import app.pawclock.model.ReptileType
 
@@ -120,5 +121,16 @@ sealed interface SpeciesParams {
      */
     data class Reptile(
         val type: ReptileType,
+    ) : SpeciesParams
+
+    /**
+     * Параметры лошади.
+     *
+     * @param type тип/порода лошади. На формулу расчёта возраста не влияет (3-фазная формула
+     *   AAEP §4.10 едина для всех), используется только для оценки ожидаемой продолжительности
+     *   жизни. См. [HorseType] и §4.10 спецификации.
+     */
+    data class Horse(
+        val type: HorseType,
     ) : SpeciesParams
 }
