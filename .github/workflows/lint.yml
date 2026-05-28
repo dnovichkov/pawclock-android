@@ -49,7 +49,7 @@ jobs:
         run: ./gradlew ktlintCheck --no-daemon --stacktrace
       - name: Upload ktlint reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ktlint-reports
           path: '**/build/reports/ktlint/**'
@@ -69,7 +69,7 @@ jobs:
         run: ./gradlew detekt --no-daemon --stacktrace
       - name: Upload detekt reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: detekt-reports
           path: '**/build/reports/detekt/**'
@@ -89,7 +89,7 @@ jobs:
         run: ./gradlew lintDebug --no-daemon --stacktrace
       - name: Upload lint reports
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: android-lint-reports
           path: '**/build/reports/lint-results-*.html'

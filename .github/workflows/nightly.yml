@@ -97,7 +97,7 @@ jobs:
 
       - name: Upload androidTest reports on failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: androidTest-reports-api${{ matrix.api-level }}
           path: |
@@ -164,7 +164,7 @@ jobs:
 
       - name: Upload Maestro reports on failure
         if: failure() && steps.detect_flows.outputs.has_flows == 'true'
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: maestro-reports
           path: ~/.maestro/tests/**
