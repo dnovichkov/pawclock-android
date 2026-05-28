@@ -10,7 +10,7 @@
     <string name="pets_list_add">Добавить</string>
     <string name="pets_list_empty_title">Добавьте первого питомца</string>
     <string name="pets_list_empty_body">Нажмите на кнопку «Добавить», чтобы создать профиль вашего питомца.</string>
-    <string name="pets_list_error">Не удалось загрузить список питомцев (key=%1$s).</string>
+    <string name="pets_list_error">Не удалось загрузить список питомцев.</string>
     <string name="pets_list_open_quick_calc">Быстрый расчёт</string>
     <string name="pets_list_open_settings">Настройки</string>
 
@@ -18,7 +18,7 @@
     <string name="pet_detail_loading_title">Загрузка…</string>
     <string name="pet_detail_fallback_title">Питомец</string>
     <string name="pet_detail_error_title">Ошибка</string>
-    <string name="pet_detail_error_body">Ошибка: %1$s</string>
+    <string name="pet_detail_error_body">Не удалось загрузить данные питомца. Попробуйте обновить экран.</string>
     <string name="pet_detail_not_found">Питомец не найден.\nВозможно, он был удалён.</string>
     <string name="pet_detail_back">Назад</string>
     <string name="pet_detail_edit">Редактировать</string>

@@ -49,11 +49,19 @@ class SettingsViewModel
                 is SettingsEvent.SetThemeMode ->
                     viewModelScope.launch { repository.setThemeMode(event.themeMode) }
                 is SettingsEvent.SetLanguageTag -> {
-                    // Применяем локаль немедленно — AppCompatDelegate триггерит Activity recreate,
-                    // что заставит Composables перечитать stringResource'ы под новой локалью.
-                    // Затем persistаем в DataStore — на следующем cold start значение уже на месте.
-                    localeApplier.applyLanguageTag(event.languageTag)
-                    viewModelScope.launch { repository.setLanguageTag(event.languageTag) }
+                    // Сначала persistим в DataStore, ПОТОМ триггерим Activity recreate.
+                    // AppCompatDelegate.setApplicationLocales() инициирует recreate,
+                    // что отменяет viewModelScope; если persist запустить ДО ожидания записи —
+                    // DataStore.edit { } может быть отменён до commit на диск, и
+                    // в следующий cold start языковая настройка SettingsRepository окажется
+                    // на старом значении (хотя AppCompat metadata-service всё равно сохранит
+                    // локаль сам — UI отрисуется правильно, но Settings-radio покажет
+                    // старый выбор). Sequence запуска внутри одной корутины гарантирует,
+                    // что setLanguageTag завершён до applyLanguageTag.
+                    viewModelScope.launch {
+                        repository.setLanguageTag(event.languageTag)
+                        localeApplier.applyLanguageTag(event.languageTag)
+                    }
                 }
                 is SettingsEvent.SetDynamicColor ->
                     viewModelScope.launch { repository.setDynamicColor(event.enabled) }

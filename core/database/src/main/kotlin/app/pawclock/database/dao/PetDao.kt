@@ -17,8 +17,12 @@ import kotlinx.coroutines.flow.Flow
  *  - [update] — частичное обновление (Room сравнивает по PK)
  *  - [deleteById] / [delete] — два варианта удаления; deleteById удобнее для UI-слоя
  *
- * Сортировка `ORDER BY name COLLATE NOCASE ASC` гарантирует case-insensitive сортировку,
- * что важно для русской/английской смешанной локали.
+ * Сортировка `ORDER BY name COLLATE NOCASE ASC` обеспечивает case-insensitive порядок
+ * для ASCII-имён (A/a, B/b). Для Cyrillic (А/а, Я/я) SQLite NOCASE не работает —
+ * Cyrillic-буквы упорядочиваются по кодпоинту, и case-fold не выполняется.
+ * Это ограничение SQLite; настоящая Unicode-сортировка возможна только через
+ * кастомный ICU collator (out-of-scope для Plan 1 MVP — будет рассмотрено в Plan 2,
+ * если пользователи пожалуются на «Марс» vs «марс»).
  *
  * Все suspend-функции должны вызываться из coroutine с IO-диспетчером (Hilt-провайдер
  * обеспечивает это автоматически через Room.databaseBuilder).

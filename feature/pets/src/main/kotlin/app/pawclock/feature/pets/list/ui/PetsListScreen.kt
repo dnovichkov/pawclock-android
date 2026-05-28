@@ -132,7 +132,7 @@ internal fun PetsListContent(
             is PetsListState.Loading -> LoadingContent(padding)
             is PetsListState.Empty -> EmptyContent(padding)
             is PetsListState.Success -> SuccessContent(state.pets, onPetClick, padding)
-            is PetsListState.Error -> ErrorContent(messageKey = state.messageKey, padding)
+            is PetsListState.Error -> ErrorContent(padding)
         }
     }
 }
@@ -207,11 +207,11 @@ private fun SuccessContent(
     }
 }
 
+// PetsListState.Error.messageKey остаётся в state как приватная техническая метка
+// (для будущего логирования/телеметрии). В UI её НЕ показываем — пользователь видит
+// безопасный общий текст.
 @Composable
-private fun ErrorContent(
-    messageKey: String,
-    padding: PaddingValues,
-) {
+private fun ErrorContent(padding: PaddingValues) {
     Box(
         modifier =
             Modifier
@@ -219,10 +219,8 @@ private fun ErrorContent(
                 .padding(padding),
         contentAlignment = Alignment.Center,
     ) {
-        // messageKey остаётся технической метрикой логирования; для UI используется
-        // общий fallback-текст с подстановкой ключа.
         Text(
-            text = stringResource(R.string.pets_list_error, messageKey),
+            text = stringResource(R.string.pets_list_error),
             color = MaterialTheme.colorScheme.error,
         )
     }

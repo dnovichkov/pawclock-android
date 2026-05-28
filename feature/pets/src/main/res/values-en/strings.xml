@@ -6,7 +6,7 @@
     <string name="pets_list_add">Add</string>
     <string name="pets_list_empty_title">Add your first pet</string>
     <string name="pets_list_empty_body">Tap “Add” to create a profile for your pet.</string>
-    <string name="pets_list_error">Failed to load pets (key=%1$s).</string>
+    <string name="pets_list_error">Failed to load pets.</string>
     <string name="pets_list_open_quick_calc">Quick calculator</string>
     <string name="pets_list_open_settings">Settings</string>
 
@@ -14,7 +14,7 @@
     <string name="pet_detail_loading_title">Loading…</string>
     <string name="pet_detail_fallback_title">Pet</string>
     <string name="pet_detail_error_title">Error</string>
-    <string name="pet_detail_error_body">Error: %1$s</string>
+    <string name="pet_detail_error_body">Failed to load pet data. Try refreshing the screen.</string>
     <string name="pet_detail_not_found">Pet not found.\nIt may have been deleted.</string>
     <string name="pet_detail_back">Back</string>
     <string name="pet_detail_edit">Edit</string>

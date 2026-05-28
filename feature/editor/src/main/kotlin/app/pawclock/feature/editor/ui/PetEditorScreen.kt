@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.pawclock.domain.pet.PetValidationError
 import app.pawclock.feature.editor.PetEditorEvent
 import app.pawclock.feature.editor.PetEditorSaveResult
 import app.pawclock.feature.editor.PetEditorState
@@ -200,7 +201,7 @@ private fun FormContent(
             onValueChange = { onEvent(PetEditorEvent.SetName(it)) },
             label = { Text(text = stringResource(R.string.pet_editor_name_label)) },
             singleLine = true,
-            isError = state.validationErrors.any { it.name == "NameBlank" },
+            isError = PetValidationError.NameBlank in state.validationErrors,
         )
 
         SpeciesSelector(
@@ -219,7 +220,11 @@ private fun FormContent(
         BirthDateField(
             value = state.birthDate,
             onChange = { onEvent(PetEditorEvent.SetBirthDate(it)) },
-            isError = state.validationErrors.any { it.name.startsWith("BirthDate") },
+            isError =
+                state.validationErrors.any {
+                    it == PetValidationError.BirthDateInFuture ||
+                        it == PetValidationError.BirthDateUnrealistic
+                },
         )
 
         GenderSelector(

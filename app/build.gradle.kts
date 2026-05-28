@@ -24,17 +24,51 @@ android {
         }
     }
 
+    // Signing config — Wired only when keystore env-vars присутствуют (release.yml decoder
+    // выставляет PAWCLOCK_KEYSTORE_PATH + PAWCLOCK_KEYSTORE_PASSWORD/KEY_ALIAS/KEY_PASSWORD).
+    // Без vars (локальный debug build разработчика) — release-сборка не падает на
+    // конфигурации, она просто остаётся неподписанной и signingConfig не привязан.
+    // Это покрывает: (a) CI release.yml → подписанный AAB для Play; (b) локальные
+    // assembleRelease без секретов → unsigned APK для smoke-проверки.
+    val releaseKeystorePath: String? = System.getenv("PAWCLOCK_KEYSTORE_PATH")
+    val releaseKeystorePassword: String? = System.getenv("PAWCLOCK_KEYSTORE_PASSWORD")
+    val releaseKeyAlias: String? = System.getenv("PAWCLOCK_KEY_ALIAS")
+    val releaseKeyPassword: String? = System.getenv("PAWCLOCK_KEY_PASSWORD")
+    val hasReleaseSigning =
+        !releaseKeystorePath.isNullOrBlank() &&
+            !releaseKeystorePassword.isNullOrBlank() &&
+            !releaseKeyAlias.isNullOrBlank() &&
+            !releaseKeyPassword.isNullOrBlank()
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            create("release") {
+                storeFile = file(releaseKeystorePath!!)
+                storePassword = releaseKeystorePassword
+                keyAlias = releaseKeyAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
         }
         release {
+            // R8/minify остаётся выключенным в Plan 1 MVP: вся библиотечная цепочка
+            // (Hilt, Room, kotlinx-serialization, Compose) поставляет consumer-rules,
+            // но без явной верификации на устройстве с включённым минификатором
+            // включать его в release нельзя — это отдельная задача в Plan 2.
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro",
             )
+            if (hasReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
     }
 

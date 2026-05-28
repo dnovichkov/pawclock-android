@@ -7,9 +7,10 @@ import kotlinx.coroutines.flow.Flow
 /**
  * Возвращает реактивный поток списка питомцев.
  *
- * Сортировка определяется реализацией [PetRepository] (обычно case-insensitive ASCII/Cyrillic
- * через `COLLATE NOCASE`). UseCase сам сортировку не выполняет — это ответственность
- * persistence-слоя ради эффективности.
+ * Сортировка определяется реализацией [PetRepository] (по умолчанию case-insensitive
+ * для ASCII через SQLite `COLLATE NOCASE` — для Cyrillic применяется бинарная сортировка
+ * по кодпоинту, см. KDoc `PetDao.observeAll`). UseCase сортировку не делает сам —
+ * это ответственность persistence-слоя ради эффективности.
  */
 class GetPetsUseCase(
     private val petRepository: PetRepository,

@@ -251,11 +251,15 @@ class PetEditorViewModel
         /**
          * Парсит строку weight в Double, возвращая null при невалидном вводе.
          * Допускает и точку, и запятую как десятичный разделитель (русская локаль).
+         *
+         * Неположительные значения (`<= 0`) отбрасываются как невалидные: вес питомца
+         * не может быть нулевым или отрицательным; пользователь вводит мусор → лучше
+         * сохранить null, чем зашить деструктивные данные в Pet/Room/Calculator.
          */
         private fun parseWeight(input: String): Double? {
             if (input.isBlank()) return null
             val normalized = input.replace(',', '.')
-            return normalized.toDoubleOrNull()
+            return normalized.toDoubleOrNull()?.takeIf { it > 0.0 }
         }
 
         private companion object {

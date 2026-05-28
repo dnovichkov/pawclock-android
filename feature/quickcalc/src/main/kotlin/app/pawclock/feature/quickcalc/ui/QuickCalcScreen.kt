@@ -29,6 +29,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pawclock.feature.quickcalc.QuickCalcEvent
 import app.pawclock.feature.quickcalc.QuickCalcResult
 import app.pawclock.feature.quickcalc.QuickCalcState
+import app.pawclock.feature.quickcalc.QuickCalcValidationError
 import app.pawclock.feature.quickcalc.QuickCalcViewModel
 import app.pawclock.feature.quickcalc.R
 import app.pawclock.feature.quickcalc.ui.section.QuickCalcBirthDateField
@@ -162,7 +163,8 @@ private fun QuickCalcForm(
             onChange = { onEvent(QuickCalcEvent.SetBirthDate(it)) },
             isError =
                 (state.result as? QuickCalcResult.ValidationError)?.errors?.any {
-                    it.name.startsWith("BirthDate")
+                    it == QuickCalcValidationError.BirthDateRequired ||
+                        it == QuickCalcValidationError.BirthDateInFuture
                 } == true,
         )
 

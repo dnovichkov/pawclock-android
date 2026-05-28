@@ -46,6 +46,7 @@ import app.pawclock.model.CareRecommendation
 import app.pawclock.model.LifeStage
 import app.pawclock.model.Pet
 import app.pawclock.model.Species
+import java.util.Locale
 import kotlin.math.roundToInt
 
 /**
@@ -125,7 +126,7 @@ internal fun PetDetailContent(
             is PetDetailState.Loading -> CenteredProgress(padding)
             is PetDetailState.NotFound -> NotFoundContent(padding)
             is PetDetailState.Success -> SuccessContent(state, padding)
-            is PetDetailState.Error -> ErrorContent(state.messageKey, padding)
+            is PetDetailState.Error -> ErrorContent(padding)
         }
     }
 }
@@ -164,17 +165,17 @@ private fun NotFoundContent(padding: PaddingValues) {
     }
 }
 
+// PetDetailState.Error.messageKey остаётся в state как приватная техническая метка
+// (для будущего логирования/телеметрии). В UI её НЕ показываем — пользователь видит
+// безопасный общий текст.
 @Composable
-private fun ErrorContent(
-    messageKey: String,
-    padding: PaddingValues,
-) {
+private fun ErrorContent(padding: PaddingValues) {
     Box(
         modifier = Modifier.fillMaxSize().padding(padding),
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = stringResource(R.string.pet_detail_error_body, messageKey),
+            text = stringResource(R.string.pet_detail_error_body),
             color = MaterialTheme.colorScheme.error,
         )
     }
@@ -352,7 +353,11 @@ internal fun lifeStageLabelRes(stage: LifeStage): Int =
         LifeStage.Cat.EndOfLife -> R.string.life_stage_cat_end_of_life
     }
 
-private fun Double.format1(): String = "%.1f".format(this)
+// Локаль-зависимое форматирование. Используем Locale.getDefault() явно вместо
+// неявного дефолта String.format/format(), чтобы decimal-separator (точка vs запятая)
+// детерминированно соответствовал текущей locale, а не подхватывался implicit'но.
+// На RU-локали → "5,2"; на EN → "5.2".
+private fun Double.format1(): String = String.format(Locale.getDefault(), "%.1f", this)
 
 private const val HORIZONTAL_PADDING_DP: Int = 16
 private const val SECTION_SPACING_DP: Int = 16
