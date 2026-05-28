@@ -56,5 +56,10 @@
     <string name="life_stage_cat_mature_adult">Mature adult</string>
     <string name="life_stage_cat_senior">Senior</string>
     <string name="life_stage_cat_end_of_life">End of life</string>
+    <string name="life_stage_rabbit_infancy">Infancy</string>
+    <string name="life_stage_rabbit_adolescence">Adolescence</string>
+    <string name="life_stage_rabbit_young_adult">Young adult</string>
+    <string name="life_stage_rabbit_adult">Adult</string>
+    <string name="life_stage_rabbit_senior">Senior</string>
 
 </resources>

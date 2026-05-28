@@ -10,6 +10,7 @@ import app.pawclock.model.CalculationMethod
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
 import app.pawclock.model.Pet
+import app.pawclock.model.RabbitSize
 import app.pawclock.model.Species
 import java.time.Clock
 import java.time.LocalDate
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.first
  * Дефолты subcategory, если [Pet.subcategory] не задан:
  *  - Dog → [DogSize.Medium] (срединная категория, минимизирует ошибку оценки)
  *  - Cat → [CatType.IndoorShortHair] (домашняя короткошёрстная — медиана)
+ *  - Rabbit → [RabbitSize.Medium] (срединная категория)
  *
  * Калькуляторы — `data object`-синглтоны (stateless), поэтому больше не инжектируются:
  * UseCase обращается к ним напрямую через фабрики. Это убирает разрастающийся
@@ -96,12 +98,16 @@ class CalculatePetAgeUseCase(
             }
             Species.Cat ->
                 SpeciesParams.Cat(type = resolveCatType(pet)) to CalculationMethod.EPIGENETIC
+            Species.Rabbit ->
+                SpeciesParams.Rabbit(size = resolveRabbitSize(pet)) to CalculationMethod.EPIGENETIC
             else -> throw UnsupportedSpeciesException(pet.species)
         }
 
     private fun resolveDogSize(pet: Pet): DogSize = pet.subcategory?.let(DogSize::fromId) ?: DogSize.Medium
 
     private fun resolveCatType(pet: Pet): CatType = pet.subcategory?.let(CatType::fromId) ?: CatType.IndoorShortHair
+
+    private fun resolveRabbitSize(pet: Pet): RabbitSize = pet.subcategory?.let(RabbitSize::fromId) ?: RabbitSize.Medium
 
     private fun calendarAgeInYears(
         birthDate: LocalDate,

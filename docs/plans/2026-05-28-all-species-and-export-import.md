@@ -172,31 +172,27 @@
 - [x] run `./gradlew :core:calculator:test :core:domain:test --no-daemon` — must pass before next task (также прогнаны `:feature:quickcalc:test`, `:feature:pets:test`, `:app:compileDebugKotlin`, detekt + koverVerify — всё зелёное)
 
 ### Task 2: RabbitAgeCalculator + life stages (TDD)
-- [ ] write FAILING test `RabbitAgeCalculatorTest` (по §4.3, кусочная формула):
-  - `0.1 year (1.2 month) = 3 human years` (30·0.1 = 3)
-  - `0.33 year (4 months) = 12 human years` (граница первого сегмента)
-  - `0.5 year = 12 + 8·(0.5 − 0.33) ≈ 13.36`
-  - `1 year = 21 ЧГ`
-  - `5 years = 21 + 6·4 = 45 ЧГ`
-  - `throws on negative age`
-- [ ] verify tests fail — **Red**
-- [ ] create `RabbitSize` enum в `:core:model` (Dwarf, Small, Medium, Large, Giant) по §4.3 + stable `id`
-- [ ] create `RabbitAgeCalculator : AgeCalculator` в `:core:calculator`
-- [ ] implement кусочную формулу:
-  - `0 ≤ age ≤ 1/3 (4 months)` → `30 · age`
-  - `1/3 < age ≤ 1` → `12 + 8 · (age − 1/3)`
-  - `age > 1` → `21 + 6 · (age − 1)`
-- [ ] add KDoc со ссылкой на House Rabbit Society + AVMA + §4.3 spec
-- [ ] add ParameterizedTest с табличными значениями (10+ кейсов)
-- [ ] verify все тесты — **Green**
-- [ ] add `LifeStage.Rabbit` sealed подтипы по §4.3 (Infancy, Adolescence, YoungAdult, Adult, Senior)
-- [ ] create `RabbitLifeStageCalculator : LifeStageCalculator` с порогами: Infancy 0-3мес, Adolescence 3-6мес, YoungAdult 6-12мес, Adult 1-5y, Senior 5+
-- [ ] write FAILING tests для `RabbitLifeStageCalculator` (граничные кейсы для каждого перехода)
-- [ ] implement and verify — **Green**
-- [ ] add `expectedLifespanRange(size: RabbitSize): ClosedFloatingPointRange<Double>` (8-12 base; small ≤14; giant 6-8) с тестами
-- [ ] update `Species.Rabbit.isImplemented = true`
-- [ ] update `AgeCalculator.forSpecies(Rabbit)` returns RabbitAgeCalculator
-- [ ] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task
+- [x] write FAILING test `RabbitAgeCalculatorTest` (по §4.3, кусочная формула): покрыты 0.1y=3, 0.33y=12, 0.5y≈13.36, 1y=21, 2y=27, 5y=45, 8y=63, throws on zero/negative + параметризованная таблица (12 кейсов) + монотонность
+- [x] verify tests fail — **Red** (написаны до реализации калькулятора)
+- [x] create `RabbitSize` enum в `:core:model` (Dwarf, Small, Medium, Large, Giant) по §4.3 + stable `id`
+- [x] create `RabbitAgeCalculator : AgeCalculator` в `:core:calculator`
+- [x] implement кусочную формулу (использован литерал `0.33` из спеки §4.3, как в эталонных значениях):
+  - `age < 0.33 (4 months)` → `30 · age`
+  - `0.33 ≤ age < 1` → `12 + 8 · (age − 0.33)`
+  - `age ≥ 1` → `21 + 6 · (age − 1)`
+  - ⚠️ формула §4.3 разрывна на стыках (привязана к опорным точкам 12 ЧГ и 21 ЧГ); монотонность сохраняется. Вопрос «continuity» в Task 11 будет переформулирован в bounded-jump/monotonicity
+- [x] add KDoc со ссылкой на House Rabbit Society + AVMA + §4.3 spec
+- [x] add ParameterizedTest с табличными значениями (12 кейсов)
+- [x] verify все тесты — **Green**
+- [x] add `LifeStage.Rabbit` sealed подтипы по §4.3 (Infancy, Adolescence, YoungAdult, Adult, Senior)
+- [x] create `RabbitLifeStageCalculator : LifeStageCalculator` с порогами: Infancy 0-3мес, Adolescence 3-6мес, YoungAdult 6-12мес, Adult 1-5y, Senior 5+
+- [x] write FAILING tests для `RabbitLifeStageCalculator` (граничные кейсы для каждого перехода)
+- [x] implement and verify — **Green**
+- [x] add `expectedLifespanRange(size: RabbitSize): ClosedFloatingPointRange<Double>` (8-12 base; Dwarf/Small ≤14; Large 7-10; Giant 6-8) с тестами
+- [x] update `Species.Rabbit.isImplemented = true`
+- [x] update `AgeCalculator.forSpecies(Rabbit)` + `LifeStageCalculator.forSpecies(Rabbit)` returns Rabbit calculators
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task (также прогнаны `:core:model:test`, `:core:domain:test`, feature-тесты, `:app:compileDebugKotlin`, detekt, koverVerify — всё зелёное)
+- [x] ➕ cross-module sync (обнаружено): добавлена ветка `Rabbit` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Rabbit(size)`; exhaustive `when (lifeStage)` в `PetDetailScreen`/`QuickCalcResultSheet` дополнены ветками Rabbit + строковые ресурсы ru/en (предварительная локализация, финал — Task 22); domain-тесты «unsupported species» переключены с Rabbit на Fish; `SpeciesTest`/`LifeStageTest` обновлены
 
 ### Task 3: HamsterAgeCalculator + life stages (TDD)
 - [ ] write FAILING test `HamsterAgeCalculatorTest` (по §4.4):

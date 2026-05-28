@@ -73,4 +73,33 @@ sealed class LifeStage(
             fun all(): List<Cat> = listOf(Kitten, YoungAdult, MatureAdult, Senior, EndOfLife)
         }
     }
+
+    /**
+     * Стадии жизни кроликов (Oxbow Rabbit Life Stages, см. §4.3 спецификации).
+     *
+     * Пороги по возрасту (единые для всех пород):
+     *  - Infancy: 0–3 мес.
+     *  - Adolescence: 3–6 мес.
+     *  - YoungAdult: 6–12 мес.
+     *  - Adult: 1–5 лет
+     *  - Senior: 5+ лет
+     */
+    sealed class Rabbit(
+        displayKey: String,
+        ordinal: Int,
+    ) : LifeStage(displayKey, ordinal) {
+        data object Infancy : Rabbit(displayKey = "rabbit_infancy", ordinal = 0)
+
+        data object Adolescence : Rabbit(displayKey = "rabbit_adolescence", ordinal = 1)
+
+        data object YoungAdult : Rabbit(displayKey = "rabbit_young_adult", ordinal = 2)
+
+        data object Adult : Rabbit(displayKey = "rabbit_adult", ordinal = 3)
+
+        data object Senior : Rabbit(displayKey = "rabbit_senior", ordinal = 4)
+
+        companion object {
+            fun all(): List<Rabbit> = listOf(Infancy, Adolescence, YoungAdult, Adult, Senior)
+        }
+    }
 }

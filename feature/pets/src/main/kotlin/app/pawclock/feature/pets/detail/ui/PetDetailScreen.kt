@@ -359,6 +359,11 @@ internal fun lifeStageLabelRes(stage: LifeStage): Int =
         LifeStage.Cat.MatureAdult -> R.string.life_stage_cat_mature_adult
         LifeStage.Cat.Senior -> R.string.life_stage_cat_senior
         LifeStage.Cat.EndOfLife -> R.string.life_stage_cat_end_of_life
+        LifeStage.Rabbit.Infancy -> R.string.life_stage_rabbit_infancy
+        LifeStage.Rabbit.Adolescence -> R.string.life_stage_rabbit_adolescence
+        LifeStage.Rabbit.YoungAdult -> R.string.life_stage_rabbit_young_adult
+        LifeStage.Rabbit.Adult -> R.string.life_stage_rabbit_adult
+        LifeStage.Rabbit.Senior -> R.string.life_stage_rabbit_senior
     }
 
 // Локаль-зависимое форматирование. Используем Locale.getDefault() явно вместо

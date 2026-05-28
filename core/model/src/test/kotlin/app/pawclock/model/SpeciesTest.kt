@@ -49,10 +49,12 @@ class SpeciesTest {
     }
 
     @Test
-    fun `only Dog and Cat are implemented in this plan`() {
+    fun `implemented species are flagged, the rest are still stubs`() {
+        // Реализованы по мере выполнения Plan 2 (Task 2 добавил Rabbit).
         assertTrue(Species.Dog.isImplemented)
         assertTrue(Species.Cat.isImplemented)
-        assertFalse(Species.Rabbit.isImplemented)
+        assertTrue(Species.Rabbit.isImplemented)
+        // Ещё не реализованные виды (будут включаться в Tasks 3–10):
         assertFalse(Species.Hamster.isImplemented)
         assertFalse(Species.GuineaPig.isImplemented)
         assertFalse(Species.Rat.isImplemented)
@@ -65,11 +67,12 @@ class SpeciesTest {
     }
 
     @Test
-    fun `implemented returns exactly Dog and Cat`() {
+    fun `implemented returns Dog, Cat and Rabbit`() {
         val implemented = Species.implemented()
-        assertEquals(2, implemented.size)
+        assertEquals(3, implemented.size)
         assertTrue(implemented.contains(Species.Dog))
         assertTrue(implemented.contains(Species.Cat))
+        assertTrue(implemented.contains(Species.Rabbit))
     }
 
     @Test

@@ -3,6 +3,7 @@ package app.pawclock.calculator
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
+import app.pawclock.model.RabbitSize
 
 /**
  * Параметры расчёта возраста/стадии жизни, специфичные для каждого вида.
@@ -36,5 +37,16 @@ sealed interface SpeciesParams {
      */
     data class Cat(
         val type: CatType,
+    ) : SpeciesParams
+
+    /**
+     * Параметры кролика.
+     *
+     * @param size порода/размер кролика. На формулу расчёта возраста не влияет
+     *   (она едина для всех пород — House Rabbit Society), используется только для оценки
+     *   ожидаемой продолжительности жизни. См. [RabbitSize] и §4.3 спецификации.
+     */
+    data class Rabbit(
+        val size: RabbitSize,
     ) : SpeciesParams
 }

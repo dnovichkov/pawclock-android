@@ -154,6 +154,11 @@ internal fun lifeStageLabelRes(stage: LifeStage): Int =
         LifeStage.Cat.MatureAdult -> R.string.quick_calc_life_stage_cat_mature_adult
         LifeStage.Cat.Senior -> R.string.quick_calc_life_stage_cat_senior
         LifeStage.Cat.EndOfLife -> R.string.quick_calc_life_stage_cat_end_of_life
+        LifeStage.Rabbit.Infancy -> R.string.quick_calc_life_stage_rabbit_infancy
+        LifeStage.Rabbit.Adolescence -> R.string.quick_calc_life_stage_rabbit_adolescence
+        LifeStage.Rabbit.YoungAdult -> R.string.quick_calc_life_stage_rabbit_young_adult
+        LifeStage.Rabbit.Adult -> R.string.quick_calc_life_stage_rabbit_adult
+        LifeStage.Rabbit.Senior -> R.string.quick_calc_life_stage_rabbit_senior
     }
 
 private const val SHEET_PADDING_DP: Int = 16

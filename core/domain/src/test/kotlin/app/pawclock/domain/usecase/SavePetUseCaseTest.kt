@@ -82,16 +82,16 @@ class SavePetUseCaseTest {
     @Test
     fun `unsupported species throws UnsupportedSpeciesException`() =
         runTest {
-            val rabbit =
+            val fish =
                 Pet(
                     id = 0L,
-                    name = "Bunny",
-                    species = Species.Rabbit,
+                    name = "Nemo",
+                    species = Species.Fish,
                     birthDate = today.minusYears(2),
                 )
             val ex =
-                assertFailsWith<UnsupportedSpeciesException> { useCase().invoke(rabbit) }
-            assertEquals(Species.Rabbit, ex.species)
+                assertFailsWith<UnsupportedSpeciesException> { useCase().invoke(fish) }
+            assertEquals(Species.Fish, ex.species)
         }
 
     @Test

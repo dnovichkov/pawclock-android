@@ -201,15 +201,15 @@ class CalculatePetAgeUseCaseTest {
             val pet =
                 Pet(
                     id = 1L,
-                    name = "Bunny",
-                    species = Species.Rabbit,
+                    name = "Nemo",
+                    species = Species.Fish,
                     birthDate = fixedToday.minusYears(2),
                 )
             val ex =
                 assertFailsWith<app.pawclock.domain.pet.UnsupportedSpeciesException> {
                     useCase().invoke(pet)
                 }
-            assertEquals(Species.Rabbit, ex.species)
+            assertEquals(Species.Fish, ex.species)
         }
 
     // ─── Calendar age computation ─────────────────────────────────────────

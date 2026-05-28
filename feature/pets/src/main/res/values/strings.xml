@@ -60,5 +60,10 @@
     <string name="life_stage_cat_mature_adult">Зрелый взрослый</string>
     <string name="life_stage_cat_senior">Старший</string>
     <string name="life_stage_cat_end_of_life">Поздний возраст</string>
+    <string name="life_stage_rabbit_infancy">Детёныш</string>
+    <string name="life_stage_rabbit_adolescence">Подросток</string>
+    <string name="life_stage_rabbit_young_adult">Молодой взрослый</string>
+    <string name="life_stage_rabbit_adult">Взрослый</string>
+    <string name="life_stage_rabbit_senior">Старший</string>
 
 </resources>
