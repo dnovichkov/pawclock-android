@@ -1,6 +1,6 @@
 [versions]
 # Kotlin & build
-kotlin = "2.0.21"
+kotlin = "2.3.21"
 ksp = "2.0.21-1.0.28"
 # Task 17: bumped AGP 8.5.2 → 8.7.3 — AndroidX libraries 1.16.0+/1.11.1+/2.9.4+
 # (которые приходят с compose-bom 2026.05.00) требуют AGP ≥ 8.6.0. Версия 8.7.3
