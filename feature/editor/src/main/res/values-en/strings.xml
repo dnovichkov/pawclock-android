@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- TopAppBar -->
+    <string name="pet_editor_title_new">New pet</string>
+    <string name="pet_editor_title_edit">Edit pet</string>
+    <string name="pet_editor_back">Back</string>
+    <string name="pet_editor_save">Save</string>
+
+    <!-- Form fields -->
+    <string name="pet_editor_name_label">Name *</string>
+    <string name="pet_editor_weight_label">Weight (kg)</string>
+    <string name="pet_editor_notes_label">Notes</string>
+    <string name="pet_editor_birth_date_label">Birth date *</string>
+
+    <!-- Date picker -->
+    <string name="pet_editor_date_ok">OK</string>
+    <string name="pet_editor_date_cancel">Cancel</string>
+
+    <!-- Species selector -->
+    <string name="pet_editor_species_label">Species *</string>
+    <string name="pet_editor_species_dog">Dog</string>
+    <string name="pet_editor_species_cat">Cat</string>
+
+    <!-- Subcategory -->
+    <string name="pet_editor_subcategory_label">Subcategory</string>
+    <string name="dog_size_toy">Toy</string>
+    <string name="dog_size_small">Small</string>
+    <string name="dog_size_medium">Medium</string>
+    <string name="dog_size_large">Large</string>
+    <string name="dog_size_giant">Giant</string>
+    <string name="cat_type_indoor_short_hair">Indoor short-hair</string>
+    <string name="cat_type_indoor_long_hair">Indoor long-hair</string>
+    <string name="cat_type_outdoor">Outdoor</string>
+    <string name="cat_type_large_breed">Large breed</string>
+
+    <!-- Gender -->
+    <string name="pet_editor_gender_label">Gender</string>
+    <string name="pet_editor_gender_male">Male</string>
+    <string name="pet_editor_gender_female">Female</string>
+    <string name="pet_editor_gender_unknown">Unspecified</string>
+
+    <!-- Validation errors -->
+    <string name="pet_editor_error_name_blank">Please enter the pet\'s name</string>
+    <string name="pet_editor_error_birth_date_in_future">Birth date cannot be in the future</string>
+    <string name="pet_editor_error_birth_date_unrealistic">Birth date is too far in the past</string>
+    <string name="pet_editor_error_species_required">Please choose a species</string>
+    <string name="pet_editor_error_birth_date_required">Please enter a birth date</string>
+    <string name="pet_editor_error_pet_not_found">Pet not found</string>
+    <string name="pet_editor_error_unsupported_species">This species is not supported yet</string>
+    <string name="pet_editor_error_load_failed">Could not load pet data</string>
+    <string name="pet_editor_error_save_failed">Could not save pet. Please try again</string>
+
+</resources>

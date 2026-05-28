@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Минимальная XML-тема для PawClock (Task 17 / Plan 1).
+
+  Реальный визуальный стиль приложения определяется Compose-темой
+  app.pawclock.designsystem.theme.PawClockTheme и применяется в setContent { ... }.
+  Эта XML-тема нужна только для:
+    1. Initial frame до того, как Compose возьмёт control (splash от системы).
+    2. Window-decor (status bar / navigation bar базовые цвета).
+
+  Material Components NoActionBar — потому что Compose сам рисует TopAppBar.
+-->
+<resources>
+    <style name="Theme.PawClock" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

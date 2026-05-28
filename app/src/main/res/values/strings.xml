@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Русские строки (default локаль для PawClock).
+  Содержит только app-wide строки. Settings/About-строки — в :feature:settings,
+  PetsList/PetDetail-строки — в :feature:pets, и т.д. Дубли удалены, чтобы
+  избежать резолва AGP в пользу :app overriding feature-модулей с другим текстом.
+
+  Локализация: §6 спецификации. Английский перевод — values-en/strings.xml.
+-->
+<resources>
+
+    <!-- App-wide -->
+    <string name="app_name">PawClock</string>
+
+    <!-- Common (используются несколькими модулями через :app fallback) -->
+    <string name="common_back">Назад</string>
+    <string name="common_ok">ОК</string>
+    <string name="common_cancel">Отмена</string>
+
+</resources>

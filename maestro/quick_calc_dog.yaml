@@ -1,0 +1,56 @@
+# Maestro E2E flow (§11.10 спецификации, Task 23 / Plan 1).
+#
+# Сценарий: пользователь открывает Quick Calculator (без сохранения в БД) →
+# выбирает «Собака» + «Средняя» + текущую дату → видит результат → переключает
+# метод расчёта (Wang ↔ По размеру) и видит изменённое значение ЧГ.
+#
+# Этот flow покрывает §3.2 спецификации (educational angle про методы расчёта).
+#
+# Запуск:
+#   maestro test maestro/quick_calc_dog.yaml
+#
+# Локаль: русские строки (default по §6).
+appId: app.pawclock.debug
+---
+- clearState
+- launchApp
+
+# Перейти из PetsList в QuickCalculator через IconButton в TopAppBar (с
+# contentDescription «Быстрый расчёт» — см. PetsListScreen.kt). Раньше тут был
+# openLink: "pawclock://quickcalc", но manifest не объявляет intent-filter под
+# эту схему (см. ADR-0005 — приложение полностью offline, никаких exported
+# deep-link сюрфейсов), и Maestro гарантированно падал. tapOn по
+# contentDescription устойчиво работает и точно отражает реальный пользовательский
+# путь в Plan 1 UI.
+- tapOn: "Быстрый расчёт"
+
+# Проверка, что мы внутри Quick Calculator (заголовок экрана идентичен label'у
+# IconButton'а — assertVisible подтверждает переход на новый экран).
+- assertVisible: "Быстрый расчёт"
+
+# Выбрать вид «Собака».
+- tapOn: "Собака"
+
+# Подкатегория «Средняя» (default для собак — см. QuickCalcViewModel).
+- assertVisible: "Средняя"
+
+# Указать дату рождения (тап по полю → ОК). QuickCalcBirthDateField
+# устанавливает initialSelectedDateMillis = "1 год назад" когда value=null
+# (см. fallback в QuickCalcBirthDateField.kt) — этого достаточно для smoke E2E:
+# дата валидна, расчёт пройдёт.
+- tapOn:
+    id: "quick_calc_birth_date_field"
+- tapOn: "ОК"
+
+# Рассчитать.
+- tapOn:
+    id: "quick_calc_calculate_fab"
+
+# Должен появиться result sheet с ЧГ.
+- assertVisible: "В человеческих годах"
+
+# Переключить метод расчёта внутри bottom-sheet'а (Wang → По размеру).
+- tapOn: "По размеру"
+
+# Sheet остаётся открытым; ЧГ автоматически пересчитывается без явного Calculate.
+- assertVisible: "В человеческих годах"

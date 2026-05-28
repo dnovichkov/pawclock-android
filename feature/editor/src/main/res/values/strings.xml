@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Русские строки для :feature:editor (PetEditorScreen + секции формы).
+  Перевод: values-en/strings.xml.
+-->
+<resources>
+
+    <!-- TopAppBar -->
+    <string name="pet_editor_title_new">Новый питомец</string>
+    <string name="pet_editor_title_edit">Редактирование</string>
+    <string name="pet_editor_back">Назад</string>
+    <string name="pet_editor_save">Сохранить</string>
+
+    <!-- Form fields -->
+    <string name="pet_editor_name_label">Имя *</string>
+    <string name="pet_editor_weight_label">Вес (кг)</string>
+    <string name="pet_editor_notes_label">Заметки</string>
+    <string name="pet_editor_birth_date_label">Дата рождения *</string>
+
+    <!-- Date picker -->
+    <string name="pet_editor_date_ok">ОК</string>
+    <string name="pet_editor_date_cancel">Отмена</string>
+
+    <!-- Species selector -->
+    <string name="pet_editor_species_label">Вид *</string>
+    <string name="pet_editor_species_dog">Собака</string>
+    <string name="pet_editor_species_cat">Кошка</string>
+
+    <!-- Subcategory -->
+    <string name="pet_editor_subcategory_label">Подкатегория</string>
+    <string name="dog_size_toy">Той</string>
+    <string name="dog_size_small">Маленькая</string>
+    <string name="dog_size_medium">Средняя</string>
+    <string name="dog_size_large">Большая</string>
+    <string name="dog_size_giant">Гигантская</string>
+    <string name="cat_type_indoor_short_hair">Домашняя короткошёрстная</string>
+    <string name="cat_type_indoor_long_hair">Домашняя длинношёрстная</string>
+    <string name="cat_type_outdoor">Уличная</string>
+    <string name="cat_type_large_breed">Крупная порода</string>
+
+    <!-- Gender -->
+    <string name="pet_editor_gender_label">Пол</string>
+    <string name="pet_editor_gender_male">Самец</string>
+    <string name="pet_editor_gender_female">Самка</string>
+    <string name="pet_editor_gender_unknown">Не указан</string>
+
+    <!-- Validation errors -->
+    <string name="pet_editor_error_name_blank">Введите имя питомца</string>
+    <string name="pet_editor_error_birth_date_in_future">Дата рождения не может быть в будущем</string>
+    <string name="pet_editor_error_birth_date_unrealistic">Дата рождения слишком давно</string>
+    <string name="pet_editor_error_species_required">Выберите вид питомца</string>
+    <string name="pet_editor_error_birth_date_required">Укажите дату рождения</string>
+    <string name="pet_editor_error_pet_not_found">Питомец не найден</string>
+    <string name="pet_editor_error_unsupported_species">Этот вид пока не поддерживается</string>
+    <string name="pet_editor_error_load_failed">Не удалось загрузить данные питомца</string>
+    <string name="pet_editor_error_save_failed">Не удалось сохранить питомца. Повторите попытку</string>
+
+</resources>

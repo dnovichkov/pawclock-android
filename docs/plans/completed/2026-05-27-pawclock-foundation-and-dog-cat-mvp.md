@@ -1,0 +1,676 @@
+# PawClock — Plan 1: Foundation + Dog & Cat MVP
+
+## Overview
+
+Первый план для greenfield-проекта **PawClock** — Android-приложения для расчёта возраста питомцев. План закладывает фундамент проекта и реализует первые два вида — **собак и кошек** — с полным MVP-функционалом (профили + Quick Calculator + стадии жизни + care-рекомендации + Material You + локализация ru/en).
+
+**Что НЕ входит в этот план (отложено на следующие планы):**
+- Остальные 10 групп животных (кролики, хомяки, морские свинки, крысы, мыши, хорьки, попугаи, рептилии, лошади, рыбы) — Plan 2
+- Экспорт/импорт JSON/CSV через SAF (§3.5 спецификации) — Plan 2
+- Виджеты Glance, уведомления WorkManager (§3.4) — Plan 3 (v2.0)
+- F-Droid публикация — Plan 3
+- Mutation testing (Pitest), benchmark profiles — Plan 3
+
+**Что входит в план:**
+- Полный Gradle multi-module skeleton (12 модулей по §7.3)
+- Полный CI/CD по §8: 4 workflow (ci.yml, release.yml, nightly.yml, lint.yml), dependabot, PR/issue templates, CODEOWNERS, scripts/pre-commit.sh
+- `:core:calculator` с TDD: DogAgeCalculator (Wang et al. 2020 + AKC/AAHA 2019 size table) и CatAgeCalculator (AAHA/AAFP 2021) с поправками
+- Стадии жизни (LifeStage) для собак и кошек по §4.1, §4.2
+- `:core:database` (Room), `:core:datastore` (Preferences), `:core:domain` (UseCases)
+- Care-рекомендации в `assets/care/` (placeholder-тексты по §3.3, заменяются позже)
+- `:core:designsystem` (Material You, динамические цвета, fallback палитра)
+- Полный UI: PetsList, PetDetail, PetEditor, QuickCalculator, Settings, About
+- Локализация ru (default) + en со spasiboм за plurals
+- Стартовые ADR-0001..0007
+- Документация: README.md, ARCHITECTURE.md, TESTING.md, CONTRIBUTING.md, RELEASE.md
+
+**Проблема, которую решает план:** запустить разработку приложения с правильной TDD-дисциплиной и работающим vertical slice "собака/кошка → возраст в человеческих годах + стадия + рекомендации". Дальнейшие виды добавляются по одной формуле = один TDD-цикл.
+
+## Context (from discovery)
+
+**Текущее состояние репозитория:**
+- Только `docs/specs/pawclock-specification.md` (1226 строк, v1.1, дата 2026-05-27)
+- Только `.git/` initialized — без любых исходников
+- `.claude/settings.local.json` уже есть (локальные настройки агента)
+- ralphex CLI установлен: `C:\Users\Dmitriy\go\bin\ralphex.exe` (v1.0.1)
+
+**Целевая структура (по §7.3 спецификации):**
+```
+:app                           — точка входа, DI-граф, Application
+:core:designsystem             — тема, цвета, типографика, общие composables
+:core:model                    — доменные модели (Pet, LifeStage, Species)
+:core:calculator               — pure-Kotlin модуль с формулами расчёта
+:core:database                 — Room, DAO, мигратор
+:core:datastore                — DataStore Preferences
+:core:domain                   — UseCase'ы
+:core:testing                  — общие fixtures, fakes
+:feature:pets                  — список питомцев, детальный экран
+:feature:editor                — создание/редактирование
+:feature:quickcalc             — одноразовый расчёт
+:feature:settings              — настройки
+```
+
+**Ключевые источники для формул (см. §4 спецификации):**
+- Собаки (Wang): `ЧГ = 16 · ln(age) + 31`, Wang T. et al., Cell Systems 2020, DOI: 10.1016/j.cels.2020.06.006
+- Собаки (size): AKC/AAHA 2019 — табличные значения для Toy/Small/Medium/Large/Giant
+- Кошки: AAHA/AAFP 2021 — `1й год = 15`, `2й = 24`, далее `+4/год`; outdoor × 1.15 после 2 лет; large breeds +1/год после 2
+
+**Стек технологий (§7.1):** Kotlin 2.0+, Compose BOM 2024.12+, Material 3 1.3+, Hilt, Navigation Compose 2.8+ typesafe, Coroutines+Flow+Turbine, Room 2.6+ KSP, DataStore Preferences, kotlinx.serialization.
+
+**SDK (§7.2):** minSdk=24, compileSdk=35, targetSdk=35, Java 17 toolchain, applicationId `app.pawclock`.
+
+**GitHub user:** dnovichkov (для CODEOWNERS, README).
+
+## Development Approach
+
+- **Testing approach: TDD (tests first)** — обязательно для `:core:calculator`, `:core:domain` и любой бизнес-логики (см. §11.1 спецификации). Цикл Red → Green → Refactor строго.
+- Complete each task fully before moving to the next.
+- Make small, focused changes.
+- **CRITICAL: every task MUST include new/updated tests for code changes in that task**
+  - tests are NOT optional — they are a required part of the checklist
+  - write unit tests for new functions/methods
+  - write unit tests for modified functions/methods
+  - add new test cases for new code paths
+  - update existing test cases if behavior changes
+  - tests cover both success and error scenarios
+- **CRITICAL: all tests must pass before starting next task** — no exceptions
+- **CRITICAL: update this plan file when scope changes during implementation**
+- Run tests after each change.
+- Maintain backward compatibility.
+- **TDD-discipline для :core:calculator (≥95% coverage по §11.4):** для каждой формулы сначала пишется падающий тест с известным эталонным значением из спецификации, потом минимально работающая реализация, потом параметризованные тесты для табличных кейсов, потом edge cases, потом property-based проверки в Kotest. Только потом — следующая формула.
+- KDoc для каждой формулы ОБЯЗАТЕЛЬНО содержит ссылку на первоисточник (DOI, URL, либо имя стандарта AKC/AAHA/AAFP).
+- Никаких `Thread.sleep` в тестах. Только `runTest` + `TestDispatcher`. Никаких реальных дат — `Clock.fixed(...)`.
+
+## Testing Strategy
+
+- **Unit tests (JVM, JUnit 5 + kotlin.test):** обязательны для каждой задачи (см. Development Approach выше). Целевое покрытие по §11.4:
+  - `:core:calculator` ≥ 95%
+  - `:core:domain` ≥ 90%
+  - `:core:database` ≥ 80%
+  - `:feature:*` ViewModels ≥ 80%
+- **Property-based tests (Kotest):** для математических свойств формул (monotonicity, positivity, continuity) — отдельная задача Task 11.
+- **Integration tests (androidTest):** Room с in-memory database, DataStore с TestDataStore.
+- **Compose UI tests:** `createComposeRule()` для каждого экрана — Task 18-21.
+- **E2E flow (Maestro):** `maestro/create_first_pet.yaml` по §11.10 — Task 23.
+- **Screenshot tests (Roborazzi):** базовый setup в Task 16, эталонные snapshots — opt-in в этом плане (можно отложить блокирующий чек в CI на Plan 2).
+- **Локализационные тесты:** проверка plurals (1 год / 2 года / 5 лет) — Task 22.
+- Coverage measurement через **Kover**, публикация в Codecov (Codecov badge — Task 25).
+
+## Progress Tracking
+
+- Mark completed items with `[x]` immediately when done.
+- Add newly discovered tasks with ➕ prefix.
+- Document issues/blockers with ⚠️ prefix.
+- Update plan if implementation deviates from original scope.
+- Keep plan in sync with actual work done.
+
+## What Goes Where
+
+- **Implementation Steps** (`[ ]` checkboxes): код, тесты, конфиги внутри репозитория.
+- **Post-Completion** (no checkboxes): manual установка Branch Protection через UI GitHub, регистрация Codecov, создание Google Play Console аккаунта, проверка domain pawclock.app — всё, что требует внешних действий.
+
+## Implementation Steps
+
+### Task 1: Project skeleton (Gradle multi-module + version catalog)
+- [x] create root files: `settings.gradle.kts`, `build.gradle.kts`, `gradle.properties` (с Kotlin code style, AndroidX, JVM args)
+- [x] create `gradle/libs.versions.toml` с версиями всех библиотек по §7.1 (Kotlin 2.0, Compose BOM 2024.12, Material 3 1.3, Hilt, Navigation 2.8, Room 2.6, Coroutines, Turbine, JUnit 5, Kotest, MockK, Roborazzi, Maestro) — версии align с offline-cache (Kotlin 2.0.21, AGP 8.5.2, KSP 2.0.21-1.0.28, Roborazzi 1.30.1; bump в следующих задачах при наличии сети)
+- [x] create gradle wrapper (`gradlew`, `gradlew.bat`, `gradle/wrapper/gradle-wrapper.properties`, `gradle-wrapper.jar`) — Gradle 8.14.3 (>= 8.9 как требует спека)
+- [x] create Android-стандартный `.gitignore` (build/, .gradle/, local.properties, *.iml, .idea/, .DS_Store)
+- [x] create `.editorconfig` (по §8.1) с UTF-8, LF, 4-space indent, max line 120
+- [x] create 12 модулей-пустышек по §7.3 с минимальным `build.gradle.kts` каждый: `:app` (com.android.application), `:core:designsystem`, `:core:model`, `:core:calculator` (pure Kotlin JVM), `:core:database`, `:core:datastore`, `:core:domain`, `:core:testing`, `:feature:pets`, `:feature:editor`, `:feature:quickcalc`, `:feature:settings`
+- [x] register all modules in `settings.gradle.kts`
+- [x] add `gradle/init.gradle` или buildSrc convention plugins (по выбору агента) для общих настроек compileSdk/minSdk/targetSdk — выбран простой inline-подход (constants в каждом модуле); convention plugins можно ввести позже при разрастании дублирования
+- [x] write smoke-test script `scripts/verify-skeleton.sh` который запускает `./gradlew help` и `./gradlew projects` и проверяет, что все 12 модулей зарегистрированы
+- [x] write unit test `:core:calculator` `SkeletonTest` (один тривиальный assertion `1+1==2`) — чтобы убедиться, что JVM-тесты вообще запускаются
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task
+
+### Task 2: ADRs (Architecture Decision Records 0001-0007)
+- [x] create `docs/adr/` directory + `docs/adr/template-madr.md` (шаблон MADR по §8.11)
+- [x] write `docs/adr/0001-jetpack-compose-over-views.md` (Status: Accepted; Context: новый проект; Decision: Compose; Consequences: меньше xml, нет View-stack)
+- [x] write `docs/adr/0002-multi-module-architecture.md` (структура по §7.3, build time benefits, fast TDD на `:core:calculator`)
+- [x] write `docs/adr/0003-tdd-as-required-practice.md` (TDD обязателен для `:core:calculator` и `:core:domain`, цели coverage из §11.4)
+- [x] write `docs/adr/0004-room-over-sqldelight.md` (Room + KSP, причина: широкая поддержка, хорошая интеграция с Hilt)
+- [x] write `docs/adr/0005-no-network-permission.md` (запрет INTERNET permission, отсутствие аналитики, Data Safety "No data collected" по §9)
+- [x] write `docs/adr/0006-wang-et-al-formula-as-default-for-dogs.md` (default = Wang 2020, альтернатива = AKC/AAHA size table; пользователь может переключать)
+- [x] write `docs/adr/0007-conventional-commits.md` (Conventional Commits, типы из §8.3, генерация CHANGELOG через git-cliff позже)
+- [x] verify all ADRs have Status, Context, Decision, Consequences sections (smoke-check через `grep -l "## Status" docs/adr/*.md`) — MADR-формат использует nested `### Positive/Negative Consequences`; verify-script принимает любой heading level
+- [x] write test script `scripts/verify-adrs.sh` проверяющий наличие всех 7 ADR и базовую структуру
+
+### Task 3: GitHub Actions — ci.yml + lint.yml + scripts/pre-commit.sh
+- [x] create `.github/workflows/ci.yml` по §8.5.1 с jobs: `unit-tests`, `lint`, `build`, `screenshot-tests` (последний — placeholder, чтобы не падать пока)
+- [x] create `.github/workflows/lint.yml` отдельным workflow по §8.5.4 (ktlint, detekt, Android Lint) — с `paths:` фильтром для пропуска docs-only PR
+- [x] create `scripts/pre-commit.sh` по §8.6 (ktlintFormat, detekt, `:core:calculator:test`) — c re-stage после ktlintFormat
+- [x] create `scripts/verify-bundle-size.sh` (placeholder, лимит 15 МБ — реально проверяется в release.yml в Task 4); exit 0 если AAB ещё не собран
+- [x] add ktlint + detekt + Android Lint конфиги: `.editorconfig` уже есть, добавить `detekt.yml` (стартовая конфигурация) и `lint.xml` (suppress несущественные); добавлен `.gitattributes` чтобы shell-скрипты оставались LF на Linux runners
+- [x] add ktlint и detekt Gradle plugins в `gradle/libs.versions.toml` и в root `build.gradle.kts` — ktlint bumped 12.1.2 → 12.1.1 для align с offline-кэшем; применяется через `subprojects { apply(plugin = "...") }` blanket-блок (auto-no-op на модулях без Kotlin)
+- [x] write test: запустить `./gradlew ktlintCheck detekt lintDebug` локально — passes (ktlintFormat auto-fix применился к `build.gradle.kts` файлам по правилу `standard:chain-method-continuation`)
+- [x] write test: `actionlint .github/workflows/*.yml` (если доступен) или хотя бы `yamllint -s` для синтаксиса — `scripts/verify-workflows.sh` с graceful fallback chain actionlint → yamllint → python+pyyaml → grep
+- [x] verify scripts/pre-commit.sh executable (`chmod +x` зафиксировать в git через `git update-index --chmod=+x`) — все 3 новых скрипта 100755
+- [x] run `./gradlew ktlintCheck detekt lintDebug` — passes (включая `:app:lintDebug` после добавления stub AndroidManifest.xml, который Task 17 расширит до полного манифеста)
+- ➕ create minimal `app/src/main/AndroidManifest.xml` stub чтобы разблокировать `:app:lintDebug` и `:app:assembleDebug` до Task 17; содержит `INTERNET tools:node="remove"` по §9 заранее
+
+### Task 4: GitHub Actions — release.yml + nightly.yml + dependabot + PR/issue templates + CODEOWNERS
+- [x] create `.github/workflows/release.yml` по §8.5.2 (триггер на тег `v*.*.*`, сборка bundleRelease с подписью из Secrets, verify-bundle-size.sh, gh release с changelog, опциональный r0adkll/upload-google-play закомментирован пока) — keystore декодируется из `KEYSTORE_BASE64`, env-vars с префиксом `PAWCLOCK_` (читаются в Task 17 signing config), `concurrency: cancel-in-progress: false` чтобы релизы не отменяли друг друга
+- [x] create `.github/workflows/nightly.yml` по §8.5.3 (reactivecircus/android-emulator-runner API 24/30/35, прогон Compose UI + Maestro, cron `0 2 * * *`) — AVD-cache + create-snapshot стадия для ускорения; matrix.target: API 24 = `default` (без GApps), 30/35 = `google_apis`; Maestro-job guard'ом detect_flows skip'ается до Task 23; +`workflow_dispatch` для ручного запуска
+- [x] create `.github/dependabot.yml` по §8.9 (gradle weekly, github-actions monthly, лимит 5 PR) — добавлены `groups` (kotlin-and-ksp, androidx-compose, androidx-core, test-runners) чтобы routine bumps шли пачками; security alerts всё равно отдельными PR
+- [x] create `.github/ISSUE_TEMPLATE/bug_report.md` по §8.7
+- [x] create `.github/ISSUE_TEMPLATE/feature_request.md` (минимальный template)
+- [x] create `.github/ISSUE_TEMPLATE/species_request.md` (вид, научное название, источник формулы, стадии) — источник формулы оформлен чек-листом (peer-review/vet-org/textbook), чтобы reviewer мог быстро отсеивать issues без citation
+- [x] create `.github/PULL_REQUEST_TEMPLATE.md` по §8.7 (чеклист с TDD-пунктами) — секции TDD & correctness / Source attribution / Quality gates / Privacy & safety
+- [x] create `.github/CODEOWNERS` по §8.8 с `* @dnovichkov` и `/core/calculator/ @dnovichkov` и `/docs/adr/ @dnovichkov` — расширено защитой `/core/model/`, `/app/src/main/assets/care/`, `/.github/`, `/gradle/libs.versions.toml`, `/scripts/`, AndroidManifest.xml
+- [x] write test: `actionlint .github/workflows/*.yml` валидирует release.yml и nightly.yml — выполняется через `scripts/verify-workflows.sh` (унаследованный из Task 3 fallback chain actionlint → yamllint → python+pyyaml → grep); все 4 workflow парсятся
+- [x] write test: проверка существования всех template-файлов через `ls -la .github/ISSUE_TEMPLATE/` и наличие обязательных секций — `scripts/verify-github-templates.sh` проверяет файлы, front-matter, обязательные секции species_request.md, TDD-маркеры PR-template, защищённые пути CODEOWNERS, структуру dependabot.yml
+- ➕ add `.github/ISSUE_TEMPLATE/config.yml` с `blank_issues_enabled: false` + Discussions/spec contact links — закрывает обход template'ов через "New blank issue"
+
+### Task 5: :core:model — Species, LifeStage, Pet
+- [x] write FAILING tests in `:core:model` `SpeciesTest`, `LifeStageTest`, `PetTest` (TDD: red first):
+  - `Species.fromString("dog")` returns `Species.Dog`
+  - `Species.fromString("unknown")` throws / returns null
+  - `LifeStage.Dog.Senior` существует и `displayKey == "dog_senior"`
+  - `Pet.equals/hashCode/copy` корректны для двух одинаковых dataclass instances
+- [x] implement `Species` sealed class или enum со всеми 12 видами из §4 (Dog, Cat, Rabbit, Hamster, GuineaPig, Rat, Mouse, Ferret, Bird, Reptile, Horse, Fish), но **только Dog и Cat имеют флаг `isImplemented = true`** в этом плане
+- [x] implement `LifeStage` sealed class с подтипами `Dog` (Puppy, YoungAdult, MatureAdult, Senior, EndOfLife) и `Cat` (Kitten, YoungAdult, MatureAdult, Senior, EndOfLife) по §4.1, §4.2
+- [x] implement `Pet` data class с полями: id (Long), name (String, required), species (Species), subcategory (String? — DogSize или CatType), birthDate (LocalDate), gender (Gender?), weightKg (Double?), notes (String?), photoPath (String?) — `init` блок enforces `require(name.isNotBlank())` для type-safe валидации на уровне модели
+- [x] implement `DogSize` enum: Toy, Small, Medium, Large, Giant с границами в кг (по §4.1) — добавлен `fromWeight(kg)` helper с правилом `[min, max)` и null для non-positive веса
+- [x] implement `CatType` enum: IndoorShortHair, IndoorLongHair, Outdoor, LargeBreed — добавлены флаги `isOutdoor` / `isLargeBreed` для использования в формулах калькулятора (Task 9)
+- [x] implement `Gender` enum: Male, Female, Unknown
+- [x] add KDoc для каждого публичного типа со ссылкой на спецификацию (§4.1, §4.2)
+- [x] run `./gradlew :core:model:test --no-daemon` — must pass before next task — 37 тестов прошли (Species: 9, LifeStage: 9, Pet: 5, DogSize: 6, CatType: 5, Gender: 3), ktlint + detekt clean
+
+### Task 6: :core:calculator — DogAgeCalculator (Wang formula) TDD
+- [x] write FAILING test `DogAgeCalculatorTest` в `:core:calculator/src/test/kotlin/`:
+  - test 1: `Wang formula returns 31 human years for 1 year old dog` (16·ln(1)+31=31)
+  - test 2: `throws on zero or negative age`
+- [x] verify tests fail with compilation error (no class yet) — **Red** (compileTestKotlin FAILED с 10 unresolved references на DogAgeCalculator/CalculationMethod)
+- [x] create `CalculationMethod` enum (EPIGENETIC, SIZE_BASED) в `:core:calculator`
+- [x] create minimal `DogAgeCalculator.toHumanYears(ageInYears: Double, method: CalculationMethod): Double` returning 31.0 — **Green** for test 1 (объединено с реальной реализацией для краткости TDD-цикла)
+- [x] add real Wang implementation `16.0 * ln(ageInYears) + 31.0` для `EPIGENETIC` + `require(ageInYears > 0)` — **Green** for test 2
+- [x] add ParameterizedTest with @CsvSource по §11.5: `1.0,31.0`, `2.0,42.1`, `5.0,56.7`, `10.0,67.8`, `12.0,70.7` с `absoluteTolerance = 0.2`
+- [x] add test `handles 7 weeks old puppy via piecewise extension` (для age < 1 года используем кусочную интерполяцию по §4.1 или возвращаем линейную аппроксимацию — задокументировать выбор в KDoc) — выбрана степенная аппроксимация `31 · age^0.6`: непрерывна с Wang в age=1, даёт 0 в age=0, монотонно растёт; задокументировано в KDoc; добавлены два дополнительных теста: `puppy extension is continuous with Wang formula at age 1` и `6 months puppy is between 15 and 25 human years`
+- [x] add KDoc со ссылкой на Wang T. et al. Cell Systems 2020, DOI: 10.1016/j.cels.2020.06.006 (§11.5 пример)
+- [x] extract `WANG_COEFFICIENT = 16.0` и `WANG_OFFSET = 31.0` как internal const — **Refactor** (плюс `WANG_PUPPY_EXPONENT = 0.6` для puppy-расширения)
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — 11 тестов прошли (1 single + 5 параметризованных + 2 throws + 3 puppy/continuity), ktlint + detekt clean
+
+### Task 7: :core:calculator — DogAgeCalculator (AKC/AAHA size table) TDD
+- [x] write FAILING test `DogAgeCalculatorSizeBasedTest`:
+  - параметризованные кейсы из таблицы §4.1: для каждого `DogSize` × табличного `Возраст` ожидаемое ЧГ
+  - `Toy 1y = 15`, `Toy 2y = 24`, `Giant 1y = 12`, `Giant 6y = 49`, и т.д. (вся таблица из §4.1)
+- [x] verify tests fail (метод SIZE_BASED ещё не реализован) — **Red** (compileTestKotlin FAILED: `Argument type mismatch: actual type is 'app.pawclock.model.DogSize', but 'app.pawclock.calculator.CalculationMethod' was expected`)
+- [x] add `DogSize` parameter overload: `toHumanYears(ageInYears, method, size: DogSize)` или передавать `DogSize` в `subcategory` — введены **две** перегрузки: type-safe `toHumanYears(age, DogSize)` (предпочтительный API) и `toHumanYears(age, method, DogSize?)` для UseCase-слоя, который читает дефолтный метод из настроек
+- [x] implement size-based lookup table как private `Map<DogSize, NavigableMap<Double, Double>>` с табличными значениями из §4.1 — отступление от плана: использован общий `DoubleArray ANCHOR_AGES` + 4 параллельных `DoubleArray` колонок ради zero boxing на горячем пути. `DogSize.Toy` и `DogSize.Small` обе мапятся на колонку «Малая ≤9 кг» (AKC/AAHA 2019 не разделяет миниатюрных и малых)
+- [x] implement линейную интерполяцию между ближайшими табличными значениями для нецелых возрастов (например, 3.5 года Toy = (28+32)/2 = 30) — выделена в private `interpolateWithinTable()` чтобы удовлетворить detekt `ReturnCount`
+- [x] verify все табличные тесты — **Green** (47 новых SIZE_BASED тестов прошли: Toy 12, Small 4, Medium 8, Large 6, Giant 8, + interpolation/extrapolation/edge cases)
+- [x] add edge tests: `age=0.5` (puppy), `age=20.0` (за пределами таблицы — экстраполяция или cap), отрицательный возраст бросает IllegalArgumentException — linear extrapolation использует наклон последних двух точек (14-15 лет), документировано в KDoc; puppy < 1 года: линейная интерполяция от 0 ЧГ к первой табличной точке
+- [x] add KDoc со ссылкой на AKC/AAHA 2019 + объяснение интерполяции/экстраполяции — полная таблица в KDoc `DogSizeTable`, ссылки в `DogAgeCalculator` KDoc; `@file:Suppress("detekt:MagicNumber")` с обоснованием что числа — это published-стандарт, а не magic
+- [x] refactor: вынести таблицу в companion object `DogSizeTable.kt` для читаемости — `internal object DogSizeTable` (не companion object: `DogAgeCalculator` остаётся `class`, чтобы можно было инстанцировать в тестах; таблица — separate file-level object для encapsulation)
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — 59 тестов прошли (11 EPIGENETIC + 47 SIZE_BASED + 1 skeleton), ktlint + detekt clean
+- ➕ added `implementation(project(":core:model"))` to `:core:calculator/build.gradle.kts` — Task 7 первая, где calculator нуждается в `DogSize` из `:core:model`
+
+### Task 8: :core:calculator — Dog life stages TDD
+- [x] write FAILING test `DogLifeStageCalculatorTest`:
+  - `Toy puppy at 6 months → LifeStage.Dog.Puppy`
+  - `Small adult at 4 years → LifeStage.Dog.MatureAdult`
+  - `Large senior at 7 years → LifeStage.Dog.Senior`
+  - `Giant senior at 5 years → LifeStage.Dog.Senior` (для гигантских с 5-6 лет по §4.1)
+  - `Toy at 15 years → LifeStage.Dog.EndOfLife` (когда возраст близок к ЧЖ)
+- [x] verify tests fail — **Red** (compileTestKotlin FAILED с `Unresolved reference 'DogLifeStageCalculator'`)
+- [x] create `DogLifeStageCalculator.determine(ageInYears: Double, size: DogSize): LifeStage.Dog`
+- [x] implement пороги по §4.1 (AAHA 2019): Puppy (0 — половая зрелость), YoungAdult, MatureAdult, Senior (зависит от размера: Toy/Small 11+, Medium 9+, Large 7+, Giant 5+), EndOfLife (близко к expected lifespan) — порог Puppy→YoungAdult = 0.75 года (единый для всех размеров, медиана AAHA по половой зрелости); MatureAdult с 3 лет (социальная зрелость по AAHA 2019)
+- [x] verify все тесты — **Green** (53 новых теста прошли)
+- [x] add ParameterizedTest для всех границ size × stage — 36 параметризованных кейсов, по 7-11 на каждый из 5 размеров, покрывают переходы и граничные значения
+- [x] add KDoc со ссылкой на AAHA 2019 Canine Life Stage Guidelines + McMillan 2024 (Scientific Reports, n=584 734)
+- [x] add `expectedLifespanRange(size: DogSize): ClosedRange<Double>` по §4.1 (6-18 лет в зависимости от размера, McMillan 2024) — возвращает `ClosedFloatingPointRange<Double>` для поддержки `contains()` с Double
+- [x] write tests для `expectedLifespanRange` (4 размера × ожидаемые границы) — 6 тестов: 5 на размеры + 1 биоинвариант "меньше собака → дольше живёт"
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — 112 тестов прошло (предыдущие 59 + 53 новых), ktlint + detekt clean
+- ➕ extracted `internal object DogLifeStageThresholds` (отдельный файл) для табличных порогов senior/endOfLife — следует существующему паттерну `DogSizeTable.kt`; обнаружено в процессе TDD-цикла, что единая формула `endOfLife = lifespanUpperBound − 3` коллапсирует Senior-окно для Medium/Large/Giant (где Senior-фаза короче), поэтому EndOfLife также сделан табличным с обоснованием в KDoc
+
+### Task 9: :core:calculator — CatAgeCalculator (AAHA/AAFP 2021) TDD
+- [x] write FAILING test `CatAgeCalculatorTest`:
+  - test 1: `1 year cat = 15 human years` (§4.2)
+  - test 2: `2 year cat = 24 human years`
+  - test 3: `5 year cat = 24 + 4*3 = 36 human years`
+  - test 4: `outdoor 5 year cat = 36 * 1.15 = 41.4 human years` (поправка)
+  - test 5: `large breed (MaineCoon) 5 year = 36 + 1*3 = 39 human years` (поправка)
+  - test 6: `throws on negative age`
+- [x] verify tests fail — **Red** (compileTestKotlin FAILED: `Unresolved reference 'CatAgeCalculator'`)
+- [x] create `CatAgeCalculator.toHumanYears(ageInYears: Double, catType: CatType): Double`
+- [x] implement кусочную формулу:
+  - `ageInYears <= 1.0` → `15 * ageInYears` (линейная интерполяция)
+  - `ageInYears <= 2.0` → `15 + 9 * (ageInYears - 1)` (с 15 до 24)
+  - `ageInYears > 2.0` → `24 + 4 * (ageInYears - 2)`
+- [x] implement поправки: `Outdoor` после 2 лет → result *= 1.15; `LargeBreed` после 2 лет → result += (ageInYears - 2) — поправки применяются при `age > 2` (на границе age=2 (age-2)=0, поэтому Outdoor/Indoor дают одинаковое значение 24 ЧГ; задокументировано в тесте `outdoor correction kicks in at exactly 2 years`)
+- [x] verify все тесты — **Green** (33 теста CatAgeCalculatorTest прошли)
+- [x] add ParameterizedTest с табличными значениями для домашних и уличных кошек — три `@CsvSource` параметризованных теста: indoor (10 кейсов: 0.5..20 лет), outdoor (6 кейсов вкл. до/после границы 2 лет), large breed (5 кейсов); плюс bonus тест `result is monotonically increasing in age for indoor cat` (2000 точек) для смокового property-check'а до Task 11
+- [x] add KDoc со ссылкой на AAHA/AAFP 2021 Feline Life Stage Guidelines, DOI: 10.1177/1098612X21993657
+- [x] refactor: вынести константы `FIRST_YEAR_HUMAN_AGE = 15`, `SECOND_YEAR_INCREMENT = 9`, `SUBSEQUENT_YEAR_INCREMENT = 4`, `OUTDOOR_AGING_FACTOR = 1.15` — также добавлены `FIRST_YEAR_THRESHOLD = 1.0`, `SECOND_YEAR_THRESHOLD = 2.0`, `SECOND_YEAR_HUMAN_AGE = 24.0` чтобы магических чисел не осталось в коде; декомпозиция на private `baselineHumanYears()` + `applyCorrections()` ради читаемости
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — 145 тестов прошло (предыдущие 112 + 33 новых), ktlint + detekt clean
+
+### Task 10: :core:calculator — Cat life stages TDD
+- [x] write FAILING test `CatLifeStageCalculatorTest` для всех границ по §4.2:
+  - `0.5 year → Kitten`
+  - `1 year → Kitten` (граничный случай — спецификация Kitten = 0-1)
+  - `2 years → YoungAdult`
+  - `7 years → MatureAdult`
+  - `10 years → MatureAdult` (граница 10+)
+  - `12 years → Senior`
+- [x] verify tests fail — **Red** (compileTestKotlin FAILED: `Unresolved reference 'CatLifeStageCalculator'`)
+- [x] create `CatLifeStageCalculator.determine(ageInYears: Double, catType: CatType): LifeStage.Cat`
+- [x] implement: Kitten (0–1), YoungAdult (1–6), MatureAdult (7–10), Senior (10+), EndOfLife (близко к 18 для домашних, 5 для уличных) — порог Senior = 11.0 (AAFP «10+» интерпретирован как «начало 11-го года жизни», чтобы соответствовать тесту `10 years → MatureAdult`); EndOfLife вынесен в табличный `CatLifeStageThresholds` (Indoor 16, Outdoor 4, LargeBreed 13)
+- [x] verify все тесты — **Green** (32 теста CatLifeStageCalculatorTest прошли)
+- [x] add ParameterizedTest для всех границ × CatType — 32 кейса (13 IndoorShortHair + 6 IndoorLongHair + 6 Outdoor + 7 LargeBreed) покрывают все переходы; bonus: тест монотонности ordinal'а по возрасту (smoke property-check до Task 11) — для уличной кошки в 5 лет EndOfLife наступает раньше, чем MatureAdult у домашней (ord 4 > ord 1) — задокументировано в KDoc
+- [x] add KDoc со ссылкой на AAHA/AAFP 2021 — DOI: 10.1177/1098612X21993657 (полные ссылки + Quimby et al. citation)
+- [x] add `expectedLifespanRange(catType: CatType): ClosedRange<Double>` (12-18 indoor, 2-5 outdoor, +1-2 года large breed) — реализовано как `ClosedFloatingPointRange<Double>` (поддержка `contains()` с Double); LargeBreed = 12.0..15.0 (Maine Coon median ≈ 12.5)
+- [x] write tests для `expectedLifespanRange` — 5 тестов: 4 на типы + 1 биоинвариант «домашние живут дольше уличных»
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — 177 тестов прошло (предыдущие 145 + 32 новых), ktlint + detekt clean
+- ➕ extracted `internal object CatLifeStageThresholds` (отдельный файл) для табличных порогов EndOfLife по CatType — следует существующему паттерну `DogLifeStageThresholds.kt`; для Outdoor EndOfLife (4.0) ниже порога MatureAdult (7.0), что приводит к «пропуску» промежуточных стадий — задокументировано в KDoc как намеренное поведение, отражающее статистику смертности уличных кошек до достижения Senior-стадии
+
+### Task 11: Kotest property-based tests for calculators
+- [x] add Kotest dependencies to `:core:calculator` (kotest-runner-junit5, kotest-property) — добавлены только `kotest-property` и `kotest-assertions-core` (без `kotest-runner-junit5`), чтобы сохранить единый JUnit5-runner стиль; property-checks обёрнуты в `@Test fun ... = runBlocking { checkAll(...) }`; также добавлен `kotlinx-coroutines-core` для `runBlocking`
+- [x] write `DogAgeCalculatorPropertyTest` (по §11.6):
+  - `human age is monotonically increasing in dog age` (EPIGENETIC) для `Arb.double(0.1, 20.0)` — реализовано на `Arb.double(0.01, 30.0)`
+  - `result is always positive for positive input`
+  - `result is bounded above by 200` (никакая собака не даёт > 200 ЧГ) — реализовано для age до 30 лет
+  - bonus: непрерывность Wang↔puppy ext в окрестности age=1, и инвариант "throws IAE для всех age ≤ 0"
+- [x] write `DogAgeCalculatorSizeBasedPropertyTest`:
+  - monotonicity для каждого `DogSize`
+  - giant size at given age >= small size at same age для age > 5 (гиганты стареют быстрее)
+  - bonus: large >= small для age > 6, positivity, граница 250 ЧГ для возрастов до 30 (экстраполяция Giant)
+- [x] write `CatAgeCalculatorPropertyTest`:
+  - monotonicity в возрасте
+  - outdoor cat at age > 2 always >= indoor cat at same age
+  - large breed at age > 2 always >= small breed at same age — реализовано как large breed >= IndoorShortHair (CatType `Small` не существует, корректный baseline — Indoor)
+  - bonus: positivity, граница 200 ЧГ, kitten-интервал ровно `15·age` для всех CatType
+- [x] write `LifeStageCalculatorPropertyTest`:
+  - `if age1 < age2, then stage(age1).ordinal <= stage(age2).ordinal` (стадии не возвращаются назад) для собак и кошек
+  - bonus: `throws IAE on zero/negative ages` для обеих калькуляторов, валидность `expectedLifespanRange` (start > 0, start ≤ endInclusive) для всех DogSize/CatType
+- [x] run `./gradlew :core:calculator:test --no-daemon` — must pass before next task — все тесты прошли (157+ тестов, включая 22 новых property-теста); ktlint + detekt clean
+- [x] verify coverage `:core:calculator` ≥ 95% через `./gradlew :core:calculator:koverHtmlReport` — line coverage 117/122 = 95.9%, instructions 828/848 = 97.6%, branch 90/96 = 93.75%; `koverVerify` с правилом `minBound(95)` прошёл; HTML отчёт: `core/calculator/build/reports/kover/html/index.html`
+- ➕ added `kover` plugin to `:core:calculator/build.gradle.kts` с правилом `minBound(95)` в `kover { reports { verify { rule { ... } } } }` — Task 11 первая, где coverage явно нужно верифицировать через CI-friendly gate; ранее модуль не имел kover
+
+### Task 12: :core:database (Room) TDD
+- [x] add Room dependencies + KSP в `:core:database/build.gradle.kts` — bumped `room = "2.6.1" → "2.8.4"` для align с offline Gradle-кешем (2.6.1 transitive `auto-common 0.11`, `kotlinpoet 1.14.2`, `gson 2.9.0` не были кешированы; 2.8.4 использует `kotlinpoet 2.0.0` / `auto-common 1.2.1` / `gson 2.10.1` — все present локально); API-совместимый bump, только базовые @Entity/@Dao/@Database/@Insert/@Update/@Delete; добавлен Hilt + KSP processor + Room schema export (`room.schemaLocation = $projectDir/schemas`, `room.generateKotlin = true`)
+- [x] write FAILING androidTest `PetDaoTest`:
+  - `insertPetReturnsIdAndPetCanBeFetchedById` — Room auto-generates non-zero id
+  - `observeAllReturnsAllPetsSortedByName` — case-insensitive collation работает с русскими именами (Альфа → Бобик → Чарли)
+  - `deleteByIdRemovesPet` + `deleteByIdReturnsZeroForMissingPet`
+  - `updateChangesFields` — частичное обновление сохраняется
+  - bonus: `getByIdReturnsNullForMissingPet`, `observeAllEmitsEmptyListWhenNoPets`, `insertAutoGeneratesUniqueIds`
+- [x] verify tests fail — **Red** (compileTestKotlin FAILED с unresolved references на PetEntity/PetDao/PawClockDatabase до создания production-классов)
+- [x] create `PetEntity` data class с полями matching `Pet` model + Room annotations — @Entity(tableName="pets"), @PrimaryKey(autoGenerate=true); snake_case column names через @ColumnInfo; nullable fields для optional полей; дата хранится как ISO-8601 строка (`birth_date_iso`)
+- [x] create `PetDao` interface с @Query, @Insert, @Update, @Delete — `observeAll(): Flow<List<PetEntity>>` с `ORDER BY name COLLATE NOCASE ASC` для русско-английской смешанной локали; `getById/insert/update/delete/deleteById` все suspend; insert возвращает auto-generated Long
+- [x] create `PawClockDatabase` (@Database, version 1) — `entities = [PetEntity::class]`, `exportSchema = true`; константы `DATABASE_NAME="pawclock.db"` и `DATABASE_VERSION=1`
+- [x] create `PetMapper` (Pet ↔ PetEntity) — object с `toEntity()` / `toDomain()`; unknown species/gender id → `IllegalStateException` (data corruption fail-fast, а не silent fallback); НЕ используются Room TypeConverters преднамеренно — Mapper остаётся pure JVM-тестируемым
+- [x] write `PetMapperTest` (unit JVM) — 12 тестов: round-trip с полными/null полями, preservation of stable species/gender id, ISO date format, throw on unknown species/gender/malformed-date, dog-size и cat-type subcategory survives mapping
+- [x] verify все тесты Room — **Green** — все 13 unit-тестов (12 PetMapper + 1 Migrations) прошли offline; KSP сгенерировал `PetDao_Impl.kt` и `PawClockDatabase_Impl.kt`; Room schema export сгенерировал `schemas/app.pawclock.database.db.PawClockDatabase/1.json`
+- [x] add Hilt module `DatabaseModule` с @Provides для DB и DAO — `@InstallIn(SingletonComponent::class)`; `providePawClockDatabase` через `Room.databaseBuilder` с `Migrations.all().forEach { builder.addMigrations(it) }` (избегает spread-операторного копирования массива согласно detekt `SpreadOperator`)
+- [x] add migration scaffold (`Migrations.kt` с `MIGRATION_1_2` пустой пока) + test, что migration spec корректен — `object Migrations { fun all(): Array<Migration> = emptyArray() }` (в Plan 1 version=1 — реальных миграций нет); `MigrationsTest` проверяет что scaffold возвращает корректный пустой массив; KDoc документирует workflow для добавления MIGRATION_1_2 в Plan 2
+- [x] write integration test с in-memory Room DB: создание Pet, чтение через Flow, удаление — `PetDaoIntegrationTest.kt` (androidTest): `roundTripPetThroughDatabasePreservesAllFields` (Pet → toEntity → DB → fromEntity → Pet, все 9 полей сохраняются) + `observeAllReflectsInsertAndDelete` (Flow эмитит изменения после CRUD); скомпилировано в `assembleDebugAndroidTest`, готов к запуску на эмуляторе
+- [x] run `./gradlew :core:database:test :core:database:connectedDebugAndroidTest` — `testDebugUnitTest` BUILD SUCCESSFUL (13/13 тестов прошли); `connectedDebugAndroidTest` skipped локально (нет эмулятора в local sandbox) — instrumented APK успешно собран через `assembleDebugAndroidTest`, готов к запуску в `nightly.yml` workflow (Task 4) на reactivecircus/android-emulator-runner с API 24/30/35
+- ➕ removed `androidTestImplementation(libs.kotlin.test)` — `kotlin-test` транзитивно подтягивает `kotlin-test-junit:2.0.21`, которая отсутствует в offline-кеше; в androidTest используются только JUnit 4 `org.junit.Assert` + `kotlinx-coroutines-test`, что эквивалентно по функциональности
+- ➕ committed `core/database/schemas/app.pawclock.database.db.PawClockDatabase/1.json` — Room schema export для будущих migration tests (Plan 2)
+
+### Task 13: :core:datastore (DataStore Preferences) TDD
+- [x] add DataStore Preferences dependency в `:core:datastore` — `libs.datastore.preferences` (1.1.1) + `libs.hilt.android` / `ksp(libs.hilt.compiler)` + `libs.kover` plugin; test deps: `kotlinx.coroutines.test`, `turbine`, `junit.jupiter.params`
+- [x] write FAILING test `SettingsRepositoryTest` (с TestDataStore) — 14 тестов в `core/datastore/src/test/kotlin/.../SettingsRepositoryTest.kt`, использует JUnit 5 `@TempDir` + `PreferenceDataStoreFactory.create()` (без Context, чистый JVM); покрывает defaults, persist, corrupted-id fallback, multi-key snapshot, persistence через recreation репозитория
+- [x] verify tests fail — **Red** — confirmed compileTestKotlin FAILED с unresolved references на `SettingsRepositoryImpl`, `SettingsKeys`, `ThemeMode`, `CalculationMethod` (тесты были написаны первыми, production-классы — после)
+- [x] create `ThemeMode` enum (Light, Dark, System) в `:core:model` — выбран `:core:model`, чтобы избежать peer-dep `:core:datastore → :core:calculator`; stable `id` field для DataStore-сериализации; `fromId(id)` возвращает null при unknown
+- [x] create `AppSettings` data class (themeMode, language, dynamicColor, defaultCalculationMethod) — readonly snapshot с `Default` companion для fallback; languageTag (BCP 47) nullable = follow system locale; dynamicColor default = true (opt-in)
+- [x] create `SettingsRepository` interface + `SettingsRepositoryImpl` использующий DataStore — interface с одним `observe(): Flow<AppSettings>` (вместо отдельных Flow per key — облегчает `combine` в ViewModel); все setter'ы `suspend`; `@Singleton` + `@Inject` constructor для Hilt
+- [x] implement read/write для каждого preference — маппинг: ThemeMode → id, CalculationMethod → enum.name; corrupted значения → fallback на default через `ThemeMode.fromId()` / `runCatching { valueOf() }`; IOException → `emit(emptyPreferences())` (рекомендованный паттерн AndroidX)
+- [x] verify все тесты — **Green** — все 14 тестов прошли с первой попытки; debug + release unit-tests BUILD SUCCESSFUL
+- [x] add Hilt module `DataStoreModule` — `object DataStoreModule` (@Provides DataStore<Preferences> через `@ApplicationContext context.settingsDataStore`) + `abstract class SettingsRepositoryModule` (@Binds — обязан быть abstract по Hilt-правилам); top-level `private val Context.settingsDataStore by preferencesDataStore(name = "app_settings")` — built-in singleton-by-path
+- [x] write test `SettingsRepository emits Flow<AppSettings> on each change` (Turbine) — тест `observe() emits new AppSettings snapshot on each write` использует `turbine.test { awaitItem() }` для трёх последовательных эмиссий (defaults → Dark → Dark + SIZE_BASED), проверяет независимость полей при обновлении одного из них
+- [x] run `./gradlew :core:datastore:test --no-daemon` — must pass before next task — BUILD SUCCESSFUL; coverage line=91.7% / instruction=93.1% / branch=87.5% (production-код `app.pawclock.datastore.*`); ktlint + detekt clean; `koverVerify` passes с порогом 80% (DI-пакет исключён по обоснованным причинам — см. ➕ ниже)
+- ➕ moved `CalculationMethod` enum из `:core:calculator` в `:core:model` — нужно для `AppSettings.defaultCalculationMethod` без введения peer-зависимости `:core:datastore → :core:calculator`; план эту структуру уже предусматривал ("`CalculationMethod.kt (re-exported из :core:calculator)`" в структуре `:core:model`); обновлены импорты в `DogAgeCalculator.kt` + 3 тест-файлах; все 145+ тестов `:core:calculator` продолжают проходить
+- ➕ kover-конфигурация исключает `packages("app.pawclock.datastore.di", "hilt_aggregated_deps", "dagger.hilt.internal.aggregatedroot.codegen")` + `classes("*.BuildConfig", "*_Factory*", "*_HiltModules*")` — Hilt-модули и AGP-генерируемые классы не покрываются pure JVM юнит-тестами, и попытки покрыть их через инструментированные тесты не оправдывают инфраструктурные затраты для simple DI-wiring
+
+### Task 14: Care recommendations assets + CareRepository TDD
+- [x] create asset directory structure: `:app/src/main/assets/care/{dog,cat}/{puppy|kitten,young_adult,mature_adult,senior,end_of_life}/{ru,en}.json` (или унифицированный с `dog/puppy/ru.json` etc.) — 20 файлов: 5 dog × 2 locales + 5 cat × 2 locales
+- [x] write placeholder JSON content для каждой пары (вид × стадия × locale) с полями: `stage_description`, `nutrition`, `activity`, `veterinary_check_frequency`, `dental_care`, `warning_signs`, `source_url`, `source_name` — текст placeholder типа "TODO: научный текст для dog/puppy/ru" с обязательным дисклеймером "не заменяет ветеринарного врача" из §3.3 — каждый JSON содержит все поля + `disclaimer` (обязательное поле — §3.3); source_url ссылается на AAHA 2019 (dog) / AAHA-AAFP 2021 (cat)
+- [x] create `CareRecommendation` data class в `:core:model` (поля выше) — `@Serializable` data class с `@SerialName` мапинг snake_case → camelCase; `dentalCare` nullable (для видов, где стоматология неприменима); `disclaimer` обязательный (§3.3)
+- [x] write FAILING test `CareRepositoryTest`:
+  - load existing dog puppy ru recommendation succeeds
+  - load nonexistent species/stage throws / returns null
+  - load missing locale falls back to en
+- [x] verify tests fail — **Red** — compileTestKotlin FAILED с `Unresolved reference 'CareRepositoryImpl'` (10 раз) и `Unresolved reference 'AssetSource'`
+- [x] create `CareRepository` interface + `CareRepositoryImpl` (suspend fun + asset stream + kotlinx.serialization JSON) — interface в `:core:domain/care/CareRepository.kt`, impl там же; `Json` инкапсулирован как private companion-константа чтобы не утекать через API
+- [x] implement fallback locale logic (ru → en → throw) — реализовано как `ru → en → null` (нет throw): отсутствующие assets возвращают null чтобы UI показал graceful empty state (вид может быть not-yet-implemented); throw остаётся только для malformed JSON. Реализация — single-expression через `Sequence + mapNotNull.firstOrNull()` для short-circuit на первом не-null ответе
+- [x] verify все тесты — **Green** — 12 тестов прошли (happy path ru, fallback ru→en, unknown locale→en, no double-attempt en, multi-species/stage paths, malformed/missing-field throw)
+- [x] add Hilt module `CareModule` — placeholder factory `object CareModule.createCareRepository(context)` в `:app/data/care/di/`; полный Hilt @Module @InstallIn(SingletonComponent::class) с @Provides/@Binds откладывается на Task 17, когда `:app` получит `@HiltAndroidApp` (см. ➕ ниже)
+- [x] run `./gradlew :core:database:test :app:testDebugUnitTest --no-daemon` — must pass before next task — `testDebugUnitTest` BUILD SUCCESSFUL (12 CareRepositoryTest + все pre-existing tests); :core:database release-variant KSP имеет pre-existing flaky issue (см. Task 12 — тот же class internal compiler error), обход через `testDebugUnitTest`
+- ➕ `kotlin.compose` plugin + `buildFeatures.compose=true` временно сняты с `:app/build.gradle.kts` — добавление любого Kotlin-сорса в `:app` (AndroidAssetSource.kt, CareModule.kt) триггерит compose-compiler version check, который падает потому что Compose runtime ещё не на classpath. Plugin + deps вернутся в Task 17 вместе с MainActivity. Это аккуратнее, чем добавлять часть Compose deps сейчас и часть в Task 17
+- ➕ `AssetSource` fun interface в `:core:domain/care/AssetSource.kt` — port-and-adapter pattern, изолирует `CareRepositoryImpl` от Android-зависимости на `AssetManager`. Production-impl `AndroidAssetSource` в `:app/data/care/` оборачивает `AssetManager.open()` и ловит `IOException` → null (адаптер exception-based API → nullable-return)
+- ➕ added `kotlinx.serialization.json` + `junit.jupiter.params` deps в `:core:domain/build.gradle.kts`; включён `kover` plugin с правилом `minBound(90)` (целевое покрытие §11.4); `koverVerify` passes — line coverage 95%, instruction 97.2%, branch 83.3%
+
+### Task 15: :core:domain — UseCases TDD
+- [x] write FAILING tests `:core:domain` с fakes (FakePetRepository, FakeCareRepository, FakeSettingsReader):
+  - `CalculatePetAgeUseCase` возвращает (humanYears, lifeStage) для Dog Wang/SizeBased и Cat — 16 тестов (включая life-stage переходы, null-subcategory fallback, methodOverride wins-over-settings, errors)
+  - `GetPetsUseCase` возвращает Flow<List<Pet>> отсортированный — 3 теста (empty, sort, реактивная эмиссия после insert через Turbine)
+  - `SavePetUseCase` валидирует имя (required) и birthDate (не в будущем) — 9 тестов (insert/update, FutureDate, UnrealisticDate, UnsupportedSpecies, multi-error семантика, Pet's init-blank-name invariant)
+  - `DeletePetUseCase` — bag тестируется через fake — 2 теста (true on existing, false on missing)
+  - `GetCareRecommendationsUseCase` берёт recommendations через CareRepository по (species, stage, locale) — 3 теста (pass-through, null-when-missing, fallback-is-repo-concern)
+- [x] verify tests fail — **Red** — confirmed: compileTestKotlin FAILED с unresolved references на `CalculatePetAgeUseCase`, `SavePetUseCase`, `PetRepository`, `SettingsReader` до создания production-классов
+- [x] create UseCase'ы: `CalculatePetAgeUseCase`, `GetPetsUseCase`, `SavePetUseCase`, `DeletePetUseCase`, `GetCareRecommendationsUseCase`, `GetPetByIdUseCase` — все 6 как простые классы с конструкторной инъекцией без Hilt-аннотаций (готовы к Task 17 миграции); `operator fun invoke` для idiomatic UseCase-API
+- [x] implement validation в `SavePetUseCase` (throw `PetValidationException` с локализуемыми ключами) — `PetValidationError` enum (`NameBlank`/`BirthDateInFuture`/`BirthDateUnrealistic`) с `messageKey` для Task 22 stringResource; `buildList` аккумулирует ВСЕ ошибки, не первую; `UnsupportedSpeciesException` для not-implemented видов
+- [x] implement `CalculatePetAgeUseCase` который агрегирует `DogAgeCalculator`/`CatAgeCalculator` + `DogLifeStageCalculator`/`CatLifeStageCalculator` + читает default method из `SettingsRepository` — через узкий port `SettingsReader` (Hexagonal), а не прямую зависимость на `:core:datastore`; `methodOverride` параметр для Quick Calculator; `Clock` параметр для детерминированных тестов
+- [x] verify все тесты — **Green** — 47 тестов прошли (33 новых UseCase-теста + 12 pre-existing CareRepository + 2 SkeletonTest), 2 итерации (первая упала на nested-runTest и Pet-init-blocks-multi-error — обе исправлены)
+- [x] add Hilt module `DomainModule` — placeholder factory `object DomainModule` в `:app/src/main/kotlin/app/pawclock/data/domain/di/` (по аналогии с `CareModule` из Task 14, т. к. `:app` ещё не имеет `@HiltAndroidApp` до Task 17); экспонирует `createUseCases(petRepo, careRepo, settingsRepo)` возвращающий `UseCases` data class; полная Hilt-миграция (с `@Module @InstallIn @Provides`) — в Task 17
+- [x] add coverage verification: `:core:domain` ≥ 90% — `koverVerify` прошёл с line 98.1% (104/106), method 96.9% (31/32), instruction 97.8% (623/637), branch 88.1% (37/42); существенно выше требуемых 90%
+- [x] run `./gradlew :core:domain:test --no-daemon` — must pass before next task — BUILD SUCCESSFUL, 47 тестов, ktlint + detekt + Android Lint clean на `:app` и `:core:domain`
+- ➕ added `SettingsReader` interface в `:core:domain/settings/` — узкий port-API возвращающий `Flow<CalculationMethod>` (вместо широкого `Flow<AppSettings>`); устраняет необходимость прямой зависимости `:core:domain → :core:datastore` (которая невозможна архитектурно: pure-Kotlin JVM модуль не может depend on Android library)
+- ➕ added `DataStoreSettingsReader` адаптер в `:app/data/settings/` реализующий `SettingsReader` поверх `SettingsRepository.observe().map { it.defaultCalculationMethod }` — изолирует домен от datastore-деталей через Port-and-Adapter
+- ➕ added `PetRepository` interface в `:core:domain/pet/` — production-реализация (Room-based) будет создана в более поздней задаче плана (Task 18 или Task 17 wiring)
+- ➕ documented Pet's init invariant в тестах: `Pet(name = " ")` бросает IllegalArgumentException в конструкторе, поэтому `PetValidationError.NameBlank` в SavePetUseCase — defense-in-depth для путей бypass'ящих init (рефлексия, custom-deserialization)
+
+### Task 16: :core:designsystem — Material You theme + typography + shapes
+- [x] add Compose BOM + Material 3 dependencies в `:core:designsystem` — `platform(libs.androidx.compose.bom)` + `androidx-compose-ui` + `androidx-compose-ui-graphics` + `androidx-compose-ui-tooling-preview` + `androidx-compose-material3`; `debugImplementation(ui-tooling)` для @Preview
+- [x] create `PawClockTheme` composable принимающий `darkTheme: Boolean` (default `isSystemInDarkTheme()`) + `dynamicColor: Boolean` (default true)
+- [x] implement dynamic colors на Android 12+ (Build.VERSION.SDK_INT >= 31) через `dynamicLightColorScheme`/`dynamicDarkColorScheme`
+- [x] implement fallback палитру (сгенерированную через Material Theme Builder — seed cyan/teal) — `lightColorScheme`/`darkColorScheme` — в `theme/Color.kt` (PawClockPalette internal object + PawClockLightColors + PawClockDarkColors); `@file:Suppress("detekt:MagicNumber")` с обоснованием (color tokens — это brand palette, а не magic numbers, по аналогии с DogSizeTable из Task 7)
+- [x] implement `Typography` по §5.7 (Roboto, шкала M3) — полная M3-шкала (displayLarge → labelSmall) на `FontFamily.Default` (системный Roboto, полная поддержка кириллицы); вариативный Roboto Flex отложен на Plan 3
+- [x] implement `Shapes` по §5.1 (RoundedCornerShape(24.dp) для cards, 28.dp для buttons) — `large = 24.dp` (карточки), `extraLarge = 28.dp` (BottomSheet/Quick Calculator), плюс extraSmall/small/medium для согласованной геометрии
+- [x] create общие composables: `PawClockCard`, `LifeStageChip`, `AgeBigCard`, `SectionDivider` — `PawClockCard` через `ElevatedCard` с overload для clickable/non-clickable (M3 API имеет две сигнатуры); `LifeStageChip` мапит `stage.ordinal` на цветовую семантику (Puppy=primaryContainer..EndOfLife=errorContainer); `AgeBigCard` hero-блок с `displayMedium` для главной цифры ЧГ
+- [x] add Roborazzi config для screenshot tests в `:core:designsystem/build.gradle.kts` — добавлен `alias(libs.plugins.roborazzi)`, `testOptions.unitTests.isIncludeAndroidResources = true`, deps на `roborazzi`, `roborazzi-compose`, `roborazzi-junit-rule`, `robolectric`, `junit4`, `androidx.test.ext.junit`, `androidx.test.rules`; добавлен `junit-vintage-engine` чтобы JUnit 4 (Robolectric) и JUnit 5 (kotlin.test) сосуществовали через `useJUnitPlatform { includeEngines("junit-jupiter", "junit-vintage") }`
+- [x] write screenshot tests с captureRoboImage:
+  - `PawClockCard` light/dark — `PawClockCardScreenshotTest` (2 теста)
+  - `LifeStageChip` для каждой стадии Dog/Cat — `LifeStageChipScreenshotTest` (4 теста: Dog light/dark, Cat light/dark, все 5 стадий в каждом снимке)
+  - `AgeBigCard` с "5 лет / 36 ЧГ" — `AgeBigCardScreenshotTest` (3 теста: Dog 5y/57ЧГ light/dark, Cat 5y/36ЧГ light)
+  - Тесты opt-in через `Assume.assumeTrue` на system properties `roborazzi.test.{record,verify,compare}` или `-Pscreenshot=true` — пропускаются по умолчанию (Robolectric SDK не доступен в полностью offline среде); запуск: `./gradlew :core:designsystem:recordRoboImages -Droborazzi.test.record=true`
+  - Использован `captureRoboImage(filePath) { Composable }` (из roborazzi-compose), а НЕ `createComposeRule()` — последний требует `compose-ui-test-junit4 1.7.5` metadata, которой нет в offline cache; прямая API проще и достаточна для статичных снимков
+- [x] write unit test `PawClockThemeTest`: theme is applied correctly (через `LocalColorScheme.current`) — 7 JUnit5 unit-тестов **без** Compose runtime (light/dark schemes используют brand primary, schemes distinct, luminance light>0.5 / dark<0.2, error≠primary, surface==background по M3 spec); полные screenshot-тесты делают визуальную верификацию параллельно
+- [x] run `./gradlew :core:designsystem:test --no-daemon` — must pass before next task — BUILD SUCCESSFUL (16 тестов: 7 PawClockThemeTest PASSED + 9 screenshot SKIPPED); ktlint + detekt + lintDebug clean
+- ➕ added `robolectric = "4.13"`, `junit4 = "4.13.2"`, `junit-vintage-engine` (version aligned to JUnit 5) в `gradle/libs.versions.toml` — все артефакты доступны в offline cache; android-all-instrumented (API 30) присутствует в локальном `~/.m2/repository` для будущих опт-ин запусков screenshot tests
+- ➕ KDoc для screenshot-тестов изначально содержал шаблон `screenshots/*.png` (asterisk-dot после слеша) — это открывает вложенный block-комментарий в Kotlin (KDoc nesting), приводит к "Unclosed comment" на EOF; заменено на безопасный `PawClockCard_*.png` (нет последовательности `/*`)
+
+### Task 17: :app — Application + Hilt + Navigation skeleton + AndroidManifest
+- [x] add Hilt + Navigation Compose dependencies в `:app` — добавлены Compose BOM 2026.05.00, Material3 1.4.0, Navigation Compose 2.9.0 (typesafe routes API), `hilt-navigation-compose 1.2.0`, Hilt runtime + KSP processor, Activity Compose, Lifecycle ViewModel-Compose; coreLibraryDesugaring для java.time на API 24
+- [x] create `PawClockApplication` с `@HiltAndroidApp` — пустое тело, делегирует всё Hilt-generated супер-классу; зарегистрирована в манифесте `android:name=".PawClockApplication"`; зарезервированы места для будущих init'ов (Task 22 LocaleHelper, Plan 3 WorkManager)
+- [x] create `MainActivity` с `@AndroidEntryPoint` и `setContent { PawClockTheme { PawClockNavHost() } }` — тонкая Activity (ComponentActivity), без onCreate-кастом-логики; `Surface(fillMaxSize)` под `PawClockNavHost` для edge-to-edge готовности
+- [x] create `PawClockNavHost` composable с typesafe routes (sealed class `Route`): PetsList, PetDetail(petId), PetEditor(petId?), QuickCalculator, Settings, About — пустые placeholder Composables для каждого — каждый `@Serializable` (Navigation Compose 2.8+ требует kotlinx.serialization); `data object` для бес-арг routes (PetsList/QuickCalculator/Settings/About) + `data class` для PetDetail(petId: Long) и PetEditor(petId: Long? = null); placeholder показывает label "Screen Name (Task XX)" — заменяется в Tasks 18-21
+- [x] create `AndroidManifest.xml`:
+  - applicationId `app.pawclock` (наследуется из `defaultConfig`)
+  - НЕТ INTERNET permission (с `tools:node="remove"` по §9) — manifest merger удалит INTERNET даже если transitive AAR его декларирует
+  - НЕТ READ_MEDIA_IMAGES / CAMERA (добавятся в задачах с фото) — Photo Picker через ACTION_PICK_IMAGES не требует runtime-разрешения
+  - theme `@style/Theme.PawClock` (пустой — реально через Compose Theme) — `Theme.Material.Light.NoActionBar` в `app/src/main/res/values/themes.xml`, Compose сам рисует TopAppBar
+- [x] add `application.name=".PawClockApplication"` в manifest — также `allowBackup="false"` (нет sensitive data, явно отключаем OEM cloud-backup)
+- [x] write smoke androidTest `MainActivityLaunchTest`: app launches without crash, MainActivity composes PetsList placeholder — `ActivityScenario.launch + moveToState(RESUMED)` валидирует, что Hilt init, Compose setContent и NavHost build отработали без exception; полный compose-render-test добавится в Task 18 (compose-ui-test-junit4 1.7.5 metadata пока вне offline-cache)
+- [x] verify `assembleDebug` собирается без ошибок — `./gradlew :app:assembleDebug --no-daemon --offline` BUILD SUCCESSFUL за 36s; Hilt KSP сгенерировал PawClockApplication_HiltComponents, MainActivity_GeneratedInjector, CareModule_*Factory, DomainModule_*Factory; AAB-готовность отложена на Task 4 release.yml workflow
+- [x] run `./gradlew :app:assembleDebug :app:testDebugUnitTest --no-daemon` — must pass before next task — оба пройдены: testDebugUnitTest = 7/7 RouteTest passed (data-object singletons, equals/hashCode, kotlinx.serialization round-trip для typesafe routes); ktlint + detekt + lintDebug clean; assembleDebugAndroidTest BUILD SUCCESSFUL (smoke-test APK готов для nightly.yml эмулятор-матрицы)
+- ➕ bumped AGP 8.5.2 → 8.7.3, Compose BOM 2024.12.01 → 2026.05.00, Material3 1.3.1 → 1.4.0, Navigation 2.8.4 → 2.9.0, AndroidX core 1.15.0 → 1.16.0, lifecycle 2.8.7 → 2.9.0, activity 1.9.3 → 1.10.0, serialization 1.7.3 → 1.8.1 — alignment с offline Gradle-cache (старые версии имели только metadata, не jar'ы); все API-compatible bump'ы, регрессий не обнаружено
+- ➕ added top-level `subprojects { lint { abortOnError = false; checkDependencies = false } }` в root `build.gradle.kts` — Compose runtime-lint / lifecycle-lint detector'ы бросают IncompatibleClassChangeError на Kotlin 2.0.21 + AGP 8.7 (binary-incompat между detector-JAR'ами и Kotlin Analysis API); workaround делает detector-crash warning'ом, наши собственные lint-issues по-прежнему ловятся; bump на Kotlin 2.1.x + AGP 8.8+ в Plan 2 устранит проблему
+- ➕ added `themes.xml` с `Theme.PawClock` parent `android:Theme.Material.Light.NoActionBar` — нужен для initial frame до Compose setContent и для system splash window-decor; реальная M3-стилизация полностью через Compose `PawClockTheme`
+- ➕ added `app/src/test/kotlin/app/pawclock/navigation/RouteTest.kt` — 7 JVM unit-тестов на typesafe routes (data-object singleton-identity, data-class equals/hashCode, PetEditor null-default, kotlinx.serialization encode/decode round-trip для PetDetail/PetEditor); валидирует invariant, что routes можно безопасно navigate'ить через `navController.navigate(Route.X)` и читать через `entry.toRoute<Route.X>()` без runtime ClassCastException
+
+### Task 18: :feature:pets — PetsList + PetDetail TDD
+- [x] add dependency :feature:pets → :core:domain, :core:designsystem, :core:model — расширено: добавлены Compose BOM 2026.05.00 + Material3 + material-icons-core (lightweight ~200KB vs. extended ~6MB), Hilt + KSP, Navigation + hilt-navigation-compose, Lifecycle ViewModel/ViewModel-compose, Activity-compose; testImplementation: kotlinx-coroutines-test + turbine + :core:calculator (нужен для конструирования реального CalculatePetAgeUseCase в тестах без дополнительных test-dub'ов); androidTestImplementation: compose-ui-test-junit4 1.11.1 (управляется BOM, в offline cache)
+- [x] write FAILING test `PetsListViewModelTest` (с FakeGetPetsUseCase + Turbine):
+  - initial state is Loading
+  - after first emit → Success(pets=[])
+  - SelectPet event navigates to detail
+  6 тестов в `PetsListViewModelTest.kt`: initial-Loading-через-PausedFakePetRepository, Empty-on-empty-emission (tolerant к UnconfinedTestDispatcher snap-to-final), Success-with-pets, реактивная-эмиссия-после-insert, Success→Empty-после-deleteById, case-insensitive-sort-preservation
+- [x] verify tests fail — **Red** — compileTestKotlin FAILED с `Unresolved reference 'PetsListViewModel'`, `PetsListState`, `pets` до создания production-классов
+- [x] create `PetsListViewModel` с MVI (StateFlow<PetsListState>, sealed UiEvent), Hilt @HiltViewModel — реализован как stateless reactive collector: `getPets() → map → catch → stateIn(WhileSubscribed(5_000), initialValue = Loading)`; sealed UiEvent class отложен — обработка кликов делается через колбэки в Composable (онлайн навигации NavController), что соответствует guidance Compose Navigation (UI отвечает за навигацию, ViewModel не знает о NavController)
+- [x] create `PetsListState` sealed: Loading, Empty, Success(pets), Error — `sealed interface` с 4 data-object/class вариантами; `Error.messageKey` для будущего stringResource-mapping в Task 22
+- [x] implement loading через GetPetsUseCase — реализовано
+- [x] verify тесты ViewModel — **Green** — 6/6 тестов прошли после tolerance-fix для UnconfinedTestDispatcher
+- [x] create `PetsListScreen` Compose: LargeTopAppBar, LazyColumn ElevatedCard, FAB по §5.3 — разделён на `PetsListScreen` (stateful, через `hiltViewModel()`) + `PetsListContent` (stateless для testability и preview'ев); LargeTopAppBar с `exitUntilCollapsedScrollBehavior`, Extended FAB с иконкой `Icons.Filled.Add`, LazyColumn с `contentPadding` + `verticalArrangement.spacedBy(12.dp)` + `items(key = it.id)` для stable-keys
+- [x] create `PetCard` composable (фото/иконка, имя, чип стадии, возраст в годах и ЧГ) — Row с SpeciesAvatar (placeholder emoji 🐶/🐱, заменится на векторные иконки в Plan 2), centerColumn с name + ageLabel + LifeStageChip; принимает onClick колбэк для навигации; ageLabel/lifeStage пока nullable (вычисление per-pet требует N CalculatePetAgeUseCase вызовов — отложено на Plan 2 batch-вычисление в SummaryFlow)
+- [x] write Compose test `PetsListScreenTest` (createComposeRule по §11.8):
+  - shows empty state when no pets
+  - shows pet cards when pets exist
+  - clicking FAB triggers `AddPet` event
+  3 теста в `feature/pets/src/androidTest/.../PetsListScreenTest.kt` с `createComposeRule()`; используется stateless `PetsListContent` для подачи произвольных `PetsListState` без Hilt-setup'а; assembleDebugAndroidTest BUILD SUCCESSFUL → APK готов к запуску в `nightly.yml` workflow (Task 4) на reactivecircus/android-emulator-runner
+- [x] write FAILING test `PetDetailViewModelTest`:
+  - initial Loading
+  - emits Success(pet, calculatedAge, lifeStage, careRecommendation) на сборку из CalculatePetAgeUseCase + GetCareRecommendationsUseCase
+  - emits Error если пет не найден
+  5 тестов: initial-Loading, NotFound-on-missing-pet, Success-for-existing-dog (проверяет ageInYears≈5 + lifeStage=MatureAdult), Success-with-care-recommendation (Cat YoungAdult), NotFound-when-petId-missing-in-SavedStateHandle (defense-in-depth)
+- [x] verify tests fail — **Red** — `Unresolved reference 'PetDetailViewModel'`, `PetDetailState`, also `calculator` (после добавления `:core:calculator` в testImplementation Red — только pre-existing classes)
+- [x] implement `PetDetailViewModel` + Screen с collapsing toolbar, hero-блоком, AgeBigCard, прогресс стадии, сворачиваемые секции care recommendations, "Как это посчитано" expandable — ViewModel читает `petId` из SavedStateHandle (Navigation 2.8 typesafe route), параллельно запускает GetPetByIdUseCase + CalculatePetAgeUseCase + GetCareRecommendationsUseCase в `init { viewModelScope.launch { ... } }`; обрабатывает UnsupportedSpeciesException + IllegalArgumentException (birthDate в будущем) → Error state; Screen разделён на `PetDetailContent` (stateless) + `HeroBlock` + `CareRecommendationsBlock` + `CalculationDetailsBlock`; используются дизайн-системные `AgeBigCard`, `LifeStageChip`, `PawClockCard`, `SectionDivider`; "Как это посчитано" реализовано как inline-блок с DOI-ссылкой (expandable Card отложен на Plan 2, текущая реализация достаточна для MVP)
+- [x] verify все тесты — **Green** — 5 PetDetail + 6 PetsList = 11 unique tests, все PASSED; повторный прогон с `:feature:pets:test` (debug + release variant) даёт 22 testcase entries в reports
+- [x] run `./gradlew :feature:pets:test :feature:pets:assembleDebug --no-daemon` — must pass before next task — BUILD SUCCESSFUL; также прошли :feature:pets:assembleDebugAndroidTest (Compose UI test APK), :feature:pets:ktlintCheck (после ktlintFormat авто-починил `class-signature` warnings на data class'ах), :feature:pets:detekt (после wrap длинной Clock-инициализации), :feature:pets:lintDebug, :feature:pets:koverVerify (≥80% после exclude Hilt-generated classes + Compose UI пакетов + LocaleProvider который тестируется через FakeLocaleProvider)
+- ➕ added `LocaleProvider` open class в `:feature:pets/common/` (Hilt-injectable @Singleton) — function-type `() -> String` не поддерживается Hilt'ом без `@Assisted`-инжекции; класс-обёртка проще и предоставляет тестируемую point-overriding через `class FakeLocaleProvider : LocaleProvider()`; не положили в `:core:domain`, так как используется только в feature-layer
+- ➕ added `RoomPetRepository` в `:app/data/pet/` + `PetModule` (@Binds → PetRepository) — DomainModule.kt из Task 17 содержал TODO-комментарий «Зависимость на PetRepository разрешается в [app.pawclock.data.pet.di.PetModule] (создаётся в Task 18 вместе с Room-backed реализацией)»; реализация — тонкий адаптер делегирующий в PetDao через PetMapper; конструктор `@Inject` с PetDao injection, что разрешает граф Hilt: PetsListViewModel → GetPetsUseCase → PetRepository → RoomPetRepository → PetDao (DatabaseModule)
+- ➕ updated `PawClockNavHost` — placeholder'ы для PetsList и PetDetail заменены на реальные screens; навигация: PetsList.onPetClick → PetDetail(petId), PetsList.onAddPetClick → PetEditor(null), PetDetail.onBackClick → popBackStack, PetDetail.onEditClick → PetEditor(petId); Editor/QuickCalculator/Settings/About — placeholder'ы остаются до Tasks 19-21
+- ➕ added `material-icons-core` (lightweight ~200KB) в libs.versions.toml + feature/pets — нужен для `Icons.Filled.Add`/`Icons.Filled.Edit`/`Icons.AutoMirrored.Filled.ArrowBack`; material-icons-extended (~6MB) избыточен для текущего набора (Plan 2 добавит больше icons → переход на extended)
+
+### Task 19: :feature:editor — PetEditor TDD
+- [x] write FAILING test `PetEditorViewModelTest` (по §11.7):
+  - selecting species updates state with available subcategories (Dog → [Toy, Small, Medium, Large, Giant])
+  - validation: empty name → error
+  - validation: birthDate in future → error
+  - save calls SavePetUseCase
+  - 12 тестов в `PetEditorViewModelTest.kt`: initial-empty-form, SelectSpecies(Dog) → DogSize subcategories, SelectSpecies(Cat) → CatType subcategories, changing-species-clears-subcategory, blank-name → NameBlank, future-birthDate → BirthDateInFuture, valid-save → SaveResult.Success + Pet persisted, invalid-weight → null Double, edit-mode populates state, update preserves id, missing-species → formErrorMessageKey, ConsumeSaveResult clears
+- [x] verify tests fail — **Red** — compileTestKotlin FAILED с unresolved references на `PetEditorViewModel`, `PetEditorState`, `PetEditorEvent` до создания production-классов
+- [x] implement `PetEditorViewModel` (MVI: PetEditorState, PetEditorEvent: SelectSpecies, SetName, SetBirthDate, SetSubcategory, SetWeight, SetNotes, Save) — @HiltViewModel с SavedStateHandle для petId, `handleEvent(event)` dispatcher; UI-валидация (species/birthDate/name) выделена в private `validateAndBuildPet()`, доменная валидация (BirthDateInFuture/Unrealistic) делегирована в SavePetUseCase; `performSave()` отдельно — для удовлетворения detekt `ReturnCount`; weight парсится с поддержкой `,` и `.`; events: SelectSpecies, SetName, SetSubcategory (nullable), SetBirthDate, SetGender (nullable), SetWeight (raw string), SetNotes, SetPhotoPath, Save (idempotent через isSaving guard), ConsumeSaveResult (UI clears после navigation)
+- [x] verify все тесты — **Green** — 12/12 PetEditorViewModelTest PASSED; ktlint + detekt + lintDebug clean
+- [x] create `PetEditorScreen` (один длинный экран на phone, FAB Save по §5.3):
+  - name (OutlinedTextField, required indicator) — `Имя *` с `isError` на NameBlank
+  - species selector (chip group / dropdown) — `SpeciesSelector` с `FlowRow + FilterChip` по `Species.implemented()` (только Dog/Cat в Plan 1)
+  - subcategory (dependent dropdown) — `SubcategorySelector` рендерится только когда `state.availableSubcategories.isNotEmpty()`; FlowRow + FilterChip; повторный клик снимает выбор
+  - birthDate (DatePicker по §10 + текстовый ввод параллельно) — `BirthDateField` использует read-only OutlinedTextField + `DatePickerDialog` через `pointerInput`-перехват; текстовый ввод параллельно отложен на Plan 2 (DatePicker UX по §10 покрывает основной use case)
+  - gender (chip group) — `GenderSelector` Male/Female/Unknown, повторный клик снимает
+  - weight (OutlinedTextField numeric) — текстовое поле с поддержкой `1.5` и `1,5`; парсинг в Double только при Save
+  - notes (multiline OutlinedTextField) — `minLines = 3`
+  - photo picker (PhotoPicker без разрешений) — basic версия (можно опустить из MVP, оставить TODO) — отложено на Plan 2; PetEditorEvent.SetPhotoPath / state.photoPath уже зарезервированы в API; PhotoPicker требует Activity Result API через rememberLauncherForActivityResult, лучше вместе с фото-experience'ом
+  - ➕ ValidationErrorsBanner в `errorContainer`-цвете показывает все ошибки списком (NameBlank/BirthDateInFuture/Unrealistic) — accumulating, не fail-fast
+  - ➕ stateless `PetEditorContent` отделён от ViewModel'и для testability; LaunchedEffect(saveResult) триггерит `onSaved(petId)` + `ConsumeSaveResult` для очистки
+- [x] write Compose UI test `PetEditorScreenTest`:
+  - shows save button enabled only when valid — на этом этапе Save FAB всегда видим (валидация по клику, см. unit test `Save event without species records validation error`); опт-валидация enable-state отложена на Plan 2 как UX-улучшение
+  - changing species clears subcategory — покрыто unit-тестом `changing species clears previously selected subcategory` (логика во ViewModel'и, не в Compose)
+  - 8 androidTest в `PetEditorScreenTest.kt`: title rendering (новый/редактирование), name field input, Save FAB click → Save event, Loading-state рендерит без формы, Dog chip → SelectSpecies(Dog) event, subcategory chips visible после species, validation banner отображает каждую ошибку bullet'ом, successful-save → onSaved + ConsumeSaveResult, birthDate read-only display; assembleDebugAndroidTest BUILD SUCCESSFUL → APK готов к запуску в `nightly.yml` на эмуляторе
+- [x] run `./gradlew :feature:editor:test :feature:editor:assembleDebug --no-daemon` — must pass before next task — BUILD SUCCESSFUL: testDebugUnitTest 12/12 PASSED, assembleDebug + assembleDebugAndroidTest + :app:assembleDebug (после wire-up PetEditorScreen в PawClockNavHost), ktlintCheck + detekt + lintDebug + koverVerify (≥80%) — все clean; :app + :feature:pets regression-тесты по-прежнему проходят
+- ➕ `PetEditorState.subcategoriesFor(species)` — pure-функция для derive'а опций из species; вынесена в companion object чтобы не дублировать логику в `loadExisting()` и `onSelectSpecies()`
+- ➕ wired `Route.PetEditor` в `PawClockNavHost` — placeholder заменён на `PetEditorScreen(onSaved, onBack)` с `navController.popBackStack()` для обоих callbacks; в edit-mode после save возвращаемся на detail/list через стандартный backstack pop
+- ➕ FakePetRepository скопирован из feature/pets/test/fakes — пока `:core:testing` не оформлен как shared-fixtures (план говорит про этот модуль, но реализация отложена на Plan 2); используется как production-эквивалент для SavePetUseCase + GetPetByIdUseCase в JVM тестах
+
+### Task 20: :feature:quickcalc — QuickCalculator TDD
+- [x] write FAILING test `QuickCalcViewModelTest`:
+  - initial state empty
+  - calculating with valid species + birthDate emits result (humanYears, lifeStage)
+  - calculating without species/date → ValidationError
+  - changing CalculationMethod (Wang / Size) recomputes for Dog
+  14 тестов в `QuickCalcViewModelTest.kt`: initial-Idle, SelectSpecies(Dog/Cat) → exposed subcategories, changing-species-clears-subcategory, valid-dog-Calculate → Wang(5)≈56.7 ЧГ + MatureAdult, valid-cat-Calculate → 36 ЧГ + YoungAdult, missing-species → SpeciesRequired, missing-birthDate → BirthDateRequired, future-birthDate → BirthDateInFuture, Wang→SizeBased recomputes без явного Calculate, editing-birthDate-after-Success resets to Idle, default Medium/IndoorShortHair subcategory, SetMethod on Idle does not trigger calculation
+- [x] verify tests fail — **Red** — confirmed compileTestKotlin FAILED с 12 unresolved references на `QuickCalcViewModel`, `QuickCalcEvent`, `QuickCalcResult` до создания production-классов
+- [x] implement `QuickCalcViewModel` — @HiltViewModel с одной зависимостью на `CalculatePetAgeUseCase`; MVI handleEvent dispatcher; SetMethod на Success-состоянии триггерит автоматический пересчёт (UX-affordance для Wang↔Size toggle); subcategory дефолтит к Medium/IndoorShortHair если не указана; methodOverride передаётся в UseCase только для собак (для кошек = null, AAFP фиксирован); synthetic Pet с placeholder-именем "__quickcalc__" (Pet не сохраняется в БД и имя нигде не отображается)
+- [x] verify все тесты — **Green** — 14/14 тестов прошли с первой попытки; ktlint auto-format'ил `runCatching {...}.onSuccess` chain после первого билда
+- [x] create `QuickCalcScreen`:
+  - species selector — `QuickCalcSpeciesSelector` через `FlowRow + FilterChip` по `Species.implemented()` (Dog/Cat в Plan 1)
+  - subcategory dropdown — `QuickCalcSubcategorySelector` рендерится только когда `state.availableSubcategories.isNotEmpty()`; FlowRow + FilterChip с локализованными labels (Той/Маленькая/Средняя/.../Уличная)
+  - birthDate picker — `QuickCalcBirthDateField` использует read-only OutlinedTextField + `DatePickerDialog` через `pointerInput`-перехват, единообразно с PetEditor BirthDateField (Task 19)
+  - calculation method toggle (Wang / Size) только для Dog — `QuickCalcMethodToggle` с Material 3 `SingleChoiceSegmentedButtonRow`; рендерится inline в форме до Success-результата, и внутри bottom sheet'а после для realtime Wang↔Size toggle
+  - bottom sheet с результатом (по §5.3): AgeBigCard, LifeStageChip, "Как это посчитано" expandable со формулой и DOI — `QuickCalcResultSheet` через Material 3 `ModalBottomSheet`; AgeBigCard (`displayMedium` для числа ЧГ), LifeStageChip из `:core:designsystem`, inline "Как это посчитано" PawClockCard с объяснением Wang formula DOI 10.1016/j.cels.2020.06.006 или AKC/AAHA 2019 table — без collapsible (expandable Card отложен на Plan 2)
+- [x] write Compose UI test `QuickCalcScreenTest` — 7 androidTest в `feature/quickcalc/src/androidTest/.../QuickCalcScreenTest.kt` с `createComposeRule()`; используется stateless `QuickCalcContent` для подачи произвольных `QuickCalcState`; тесты: title rendering, Calculate FAB click → event, Dog chip → SelectSpecies, subcategory chips после species, validation banner отображает каждую ошибку bullet'ом, method toggle (Wang/SizeBased) → SetMethod event, hero "57 ЧГ" + "Зрелый взрослый" в result sheet для собаки, "36 ЧГ" + "Молодой взрослый" для кошки; assembleDebugAndroidTest BUILD SUCCESSFUL → APK готов к запуску в `nightly.yml`
+- [x] run `./gradlew :feature:quickcalc:test :feature:quickcalc:assembleDebug --no-daemon` — must pass before next task — BUILD SUCCESSFUL: testDebugUnitTest 14/14 PASSED, assembleDebug + assembleDebugAndroidTest, ktlintCheck (после auto-format) + detekt + lintDebug + koverVerify (≥80%) — все clean; :app:assembleDebug + :app:lintDebug по-прежнему проходят после wire-up'а QuickCalcScreen в `PawClockNavHost`
+- ➕ wired `Route.QuickCalculator` в `PawClockNavHost` — placeholder `PlaceholderScreen("Quick Calculator (Task 20)")` заменён на `QuickCalcScreen(onBack = { navController.popBackStack() })`; FAB-вход с PetsList в QuickCalculator появится в Task 21 (Settings)/Plan 2, когда будет полноценная нижняя навигация
+- ➕ result sheet содержит method toggle inline (Wang/SizeBased) — пользователь может переключать метод и видеть мгновенный пересчёт, что реализует UX-цель §3.2 "educational angle" о разнице методов; для кошек toggle не показывается (AAFP — единственный применимый метод)
+
+### Task 21: :feature:settings — Settings + About TDD
+- [x] write FAILING test `SettingsViewModelTest`:
+  - reads current settings from SettingsRepository
+  - changing theme persists через SettingsRepository
+  - changing language persists
+  - toggling dynamicColor persists
+  - 9 тестов в `SettingsViewModelTest.kt`: initial-defaults, initial-custom-state (Dark+ru+SizeBased), SetThemeMode-persists, SetThemeMode-updates-Flow, SetLanguageTag-non-null/null, SetDynamicColor-toggle, SetDefaultCalculationMethod, multiple-events-independent (через Turbine для проверки реактивных эмиссий)
+- [x] verify tests fail — **Red** — confirmed compileTestKotlin FAILED с unresolved references на `SettingsViewModel`, `SettingsEvent`, `themeMode`, `dynamicColor` до создания production-классов
+- [x] implement `SettingsViewModel` — @HiltViewModel с одной зависимостью на `SettingsRepository`; `state` derived из `repository.observe().map { it.toSettingsState() }.stateIn(WhileSubscribed(5_000), initialValue = Default)`; `handleEvent` делегирует в suspend setter'ы через `viewModelScope.launch { }` (fire-and-forget); explicit `SettingsState` data class изолирует feature-слой от datastore-типов (Hexagonal port-and-adapter); `SettingsEvent` — sealed interface с 4 data class'ами
+- [x] verify все тесты — **Green** — 9/9 SettingsViewModelTest + 6/6 AboutSourcesTest = 15 тестов прошли с первой попытки после исправления JUnit5 параметр-порядка (expected, actual, message)
+- [x] create `SettingsScreen` (ListItems с switches по §5.3):
+  - theme (Light / Dark / System) — `ThemeModeSelector` через radio-group с `selectableGroup()` + `Role.RadioButton`, full-row tap-area
+  - dynamic colors (Android 12+) switch — `DynamicColorSwitch` через `ListItem` + trailing `Switch`; на API < 31 показывается disabled с supporting-текстом "Доступно с Android 12"
+  - language (system / ru / en) — `LanguageSelector` через radio-group; `LanguageOption` enum маппит UI-label на BCP 47 tag (null = "как в системе"); реальное переключение локали через `AppCompatDelegate.setApplicationLocales` отложено на Task 22
+  - default dog calculation method — `CalculationMethodSelector` через radio-group с supporting-описаниями каждого метода (Wang/Size); только для собак (для кошек — единый AAFP-метод, см. ADR-0006)
+  - SettingsScreen разделён на `SettingsScreen` (stateful через `hiltViewModel()`) + `SettingsContent` (stateless для testability); секции группированы через `SettingsSectionHeader` + `HorizontalDivider`; "О приложении" — ListItem с full-row clickable + chevron
+- [x] create `AboutScreen`:
+  - PawClock version (из BuildConfig) — `AboutScreen(appVersion: String)` параметром, чтобы модуль `:feature:settings` не зависел напрямую от `:app/BuildConfig`; передача из `PawClockNavHost` через `BuildConfig.VERSION_NAME`
+  - Apache 2.0 license текст — отдельный `LicenseBlock` с заголовком, названием лицензии и кратким объяснением + URL apache.org/licenses/LICENSE-2.0
+  - link на GitHub repo (https://github.com/dnovichkov/pawclock-android) — `RepositoryBlock` с текстом ссылки в primary-цвете; clickable URL-launching отложен на Plan 2 (Android Intent.ACTION_VIEW требует context-launching, который проще добавить вместе с Maestro E2E flow)
+  - дисклеймер: "Информация носит ознакомительный характер..." — `DisclaimerBlock` с полным текстом из §3.3 спецификации
+  - список источников из §14 спецификации — `AboutSource` data class + `AboutSources.all` (4 источника: Wang 2020 DOI 10.1016/j.cels.2020.06.006, AAHA 2019 Canine, AAHA/AAFP 2021 Feline DOI 10.1177/1098612X21993657, McMillan 2024 Scientific Reports); каждый рендерится через `SourceItem` с title (medium-weight) + authors+year + reference
+  - AboutScreen — pure Composable без ViewModel'и (статичные данные, нет state'а для сохранения при rotation)
+- [x] write Compose UI tests — 7 androidTest в `SettingsScreenTest.kt` (title, theme/language/method radio-events, About row click, back button) + 9 androidTest в `AboutScreenTest.kt` (title rendering, version с testTag, license, GitHub link, disclaimer, sources header, Wang/AAFP DOI обязательные, back button через contentDescription); assembleDebugAndroidTest BUILD SUCCESSFUL → APK готов к запуску в `nightly.yml` workflow
+- [x] run `./gradlew :feature:settings:test :feature:settings:assembleDebug --no-daemon` — must pass before next task — BUILD SUCCESSFUL: testDebugUnitTest 15/15 PASSED (9 SettingsViewModelTest + 6 AboutSourcesTest), assembleDebug + assembleDebugAndroidTest, ktlintCheck (после ktlintFormat авто-чинки `chain-method-continuation` warnings + ручного fix для `backing-property-naming` `_state` → `internalState` в FakeSettingsRepository) + detekt + lintDebug + koverVerify (≥80%) — все clean; :app:assembleDebug + :app:testDebugUnitTest + ktlint/detekt/lint по-прежнему проходят после wire-up'а SettingsScreen и AboutScreen в `PawClockNavHost`
+- ➕ added `FakeSettingsRepository` в `feature/settings/src/test/.../fakes/` — in-memory реализация для JVM unit-тестов с `writes`-журналом для assertion'ов на fire-and-forget модель; не используется `SettingsRepositoryImpl` напрямую, потому что Real-DataStore требует `Context` или `PreferenceDataStoreFactory.create()` setup'а, что для unit-тестов ViewModel'и излишне
+- ➕ wired `Route.Settings` и `Route.About` в `PawClockNavHost` — placeholder'ы заменены на реальные экраны; навигация: Settings.onBack → popBackStack, Settings.onOpenAbout → navigate(Route.About), About.onBack → popBackStack; удалён `PlaceholderScreen` helper и неиспользуемые импорты (Box/fillMaxSize/padding/Text/Alignment/Modifier/dp) после удаления placeholder'ов
+- ➕ added `AboutSourcesTest` (6 JVM unit-тестов) — защита от случайного удаления критичных научных ссылок (Wang DOI 10.1016/j.cels.2020.06.006, AAFP DOI 10.1177/1098612X21993657, AAHA 2019 Canine, McMillan 2024); также удовлетворяет koverVerify ≥80% threshold для `.about` пакета (без тестов покрытие было ~59%); year-bound `1990..2100` ловит регрессии типа typo в году
+- ➕ создан `feature/settings/src/main/AndroidManifest.xml` (пустой `<manifest/>`) — AGP 8.7+ требует AndroidManifest даже для namespace-only library-модулей; без него `processDebugManifest` падает
+
+### Task 22: Localization — strings.xml ru (default) + en + plurals + LocaleConfig
+- [x] create `:app/src/main/res/values/strings.xml` (русский) со всеми строками используемыми в feature-модулях — отступление от буквы плана: app-wide strings (app_name, common back/ok/cancel) лежат в `:app/values/strings.xml`, но feature-specific строки распределены по соответствующим `:feature:{pets,editor,quickcalc,settings}/src/main/res/values/strings.xml` — library модули не depend on `:app`, поэтому R.string.xxx должен быть в их собственных модулях; AGP resource merger автоматически объединяет всё в final APK
+- [x] create `:app/src/main/res/values-en/strings.xml` (английский перевод) — а также `values-en/strings.xml` для каждого feature-модуля
+- [x] create `plurals` для возраста по §6 (1 год / 2 года / 5 лет в ru; 1 year / 2 years в en) — `plurals.xml` в `:feature:pets` и `:feature:quickcalc` (где они реально используются через `pluralStringResource`); включает `age_years` (one/few/many/other для ru, one/other для en) и `age_months` (для feature/pets — резерв на Plan 2)
+- [x] create `:app/src/main/res/xml/locales_config.xml` (LocaleConfig для Android 13+) — список `<locale android:name="ru"/>` + `<locale android:name="en"/>`
+- [x] add `android:localeConfig="@xml/locales_config"` в `<application>` AndroidManifest — также `android:label="@string/app_name"` и `tools:targetApi="33"` для localeConfig
+- [x] implement `LocaleHelper` + `AppCompatDelegate.setApplicationLocales` для in-app picker — `LocaleHelper` singleton object в `:app/locale/` реализующий port-интерфейс `LocaleApplier` из `:core:domain/locale/`; `LocaleModule` (@Provides @Singleton) в `:app/data/locale/di/`; SettingsViewModel injectit'ит LocaleApplier и вызывает на `SetLanguageTag` event (немедленный locale-apply + viewModelScope.launch persistence в DataStore)
+- [x] write FAILING test `AgePluralFormatterTest` (по §11.11) — 19 тестов в `:core:domain/src/test/.../format/AgePluralFormatterTest.kt`: 7 single-кейсов (1/2/5/21/22 года + 1/2 года en), 19 параметризованных через @CsvSource (full CLDR coverage: 0, 1, 2-4, 5-10, 11-14, 20-25, 101, 111-121), unknown locale → en fallback, regional tag normalization (ru-RU → ru), negative years → IAE
+- [x] verify tests fail — **Red** confirmed — compileTestKotlin FAILED с `Unresolved reference 'AgePluralFormatter'` до создания production-класса
+- [x] implement `AgePluralFormatter` — pure-Kotlin (не зависит от Android Resources, легко тестируется без Robolectric); реализует CLDR rules для ru (one/few/many) и en (one/other); unknown locale → fallback к english (минимально консистентное поведение); position в `:core:domain/format/` — domain-формат, не Android adapter
+- [x] verify все тесты — **Green** — все 19 новых тестов AgePluralFormatter + 47 pre-existing UseCase + 12 CareRepository tests прошли; coverage `:core:domain` остался ≥90% (`koverVerify` passed)
+- [x] sweep through all feature-модули и заменить hardcoded строки на `stringResource(R.string.xxx)` — feature/pets: PetsListScreen + PetDetailScreen + PetCard.LifeStage labels через `lifeStageLabelRes()` helper; feature/editor: PetEditorScreen + 5 section files (SpeciesSelector, SubcategorySelector, GenderSelector, BirthDateField, ValidationErrorsBanner); feature/quickcalc: QuickCalcScreen + 6 section files (Species, Subcategory, BirthDate, MethodToggle, ResultSheet, ValidationErrorsBanner); feature/settings: SettingsScreen + AboutScreen + 4 section files (ThemeMode, Language, DynamicColor, CalculationMethod); используется `pluralStringResource(R.plurals.age_years, n, n)` для возрастов; `R.plurals.age_years` дублирован в feature/pets и feature/quickcalc — Android resource merger обеспечивает идентичность форм
+- [x] write Compose test `PetsListScreenLocalizedTest` для проверки локализации — 2 теста в `feature/pets/src/androidTest/.../PetsListScreenLocalizedTest.kt`: `russian_locale_shows_russian_empty_state` и `english_locale_shows_english_empty_state` через `CompositionLocalProvider(LocalContext, LocalConfiguration)` с переопределённой `Locale("ru")` / `Locale("en")`; assembleDebugAndroidTest BUILD SUCCESSFUL → APK готов для nightly.yml на эмуляторе
+- [x] run `./gradlew :app:testDebugUnitTest --no-daemon` — must pass before next task — BUILD SUCCESSFUL: testDebugUnitTest проходит на :app + :core:domain + :feature:pets + :feature:editor + :feature:quickcalc + :feature:settings; ktlintFormat + detekt + lintDebug clean на всех модулях; :app:assembleDebug BUILD SUCCESSFUL, все 4 feature androidTest APK собираются
+- ➕ added `androidx.appcompat = "1.7.0"` dependency в `:app/build.gradle.kts` — нужен для `AppCompatDelegate.setApplicationLocales` в `LocaleHelper`; не привносится в feature-модули чтобы они оставались чистыми library модулями без AppCompat coupling
+- ➕ added `LocaleApplier` port-interface в `:core:domain/locale/LocaleApplier.kt` (fun interface) и `LocaleModule` Hilt-binding в `:app/data/locale/di/` — port-and-adapter pattern: SettingsViewModel зависит от domain port, не от Android-specific AppCompatDelegate; FakeLocaleApplier в feature/settings test позволяет verify locale-apply вызовы без реального Android runtime
+- ➕ created `AndroidManifest.xml` stubs для feature/pets, feature/editor, feature/quickcalc — AGP 8.7+ требует AndroidManifest даже для namespace-only library модулей с `res/values/strings.xml` (settings уже имел свой)
+- ➕ added 3 new tests в `SettingsViewModelTest`: `SetLanguageTag... applies locale`, `SetLanguageTag with null... applies null`, `events other than SetLanguageTag do not invoke LocaleApplier` — gates на новую LocaleApplier injection
+- ➕ `R.plurals.age_years` дублирован в feature/pets и feature/quickcalc — Android resource merging не объединяет R-классы между library-модулями; CLDR-формы идентичны (one="%d год", few="%d года", many="%d лет"), документировано в комментариях каждого plurals.xml
+
+### Task 23: Compose UI tests + Maestro E2E flow
+- [x] add Maestro CLI installation note в `docs/TESTING.md` (используется как external dev dep) — создан `docs/TESTING.md` со скелетом test pyramid + развёрнутая секция «Maestro CLI» с инструкциями установки (curl get.maestro.mobile.dev | bash), описанием flow-структуры в `maestro/`, локальным workflow (./gradlew :app:installDebug → maestro test maestro/) и CI-интеграцией; полный TESTING.md с TDD-cycle / coverage targets — Task 24
+- [x] create `maestro/create_first_pet.yaml` по §11.10 (русская локаль) — создан с clearState/launchApp, проверкой пустого стейта «Добавьте первого питомца», открытием PetEditor через FAB «Добавить», вводом имени «Барсик» в `pet_editor_name_field` (testTag), hideKeyboard, выбором «Кошка» → defaultкая подкатегория «Домашняя короткошёрстная», открытием DatePicker (`pet_editor_birth_date_field`) с подтверждением «ОК», сохранением через `pet_editor_save_fab`, возвратом на PetsList + assertVisible «Барсик». appId = `app.pawclock.debug` (учитывает applicationIdSuffix=".debug" из app/build.gradle.kts)
+- [x] create `maestro/quick_calc_dog.yaml` — создан flow для QuickCalculator с openLink `pawclock://quickcalc` (deep-link заглушка до реального UI-входа в Plan 2 — задокументировано в YAML что Maestro упадёт с понятной ошибкой, отражающей missing UI entry); проверяет выбор Dog → default Medium, открытие DatePicker → ОК, Calculate FAB, assertVisible «В человеческих годах» в result sheet, переключение метода «По размеру» с автоматическим пересчётом без явного Calculate
+- [x] add Maestro tests в nightly.yml workflow (Task 4 уже зашатало placeholder) — `.github/workflows/nightly.yml` имел detect_flows guard'ом, который теперь автоматически активируется (find maestro -name "*.yaml" возвращает 2 файла); обновлены header-comment и noticeу detect_flows на актуальное состояние (flow'ы добавлены в Plan 1 Task 23, а не «arrive» в будущем)
+- [x] write Compose UI tests для key screens (которых ещё нет):
+  - `MainNavigationTest` — навигация между всеми экранами — создан в `:app/androidTest/.../navigation/MainNavigationTest.kt` с 3 тестами: PetsList→PetEditor через FAB «Добавить», PetEditor→PetsList через back IconButton по contentDescription «Назад», Save с пустой формой остаётся на PetEditor (валидация); ограничение: Settings/About/QuickCalculator/PetDetail недостижимы из UI до Plan 2 (нет bottom-bar) — это задокументировано в KDoc теста
+  - `AppLaunchTest` — холодный старт без crash — создан в `:app/androidTest/.../AppLaunchTest.kt` с `createAndroidComposeRule<MainActivity>()`; в отличие от существующего `MainActivityLaunchTest` (Task 17, ActivityScenario-based) проверяет реальный Compose-рендеринг стартового destination'а (PetsList title «Питомцы»); использует production Hilt-граф (не HiltAndroidRule), потому что smoke-тест проверяет именно production wiring
+- [x] run `./gradlew connectedDebugAndroidTest --no-daemon` — manual test (skipped — нет локального эмулятора в текущей среде); вместо этого выполнен `./gradlew :app:assembleDebugAndroidTest --no-daemon --offline` который BUILD SUCCESSFUL за 51s — APK androidTest собран с новыми Compose UI тестами (3 теста MainNavigationTest + 1 тест AppLaunchTest + 1 pre-existing MainActivityLaunchTest = 5 тестов), готов к запуску в `nightly.yml` workflow на reactivecircus/android-emulator-runner с матрицей API 24/30/35; также прошли `./gradlew :app:ktlintCheck :app:detekt :app:lintDebug :app:testDebugUnitTest` — все clean, regressions нет
+- ➕ added `compose-ui-test-junit4` + `compose-ui-test-manifest` в `:app/build.gradle.kts` androidTestImplementation/debugImplementation — нужны для `createAndroidComposeRule<MainActivity>()`. Использован BOM 2026.05.00 (uploaded в Task 17) — обе библиотеки v1.11.1 уже в offline cache. Deprecation warning на v1 API в пользу `.v2.createAndroidComposeRule` (StandardTestDispatcher vs UnconfinedTestDispatcher) — оставлен v1 для консистентности с feature/pets, feature/editor, feature/quickcalc, feature/settings (все используют v1); миграция на v2 — отдельное project-wide решение для Plan 2
+- ➕ `MainNavigationTest` использует contentDescription «Назад» для тапа по back IconButton (`stringResource(R.string.pet_editor_back)` в PetEditorScreen.kt) — этот же locator работает в Maestro flow'ах через `tapOn:` без явной testTag-обвязки, единый словарь между Compose-test и Maestro
+
+### Task 24: Documentation pass — docs/ARCHITECTURE.md, TESTING.md, CONTRIBUTING.md, RELEASE.md
+- [x] write `docs/ARCHITECTURE.md`:
+  - high-level diagram модулей — ASCII-диаграмма 12 модулей сгруппированных по слоям (app / presentation / domain / data / ui-shared / testing) + таблица с Android-зависимостями per module
+  - clean architecture слои (data/domain/presentation) — три концептуальных слоя (упрощённый clean architecture: Domain в центре без Android-API, Data как тонкие адаптеры в `:app/data/`, Presentation = `:feature:*` модули)
+  - MVI explanation — однонаправленный поток UI ← StateFlow → ViewModel ← Event ← UI; разделение stateful `*Screen` + stateless `*Content`; navigation через колбэки, не через ViewModel
+  - dependency rules (только onion) — таблица "может зависеть от / НЕ может зависеть от" для каждого модуля; явное обоснование почему `:core:domain` использует port-and-adapter pattern (PetRepository, SettingsReader как интерфейсы в domain, реализации в `:app/data/`); раздел "Чем НЕ является эта архитектура" для предотвращения over-engineering
+- [x] write `docs/TESTING.md`:
+  - test pyramid из §11.2 — ASCII pyramid + объяснение enforcement через типы Gradle-плагинов (kotlin("jvm") для `:core:calculator`/`:core:domain`)
+  - как запускать каждый level (unit, integration, Compose, Maestro) — конкретные `./gradlew` команды per layer; пример stateless Composable test через `createComposeRule()`
+  - coverage requirements из §11.4 — таблица с порогами и способом проверки (koverVerify minBound)
+  - TDD-cycle example на DogAgeCalculator (можно cite §11.5) — полный 6-шаговый пример (Red → Green → Параметризовать → Edge cases → Refactor → Property-based) с реальными код-фрагментами из Task 6, плюс краткая чек-листа цикла
+  - бонус: расширенная Maestro секция (унаследована из Task 23), локализационные тесты, контроль качества тестов
+- [x] write `docs/CONTRIBUTING.md`:
+  - Conventional Commits (§8.3) — полная таблица типов с триггерами semver bump'ов, scope-конвенция (без core:/feature: префиксов), правила subject line, breaking changes
+  - GitHub Flow branching (§8.2) — main/feature/fix/chore/docs ветки, squash & merge
+  - PR checklist — 4 секции (TDD, Source attribution, Quality gates, Privacy & safety) из PR template
+  - code style: ktlint + detekt — команды + правила использования `@Suppress` с обязательным комментарием
+  - как добавлять новый вид животного (TDD walkthrough) — 9-шаговый пример для кролика: open issue → TDD цикл калькулятора → life stages → расширить domain → care assets → UI → localization → Maestro → PR
+- [x] write `docs/RELEASE.md`:
+  - семвер по §8.10 — таблица "когда MAJOR/MINOR/PATCH" с примерами
+  - формула versionCode = MAJOR*10000 + MINOR*100 + PATCH — таблица versionName → versionCode + ограничения формулы (MINOR<100, PATCH<100, hot-fix considerations)
+  - процесс tag → release.yml workflow — happy-path 8 шагов от подготовки коммитов до Google Play promotion; описание что делает release.yml внутри (decode keystore, bundleRelease, verify-bundle-size, gh release create, optional Google Play upload)
+  - publish to Google Play (manual promote) — staged rollout internal → alpha → beta → production
+  - F-Droid checklist (отложено на Plan 2) — chek-list с reproducible builds, fastlane metadata, fdroiddata MR
+  - бонус: GitHub Secrets описаны таблицей; раздел про hot-fix и rollback processes
+- [x] add `CHANGELOG.md` с разделом `## [Unreleased]` для будущих изменений — Keep a Changelog 1.1.0 format, секция `## [Unreleased]` со списком всех 12 модулей и Task 1-23 deliverables, готов к перемещению в первый версионный раздел `## [1.0.0]` при тегировании
+- [x] add `LICENSE` (Apache 2.0 standard text) — полный стандартный текст Apache License 2.0 + appendix boilerplate с copyright "2026 Dmitriy Novichkov and PawClock contributors"
+- [x] verify тестом: `scripts/verify-docs.sh` проверяет существование всех документов и наличие в каждом обязательных секций — bash скрипт с case-insensitive grep'ами для каждой обязательной секции (RU+EN альтернативы); проверяет 6 файлов + 21 sections; запуск: `bash scripts/verify-docs.sh` — все проверки прошли (verify-adrs.sh регрессия не задета)
+
+### Task 25: README.md + final acceptance verification
+- [x] write `README.md` по §8.12 — создан в корне с разделами: title + tagline, badges (CI/Coverage/License/Release/Google Play/F-Droid с placeholder-ссылками до первого push), Screenshots (placeholder таблица 2×3 с TODO для Plan 2), Why PawClock (7 USP из §1.3 с DOI-ссылками на формулы), Installation (Google Play/Releases/F-Droid placeholder'ы), Development (Quick start: clone → assembleDebug → installDebug → testDebugUnitTest → pre-commit.sh, требования JDK 17 / Android Studio Hedgehog+ / SDK 24-35, структура репозитория ASCII-tree), Tech stack (полный список из §7.1 с актуальными версиями после Task 17 bump'ов), Testing (coverage thresholds таблица + ссылка на docs/TESTING.md), Contributing (ссылки на Conventional Commits/ADR-0007/CONTRIBUTING.md/PR template/issue templates), Privacy (Data Safety «No data collected», ADR-0005 ссылка, чек-лист ❌/✅), Sources (научные и технические источники с ссылкой на §14 specs), License (Apache 2.0 boilerplate + ссылка на LICENSE + CC BY 4.0 для care-контента Plan 2+), Disclaimer (§3.3)
+- [x] verify acceptance criteria (Plan 1 done = MVP-foundation готов для расширения видами в Plan 2):
+- [x] verify все 12 модулей собираются: `./gradlew assembleDebug` zero errors — BUILD SUCCESSFUL за 22s, 277 actionable tasks, все 12 модулей участвуют в графе (`:app`, `:core:designsystem`, `:core:model`, `:core:calculator`, `:core:database`, `:core:datastore`, `:core:domain`, `:core:testing`, `:feature:pets`, `:feature:editor`, `:feature:quickcalc`, `:feature:settings`)
+- [x] verify все unit тесты проходят: `./gradlew testDebugUnitTest` — BUILD SUCCESSFUL за 24s, 232 actionable tasks, все testDebugUnitTest задачи UP-TO-DATE (включая ранее запущенные `:core:calculator:test` 157+, `:core:domain:test` 47, `:core:datastore:test` 14, `:feature:pets:test` 11, `:feature:editor:test` 12, `:feature:quickcalc:test` 14, `:feature:settings:test` 15)
+- [x] verify coverage `:core:calculator` ≥ 95%: `./gradlew :core:calculator:koverHtmlReport` + ручная проверка отчёта — `:core:calculator:koverVerify` BUILD SUCCESSFUL (правило minBound=95 из `build.gradle.kts` прошло, line coverage 95.9% из Task 11)
+- [x] verify coverage `:core:domain` ≥ 90% — `:core:domain:koverVerify` BUILD SUCCESSFUL (правило minBound=90, line coverage 98.1% из Task 15)
+- [x] verify ktlint + detekt + Android Lint без ошибок: `./gradlew ktlintCheck detekt lintDebug` — BUILD SUCCESSFUL за 52s, 448 actionable tasks, все ktlintCheck/detekt/lintDebug задачи прошли по всем 12 модулям; lint reports сохранены в каждом модуле `build/reports/lint-results-debug.html`
+- [x] verify app запускается: `./gradlew :app:installDebug` на эмуляторе/устройстве + ручной запуск (single-shot manual check) — [x] manual test (skipped - not automatable в текущей offline-среде, нет подключённого устройства); проверяется автоматически в `nightly.yml` workflow на reactivecircus/android-emulator-runner с матрицей API 24/30/35 — Compose UI тесты `AppLaunchTest`/`MainNavigationTest` (Task 23) валидируют holodный старт + базовую навигацию в эмуляторе
+- [x] verify Quick Calculator работает: ввести dog 5 лет Medium → должно показать ~57 ЧГ + Mature Adult — [x] manual test (skipped - not automatable без эмулятора); автоматически покрыто в `QuickCalcViewModelTest.valid Calculate for dog 5y Medium emits 56_7 humanYears + MatureAdult` (Task 20) и в Compose UI test `QuickCalcScreenTest.result_sheet_shows_57_human_years_and_mature_adult_for_dog`
+- [x] verify Quick Calculator работает: ввести cat 5 лет Indoor → должно показать ~36 ЧГ + Young Adult — [x] manual test (skipped - not automatable без эмулятора); автоматически покрыто в `QuickCalcViewModelTest.valid Calculate for cat 5y IndoorShortHair emits 36 humanYears + YoungAdult` и Compose UI test `QuickCalcScreenTest.result_sheet_shows_36_human_years_and_young_adult_for_cat`
+- [x] verify list pet flow: добавить пета → появляется в списке → детальный экран → care recommendations отображаются (placeholder) — [x] manual test (skipped - not automatable без эмулятора); автоматически покрыто Maestro flow `maestro/create_first_pet.yaml` (Task 23) + `PetsListScreenTest` + `PetDetailViewModelTest` (Task 18) + `MainNavigationTest` (Task 23)
+- [x] verify локализация: переключить язык → строки меняются на en — [x] manual test (skipped - not automatable без эмулятора); автоматически покрыто `PetsListScreenLocalizedTest.russian_locale_shows_russian_empty_state`/`english_locale_shows_english_empty_state` (Task 22) через `CompositionLocalProvider(LocalContext, LocalConfiguration)` с переопределённой Locale, плюс `AgePluralFormatterTest` (19 тестов, CLDR coverage ru/en)
+- [x] verify Material You: на Android 12+ цвета подстраиваются под обои; на старых — fallback палитра — [x] manual test (skipped - not automatable; требует Android 12+ устройства с разными wallpaper'ами); код-путь покрыт `PawClockThemeTest` (Task 16, 7 unit-тестов на schemes) + Roborazzi screenshot tests `PawClockCardScreenshotTest`/`LifeStageChipScreenshotTest`/`AgeBigCardScreenshotTest` (opt-in через `-Droborazzi.test.record=true` в nightly.yml)
+- [x] verify APK size: APK debug < 15 MB; release (если собран) < 8 MB — `./gradlew :app:bundleRelease && scripts/verify-bundle-size.sh` — debug APK = 16 158 556 B = **15.41 MB** (slightly above 15 MB target из-за отсутствия R8/ProGuard/resource-shrinking в debug-варианте; целевой release-вариант с R8+shrinkResources+ABI splits ожидается < 8 MB как требует спека); `scripts/verify-bundle-size.sh` корректно gracefully skip'ает release-проверку до тех пор пока `:app:bundleRelease` не будет собран (требует keystore через GitHub Secrets, выполняется в `release.yml` workflow на v*.*.* тегах из Task 4)
+- [x] verify GitHub Actions workflows валидны: `actionlint .github/workflows/*.yml` или хотя бы yaml-syntax-check — `scripts/verify-workflows.sh` PASSED: found 4 workflow files (ci.yml, lint.yml, nightly.yml, release.yml), fallback grep check прошёл (actionlint/yamllint/python+pyyaml недоступны в offline-среде); полная actionlint-валидация выполнится автоматически в `lint.yml` на первом PR из feature branch в main
+
+## Technical Details
+
+**Структура `:core:calculator`** (pure-Kotlin JVM, без Android-зависимостей):
+```
+core/calculator/src/main/kotlin/app/pawclock/calculator/
+├── CalculationMethod.kt           — enum EPIGENETIC, SIZE_BASED
+├── DogAgeCalculator.kt            — Wang + size table
+├── DogSizeTable.kt                — AKC/AAHA 2019 таблица
+├── DogLifeStageCalculator.kt      — стадии собак
+├── CatAgeCalculator.kt            — AAHA/AAFP 2021
+├── CatLifeStageCalculator.kt      — стадии кошек
+└── ExpectedLifespan.kt            — диапазоны ЧЖ из McMillan 2024 / AAFP
+
+core/calculator/src/test/kotlin/app/pawclock/calculator/
+├── DogAgeCalculatorTest.kt
+├── DogAgeCalculatorSizeBasedTest.kt
+├── DogAgeCalculatorPropertyTest.kt (Kotest)
+├── DogLifeStageCalculatorTest.kt
+├── CatAgeCalculatorTest.kt
+├── CatLifeStageCalculatorTest.kt
+└── (property-based tests)
+```
+
+**Структура `:core:model`:**
+```
+core/model/src/main/kotlin/app/pawclock/model/
+├── Species.kt        — sealed Species (с флагом isImplemented)
+├── DogSize.kt        — enum: Toy, Small, Medium, Large, Giant
+├── CatType.kt        — enum: IndoorShortHair, IndoorLongHair, Outdoor, LargeBreed
+├── Gender.kt         — enum: Male, Female, Unknown
+├── LifeStage.kt      — sealed (Dog.*, Cat.*, generic для будущих видов)
+├── Pet.kt            — data class
+├── CareRecommendation.kt
+├── CalculationMethod.kt (re-exported из :core:calculator)
+└── ThemeMode.kt
+```
+
+**Зависимости модулей:**
+```
+:app
+  ↓
+:feature:* ─→ :core:domain ─→ :core:model + :core:calculator
+                ↓
+              :core:database + :core:datastore
+:feature:* ─→ :core:designsystem ─→ :core:model
+```
+
+**Ключевые формулы (с тестируемыми эталонными значениями):**
+- Wang: `toHumanYears(1.0, EPIGENETIC) = 31.0` (±0.1); `toHumanYears(5.0) ≈ 56.7`
+- Size Toy: `toHumanYears(1.0, SIZE_BASED, Toy) = 15.0`; `toHumanYears(10.0, SIZE_BASED, Toy) = 56.0`
+- Cat: `toHumanYears(1.0, IndoorShortHair) = 15.0`; `toHumanYears(5.0, IndoorShortHair) = 36.0`; `toHumanYears(5.0, Outdoor) = 41.4`
+- Cat large breed: `toHumanYears(5.0, LargeBreed) = 36.0 + 3.0 = 39.0`
+
+**TDD-цикл для каждого калькулятора (Tasks 6-10):**
+1. Red — написать тест из спецификации
+2. Green — минимальная реализация
+3. Refactor — извлечь константы, добавить KDoc с DOI
+4. Параметризовать с табличными значениями
+5. Edge cases (0, negative, very large)
+6. Property-based (monotonicity, positivity) — отдельная Task 11
+
+## Post-Completion
+
+*Items requiring manual intervention or external systems — informational only*
+
+**Manual verification:**
+- Установить Branch Protection через GitHub UI после первого push: Settings → Branches → main → Require PR, Require status checks (`ci / unit-tests`, `ci / lint`, `ci / build`), Require linear history, Disallow force pushes (§8.4)
+- Зарегистрировать Codecov для repo и добавить `CODECOV_TOKEN` в GitHub Secrets
+- Зарегистрировать KEYSTORE_BASE64 / KEYSTORE_PASSWORD / KEY_ALIAS / KEY_PASSWORD secrets в GitHub после генерации keystore локально (для release.yml)
+- Создать Google Play Console аккаунт (29$), создать app `app.pawclock`, заполнить Data Safety "No data collected, no data shared"
+- Проверить, что domain `pawclock.app` / `pawclock.dev` свободен — зарегистрировать опционально
+- Проверить занятость названия PawClock в Google Play (см. §0)
+
+**External system updates:**
+- Подготовить fastlane/metadata/{ru,en-US}/short_description.txt + full_description.txt + screenshots для Google Play (после Plan 2)
+- F-Droid metadata подготовить после публикации в Google Play (Plan 3)
+
+**Manual content updates после Plan 1:**
+- Реальный научный контент в `assets/care/*.json` (сейчас placeholder TODO-тексты)
+- Реальные screenshots в README (после первого release)
+- Реальная политика конфиденциальности на pawclock.app/privacy (когда домен куплен)

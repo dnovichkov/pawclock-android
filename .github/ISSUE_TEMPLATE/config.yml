@@ -1,0 +1,9 @@
+# Force contributors to use a template so triage stays cheap.
+blank_issues_enabled: false
+contact_links:
+  - name: "PawClock spec & ADRs"
+    url: "https://github.com/dnovichkov/pawclock-android/tree/main/docs"
+    about: "Read the specification and architectural decisions before opening an issue."
+  - name: "Discussions (questions, ideas)"
+    url: "https://github.com/dnovichkov/pawclock-android/discussions"
+    about: "Open-ended discussion belongs here, not in the issue tracker."

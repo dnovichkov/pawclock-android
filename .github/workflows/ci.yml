@@ -1,0 +1,128 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Cancel any in-progress run for the same PR/branch when a new commit lands.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  unit-tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          gradle-home-cache-cleanup: true
+
+      - name: Run :core:calculator tests (TDD canary)
+        run: ./gradlew :core:calculator:test --no-daemon --stacktrace
+
+      - name: Run all debug unit tests
+        run: ./gradlew testDebugUnitTest --no-daemon --stacktrace
+
+      - name: Publish test report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Unit Tests
+          path: '**/build/test-results/test*/TEST-*.xml'
+          reporter: java-junit
+          fail-on-error: false
+
+      - name: Upload test reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-reports
+          path: '**/build/reports/tests/**'
+
+  lint:
+    name: Lint (ktlint + detekt + Android Lint)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Run ktlint + detekt + Android Lint
+        run: ./gradlew ktlintCheck detekt lintDebug --no-daemon --stacktrace
+
+      - name: Upload lint reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports
+          path: |
+            **/build/reports/ktlint/**
+            **/build/reports/detekt/**
+            **/build/reports/lint-results-*.html
+
+  build:
+    name: Assemble debug APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: [unit-tests, lint]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Assemble debug APK + bundle
+        run: ./gradlew assembleDebug bundleDebug --no-daemon --stacktrace
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          if-no-files-found: warn
+
+  screenshot-tests:
+    # PLACEHOLDER per Plan 1, Task 3.
+    # Real Roborazzi verification arrives in Task 16 (:core:designsystem).
+    # Until then this job just succeeds quickly so branch-protection rules
+    # referencing "screenshot-tests" do not block merges.
+    name: Screenshot tests (placeholder)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Placeholder
+        run: |
+          echo "Screenshot tests not yet enabled."
+          echo "Tracked: Plan 1 Task 16 — Roborazzi setup in :core:designsystem."

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  English strings for PawClock.
+  Only app-wide strings live here. Per-screen strings live in their respective
+  :feature:* modules to avoid AGP resource merging shadows.
+-->
+<resources>
+
+    <!-- App-wide -->
+    <string name="app_name">PawClock</string>
+
+    <!-- Common -->
+    <string name="common_back">Back</string>
+    <string name="common_ok">OK</string>
+    <string name="common_cancel">Cancel</string>
+
+</resources>

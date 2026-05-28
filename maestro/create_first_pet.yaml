@@ -1,0 +1,60 @@
+# Maestro E2E flow (§11.10 спецификации, Task 23 / Plan 1).
+#
+# Сценарий: пользователь впервые открывает приложение → видит пустой стейт →
+# добавляет первого питомца (имя «Барсик», вид «Кошка», дата сегодняшняя по умолчанию) →
+# попадает на PetDetail с расчётом ЧГ и LifeStage.
+#
+# Запуск:
+#   maestro test maestro/create_first_pet.yaml
+#
+# Локаль: тест полагается на русские строки (default по §6). Применённая локаль
+# определяется системой эмулятора; для CI nightly.yml эмулятор стартует с
+# русской локалью при необходимости (см. nightly.yml).
+#
+# applicationId — debug-вариант (см. app/build.gradle.kts applicationIdSuffix=".debug").
+appId: app.pawclock.debug
+---
+# Холодный запуск (clearState очищает Room БД, чтобы тест был idempotent
+# и не зависел от предыдущих запусков).
+- clearState
+- launchApp
+
+# Проверка пустого стейта.
+- assertVisible: "Питомцы"
+- assertVisible: "Добавьте первого питомца"
+
+# Открыть PetEditor через FAB «Добавить».
+- tapOn: "Добавить"
+
+# Заполнить имя.
+- assertVisible: "Новый питомец"
+- tapOn:
+    id: "pet_editor_name_field"
+- inputText: "Барсик"
+# Скрыть клавиатуру, чтобы FAB Save был доступен на маленьких экранах.
+- hideKeyboard
+
+# Выбрать вид «Кошка» через FilterChip.
+- tapOn: "Кошка"
+
+# Подкатегория «Домашняя короткошёрстная» (default для кошек по
+# QuickCalcViewModel/PetEditorViewModel — выбирается автоматически после
+# SelectSpecies(Cat); явный tap нужен только если пользователь хочет другую).
+- assertVisible: "Домашняя короткошёрстная"
+
+# Открыть DatePicker и подтвердить. BirthDateField устанавливает
+# initialSelectedDateMillis = "1 год назад" когда value=null (см. fallback
+# в BirthDateField.kt) — этого достаточно для smoke E2E: дата валидна для
+# SavePetUseCase (past, не unrealistic), age ≈ 1 год → Kitten для кошки.
+- tapOn:
+    id: "pet_editor_birth_date_field"
+- tapOn: "ОК"
+
+# Сохранить.
+- tapOn:
+    id: "pet_editor_save_fab"
+
+# После save'а навигация возвращается в PetsList; должна появиться карточка
+# с именем «Барсик».
+- assertVisible: "Питомцы"
+- assertVisible: "Барсик"

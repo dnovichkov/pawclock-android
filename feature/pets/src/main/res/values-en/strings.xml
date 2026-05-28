@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- PetsListScreen -->
+    <string name="pets_list_title">Pets</string>
+    <string name="pets_list_add">Add</string>
+    <string name="pets_list_empty_title">Add your first pet</string>
+    <string name="pets_list_empty_body">Tap “Add” to create a profile for your pet.</string>
+    <string name="pets_list_error">Failed to load pets.</string>
+    <string name="pets_list_open_quick_calc">Quick calculator</string>
+    <string name="pets_list_open_settings">Settings</string>
+
+    <!-- PetDetailScreen -->
+    <string name="pet_detail_loading_title">Loading…</string>
+    <string name="pet_detail_fallback_title">Pet</string>
+    <string name="pet_detail_error_title">Error</string>
+    <string name="pet_detail_error_body">Failed to load pet data. Try refreshing the screen.</string>
+    <string name="pet_detail_not_found">Pet not found.\nIt may have been deleted.</string>
+    <string name="pet_detail_back">Back</string>
+    <string name="pet_detail_edit">Edit</string>
+
+    <!-- Hero block -->
+    <string name="pet_detail_age_descriptor">Age</string>
+    <string name="pet_detail_human_years_descriptor">In human years</string>
+    <string name="pet_detail_human_years_unit">%1$d HY</string>
+    <string name="pet_detail_weight">Weight: %1$s kg</string>
+
+    <!-- Care recommendations -->
+    <string name="pet_detail_section_care">Care recommendations</string>
+    <string name="pet_detail_section_calculation">How is this calculated</string>
+    <string name="pet_detail_care_empty">No recommendations for this stage yet.</string>
+    <string name="pet_detail_care_stage">Stage</string>
+    <string name="pet_detail_care_nutrition">Nutrition</string>
+    <string name="pet_detail_care_activity">Activity</string>
+    <string name="pet_detail_care_vet">Vet check-ups</string>
+    <string name="pet_detail_care_dental">Dental</string>
+    <string name="pet_detail_care_warning_signs">Warning signs</string>
+    <string name="pet_detail_care_source">Source: %1$s</string>
+
+    <!-- Calculation explanation -->
+    <string name="pet_detail_calc_dog">Method: %1$s. Wang et al. (Cell Systems 2020) or AKC/AAHA 2019 size-table. Age %2$s years → %3$s HY.</string>
+    <string name="pet_detail_calc_cat">Method: AAHA/AAFP 2021. Piecewise formula: year 1 = 15, year 2 = 24, then +4/year. Adjustments: outdoor (+15%%) and large breed (+1/year).</string>
+    <string name="pet_detail_calc_unsupported">Method not implemented for this species.</string>
+    <!-- Method labels (used as %1$s in pet_detail_calc_dog). -->
+    <string name="pet_detail_method_epigenetic">Wang (epigenetic)</string>
+    <string name="pet_detail_method_size_based">Size-based (AKC/AAHA)</string>
+
+    <!-- Life stages -->
+    <string name="life_stage_dog_puppy">Puppy</string>
+    <string name="life_stage_dog_young_adult">Young adult</string>
+    <string name="life_stage_dog_mature_adult">Mature adult</string>
+    <string name="life_stage_dog_senior">Senior</string>
+    <string name="life_stage_dog_end_of_life">End of life</string>
+    <string name="life_stage_cat_kitten">Kitten</string>
+    <string name="life_stage_cat_young_adult">Young adult</string>
+    <string name="life_stage_cat_mature_adult">Mature adult</string>
+    <string name="life_stage_cat_senior">Senior</string>
+    <string name="life_stage_cat_end_of_life">End of life</string>
+
+</resources>

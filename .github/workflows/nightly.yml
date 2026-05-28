@@ -1,0 +1,181 @@
+name: Nightly
+
+# Spec §8.5.3 — heavy emulator-based suite. Runs unattended at night so a
+# slow matrix (~30 min/API) does not block PR turnaround on ci.yml.
+#
+# Coverage: API 24 (minSdk), 30 (median field device), 35 (targetSdk).
+# Tests: Compose UI (connectedDebugAndroidTest) + Maestro E2E flows.
+# Maestro flows arrived in Plan 1 Task 23 (maestro/*.yaml). The Maestro job
+# is still guarded by a path check so future flow removals do not break the
+# workflow — the check skips cleanly if no flows exist.
+
+on:
+  schedule:
+    # 02:00 UTC daily ≈ 05:00 MSK / late evening in the Americas; spreads load
+    # away from working hours.
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: nightly-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  instrumented-tests:
+    name: Compose UI tests (API ${{ matrix.api-level }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [24, 30, 35]
+        include:
+          - api-level: 24
+            target: default
+            arch: x86_64
+          - api-level: 30
+            target: google_apis
+            arch: x86_64
+          - api-level: 35
+            target: google_apis
+            arch: x86_64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Enable KVM (required for hardware acceleration)
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: AVD cache
+        uses: actions/cache@v4
+        id: avd-cache
+        with:
+          path: |
+            ~/.android/avd/*
+            ~/.android/adb*
+          key: avd-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}
+
+      - name: Create AVD snapshot for cache
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: ${{ matrix.arch }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
+          disable-animations: false
+          script: echo "Generated AVD snapshot."
+
+      - name: Run Compose UI tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: ${{ matrix.target }}
+          arch: ${{ matrix.arch }}
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot-save -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: ./gradlew connectedDebugAndroidTest --no-daemon --stacktrace
+
+      - name: Upload androidTest reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: androidTest-reports-api${{ matrix.api-level }}
+          path: |
+            **/build/reports/androidTests/**
+            **/build/outputs/androidTest-results/**
+
+  maestro:
+    name: Maestro E2E flows
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    needs: instrumented-tests
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect Maestro flows
+        id: detect_flows
+        run: |
+          if [ -d "maestro" ] && find maestro -name "*.yaml" -o -name "*.yml" | grep -q .; then
+            echo "has_flows=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_flows=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::No Maestro flows under maestro/. Skipping."
+          fi
+
+      - name: Set up JDK 17
+        if: steps.detect_flows.outputs.has_flows == 'true'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        if: steps.detect_flows.outputs.has_flows == 'true'
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Enable KVM
+        if: steps.detect_flows.outputs.has_flows == 'true'
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' \
+            | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install Maestro CLI
+        if: steps.detect_flows.outputs.has_flows == 'true'
+        run: |
+          curl -fsSL "https://get.maestro.mobile.dev" | bash
+          echo "$HOME/.maestro/bin" >> "$GITHUB_PATH"
+
+      - name: Run Maestro flows on emulator (API 30)
+        if: steps.detect_flows.outputs.has_flows == 'true'
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86_64
+          force-avd-creation: false
+          emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot-save -noaudio -no-boot-anim -camera-back none
+          disable-animations: true
+          script: |
+            ./gradlew :app:installDebug --no-daemon --stacktrace
+            maestro test maestro/
+
+      - name: Upload Maestro reports on failure
+        if: failure() && steps.detect_flows.outputs.has_flows == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-reports
+          path: ~/.maestro/tests/**
+
+  screenshots:
+    name: Roborazzi screenshot tests (placeholder)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Placeholder
+        run: |
+          echo "Roborazzi reference images and verification arrive in Plan 1 Task 16."
+          echo "Until then this job is a no-op so the nightly schedule succeeds."

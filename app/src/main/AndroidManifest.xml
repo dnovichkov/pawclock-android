@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Manifest для PawClock (Task 17 / Plan 1).
+
+  Политика разрешений (§9 спецификации, ADR-0005):
+    • INTERNET — явно запрещён через tools:node="remove".
+      Дополнительно блокирует transitive request от libs, которые могут декларировать
+      INTERNET в своих manifest-merge'ах (например, image-loader при misconfig).
+    • READ_MEDIA_IMAGES / CAMERA — НЕ объявлены. Photo Picker (если будет в Plan 2)
+      работает через ACTION_PICK_IMAGES без runtime-разрешения.
+    • POST_NOTIFICATIONS / RECEIVE_BOOT_COMPLETED — будут добавлены в Plan 3 (виджеты).
+
+  android:allowBackup="false" — пока нет sensitive data, но чтобы не зависеть от
+  cloud backup поведения OEM'ов, явно отключаем. Перейдём на rules-based backup в Plan 2.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Явный запрет сетевого доступа на уровне manifest (§9 Privacy). -->
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        tools:node="remove" />
+
+    <application
+        android:name=".PawClockApplication"
+        android:allowBackup="false"
+        android:icon="@android:drawable/sym_def_app_icon"
+        android:label="@string/app_name"
+        android:localeConfig="@xml/locales_config"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.PawClock"
+        tools:targetApi="33">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.PawClock">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          AppCompat per-app language preference backport для API 24-32 (Android < 13).
+          Без этого service'а + metadata `autoStoreLocales=true` пользовательский выбор
+          языка из Settings → Language применяется в текущей сессии, но НЕ восстанавливается
+          после cold start: SharedPreferences-хранилище AppCompat'а не активируется.
+          MainActivity у нас ComponentActivity (не AppCompatActivity), поэтому
+          AppCompatActivity.attachBaseContext-путь автоматического восстановления не работает —
+          service-based-путь единственный.
+          На API 33+ системный per-app-language кэш игнорирует этот блок.
+        -->
+        <service
+            android:name="androidx.appcompat.app.AppLocalesMetadataHolderService"
+            android:enabled="false"
+            android:exported="false">
+            <meta-data
+                android:name="autoStoreLocales"
+                android:value="true" />
+        </service>
+    </application>
+</manifest>

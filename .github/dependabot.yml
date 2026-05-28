@@ -1,0 +1,55 @@
+# Spec §8.9 — keep dependency drift low without drowning a solo maintainer
+# in PR noise. Gradle weekly (deps move fast), actions monthly (slower
+# cadence), capped at 5 open PRs per ecosystem.
+
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: "Europe/Moscow"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - gradle
+    commit-message:
+      prefix: build
+      include: scope
+    # Group routine Kotlin/Compose/AndroidX bumps to avoid PR storms;
+    # security alerts always come through as standalone PRs (Dependabot
+    # excludes them from groups by default).
+    groups:
+      kotlin-and-ksp:
+        patterns:
+          - "org.jetbrains.kotlin:*"
+          - "com.google.devtools.ksp:*"
+      androidx-compose:
+        patterns:
+          - "androidx.compose.*"
+          - "androidx.activity:activity-compose*"
+      androidx-core:
+        patterns:
+          - "androidx.core:*"
+          - "androidx.lifecycle:*"
+          - "androidx.navigation:*"
+      test-runners:
+        patterns:
+          - "io.kotest:*"
+          - "org.junit*"
+          - "app.cash.turbine:*"
+          - "io.mockk:*"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: ci
+      include: scope

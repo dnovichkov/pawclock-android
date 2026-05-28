@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_back">Back</string>
+
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_section_language">Language</string>
+    <string name="settings_section_calculation">Dog age calculation</string>
+
+    <string name="settings_open_about_title">About PawClock</string>
+    <string name="settings_open_about_supporting">Version, license, sources</string>
+
+    <!-- Theme mode -->
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_theme_system">Follow system</string>
+
+    <!-- Dynamic color -->
+    <string name="settings_dynamic_color_title">Dynamic colors</string>
+    <string name="settings_dynamic_color_supporting_supported">App colors adapt to your Android wallpaper</string>
+    <string name="settings_dynamic_color_supporting_unsupported">Available from Android 12. Your device uses the brand palette.</string>
+
+    <!-- Language picker -->
+    <string name="settings_language_system">Follow system</string>
+    <string name="settings_language_russian">Русский</string>
+    <string name="settings_language_english">English</string>
+
+    <!-- Calculation method -->
+    <string name="settings_method_epigenetic_title">Epigenetic (Wang 2020)</string>
+    <string name="settings_method_epigenetic_supporting">DNA methylation-based formula. Single curve for all dog sizes.</string>
+    <string name="settings_method_size_based_title">Size-based (AKC/AAHA 2019)</string>
+    <string name="settings_method_size_based_supporting">Table-based by weight class — giants age faster than small breeds.</string>
+
+    <!-- About screen -->
+    <string name="about_title">About</string>
+    <string name="about_back">Back</string>
+    <string name="about_app_name">PawClock</string>
+    <string name="about_version">Version %1$s</string>
+    <string name="about_app_tagline">Pet age calculation in human years, based on peer-reviewed sources.</string>
+
+    <string name="about_license_header">License</string>
+    <string name="about_license_name">Apache License 2.0</string>
+    <string name="about_license_body">Apache License, Version 2.0 — an open-source license. You may use, modify and redistribute the app provided you preserve copyright notices. Full text: apache.org/licenses/LICENSE-2.0</string>
+
+    <string name="about_repository_header">Source code</string>
+    <string name="about_repository_body">Report issues, suggest improvements or add a new species — via GitHub Issues.</string>
+
+    <string name="about_disclaimer_header">Disclaimer</string>
+    <string name="about_disclaimer_body">Information in this app is for general guidance only and is not a substitute for veterinary advice. Care, nutrition and checkup recommendations are general orientations, not an individual medical plan.</string>
+
+    <string name="about_sources_header">Scientific sources</string>
+
+</resources>

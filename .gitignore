@@ -1,0 +1,52 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/**/build/
+!**/src/**/build/**
+gradle-app.setting
+
+# Local config
+local.properties
+*.iml
+*.ipr
+*.iws
+
+# IDEs
+.idea/
+.vscode/
+.fleet/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Android
+captures/
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+*.ap_
+*.dex
+release/
+debug/
+*.keystore
+!debug.keystore
+keystore.properties
+
+# Reports
+**/reports/
+**/test-results/
+**/coverage/
+*.log
+
+# Misc
+.kotlin/
+.history/
+.tmp/
+node_modules/

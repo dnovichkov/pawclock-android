@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- TopAppBar / FAB -->
+    <string name="quick_calc_title">Quick calculator</string>
+    <string name="quick_calc_back">Back</string>
+    <string name="quick_calc_calculate">Calculate</string>
+    <string name="quick_calc_intro">Calculate your pet\'s age in human years without saving — just pick a species, size/type and birth date.</string>
+
+    <!-- Form fields -->
+    <string name="quick_calc_species_label">Species *</string>
+    <string name="quick_calc_subcategory_label">Subcategory</string>
+    <string name="quick_calc_birth_date_label">Birth date *</string>
+    <string name="quick_calc_method_label">Calculation method</string>
+
+    <!-- Species labels -->
+    <string name="quick_calc_species_dog">Dog</string>
+    <string name="quick_calc_species_cat">Cat</string>
+
+    <!-- Subcategory labels -->
+    <string name="quick_calc_subcategory_toy">Toy</string>
+    <string name="quick_calc_subcategory_small">Small</string>
+    <string name="quick_calc_subcategory_medium">Medium</string>
+    <string name="quick_calc_subcategory_large">Large</string>
+    <string name="quick_calc_subcategory_giant">Giant</string>
+    <string name="quick_calc_subcategory_indoor_short_hair">Indoor short-hair</string>
+    <string name="quick_calc_subcategory_indoor_long_hair">Indoor long-hair</string>
+    <string name="quick_calc_subcategory_outdoor">Outdoor</string>
+    <string name="quick_calc_subcategory_large_breed">Large breed</string>
+
+    <!-- Date picker -->
+    <string name="quick_calc_date_ok">OK</string>
+    <string name="quick_calc_date_cancel">Cancel</string>
+
+    <!-- Method toggle -->
+    <string name="quick_calc_method_epigenetic">Wang (epigenetic)</string>
+    <string name="quick_calc_method_size_based">Size-based</string>
+
+    <!-- Validation errors -->
+    <string name="quick_calc_error_species_required">Please choose a species</string>
+    <string name="quick_calc_error_birth_date_required">Please enter a birth date</string>
+    <string name="quick_calc_error_birth_date_in_future">Birth date cannot be in the future</string>
+    <string name="quick_calc_error_unsupported_species">This species is not supported yet</string>
+    <string name="quick_calc_error_unexpected">Could not calculate the age. Please try again.</string>
+
+    <!-- Result sheet -->
+    <string name="quick_calc_result_age_descriptor">Calendar age</string>
+    <string name="quick_calc_result_human_years_descriptor">In human years</string>
+    <string name="quick_calc_result_human_years_unit">%1$d HY</string>
+    <string name="quick_calc_result_explanation_title">How is this calculated</string>
+    <string name="quick_calc_result_explanation_epigenetic">Wang et al. formula (Cell Systems 2020, DOI 10.1016/j.cels.2020.06.006): HY = 16 · ln(age) + 31. Based on DNA methylation — more accurate than the traditional "1 year = 7 years" rule.</string>
+    <string name="quick_calc_result_explanation_size_based">AKC/AAHA 2019 table-based method: human-year value is taken from a published table by weight class (Toy / Small / Medium / Large / Giant).</string>
+    <string name="quick_calc_result_explanation_aafp">AAHA/AAFP 2021 feline life-stage guidelines: piecewise formula — kitten (15 HY for the first year) + young adult (+9 HY for the second) + 4 HY per additional year. Independent of the Wang method.</string>
+
+    <!-- Life stages -->
+    <string name="quick_calc_life_stage_dog_puppy">Puppy</string>
+    <string name="quick_calc_life_stage_dog_young_adult">Young adult</string>
+    <string name="quick_calc_life_stage_dog_mature_adult">Mature adult</string>
+    <string name="quick_calc_life_stage_dog_senior">Senior</string>
+    <string name="quick_calc_life_stage_dog_end_of_life">End of life</string>
+    <string name="quick_calc_life_stage_cat_kitten">Kitten</string>
+    <string name="quick_calc_life_stage_cat_young_adult">Young adult</string>
+    <string name="quick_calc_life_stage_cat_mature_adult">Mature adult</string>
+    <string name="quick_calc_life_stage_cat_senior">Senior</string>
+    <string name="quick_calc_life_stage_cat_end_of_life">End of life</string>
+
+</resources>

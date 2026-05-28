@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Русские строки для :feature:pets (PetsList + PetDetail).
+  Английский перевод — values-en/strings.xml. Plurals возраста — :app/values/plurals.xml.
+-->
+<resources>
+
+    <!-- PetsListScreen -->
+    <string name="pets_list_title">Питомцы</string>
+    <string name="pets_list_add">Добавить</string>
+    <string name="pets_list_empty_title">Добавьте первого питомца</string>
+    <string name="pets_list_empty_body">Нажмите на кнопку «Добавить», чтобы создать профиль вашего питомца.</string>
+    <string name="pets_list_error">Не удалось загрузить список питомцев.</string>
+    <string name="pets_list_open_quick_calc">Быстрый расчёт</string>
+    <string name="pets_list_open_settings">Настройки</string>
+
+    <!-- PetDetailScreen -->
+    <string name="pet_detail_loading_title">Загрузка…</string>
+    <string name="pet_detail_fallback_title">Питомец</string>
+    <string name="pet_detail_error_title">Ошибка</string>
+    <string name="pet_detail_error_body">Не удалось загрузить данные питомца. Попробуйте обновить экран.</string>
+    <string name="pet_detail_not_found">Питомец не найден.\nВозможно, он был удалён.</string>
+    <string name="pet_detail_back">Назад</string>
+    <string name="pet_detail_edit">Редактировать</string>
+
+    <!-- Hero block -->
+    <string name="pet_detail_age_descriptor">Возраст</string>
+    <string name="pet_detail_human_years_descriptor">В человеческих годах</string>
+    <string name="pet_detail_human_years_unit">%1$d ЧГ</string>
+    <string name="pet_detail_weight">Вес: %1$s кг</string>
+
+    <!-- Care recommendations -->
+    <string name="pet_detail_section_care">Рекомендации по уходу</string>
+    <string name="pet_detail_section_calculation">Как это посчитано</string>
+    <string name="pet_detail_care_empty">Для этой стадии пока нет рекомендаций.</string>
+    <string name="pet_detail_care_stage">Стадия</string>
+    <string name="pet_detail_care_nutrition">Питание</string>
+    <string name="pet_detail_care_activity">Активность</string>
+    <string name="pet_detail_care_vet">Визиты к врачу</string>
+    <string name="pet_detail_care_dental">Зубы</string>
+    <string name="pet_detail_care_warning_signs">Тревожные сигналы</string>
+    <string name="pet_detail_care_source">Источник: %1$s</string>
+
+    <!-- Calculation explanation -->
+    <string name="pet_detail_calc_dog">Метод: %1$s. Wang et al. (Cell Systems 2020) или AKC/AAHA 2019 size-table. Возраст %2$s лет → %3$s ЧГ.</string>
+    <string name="pet_detail_calc_cat">Метод: AAHA/AAFP 2021. Кусочная формула: 1й год = 15, 2й = 24, далее +4/год. Поправки на outdoor (+15%%) и large breed (+1/год).</string>
+    <string name="pet_detail_calc_unsupported">Метод неприменим для этого вида.</string>
+    <!-- Method labels (для подстановки в pet_detail_calc_dog %1$s). -->
+    <string name="pet_detail_method_epigenetic">Wang (эпигенетика)</string>
+    <string name="pet_detail_method_size_based">По размеру (AKC/AAHA)</string>
+
+    <!-- Life stages -->
+    <string name="life_stage_dog_puppy">Щенок</string>
+    <string name="life_stage_dog_young_adult">Молодой взрослый</string>
+    <string name="life_stage_dog_mature_adult">Зрелый взрослый</string>
+    <string name="life_stage_dog_senior">Старший</string>
+    <string name="life_stage_dog_end_of_life">Поздний возраст</string>
+    <string name="life_stage_cat_kitten">Котёнок</string>
+    <string name="life_stage_cat_young_adult">Молодой взрослый</string>
+    <string name="life_stage_cat_mature_adult">Зрелый взрослый</string>
+    <string name="life_stage_cat_senior">Старший</string>
+    <string name="life_stage_cat_end_of_life">Поздний возраст</string>
+
+</resources>
