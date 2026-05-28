@@ -110,6 +110,8 @@ class CalculatePetAgeUseCase(
                 SpeciesParams.Rat to CalculationMethod.EPIGENETIC
             Species.Mouse ->
                 SpeciesParams.Mouse to CalculationMethod.EPIGENETIC
+            Species.Ferret ->
+                SpeciesParams.Ferret to CalculationMethod.EPIGENETIC
             else -> throw UnsupportedSpeciesException(pet.species)
         }
 

@@ -81,5 +81,10 @@
     <string name="life_stage_mouse_adult">Adult</string>
     <string name="life_stage_mouse_senior">Senior</string>
     <string name="life_stage_mouse_end_of_life">End of life</string>
+    <string name="life_stage_ferret_kit">Kit</string>
+    <string name="life_stage_ferret_juvenile">Juvenile</string>
+    <string name="life_stage_ferret_adult">Adult</string>
+    <string name="life_stage_ferret_senior">Senior</string>
+    <string name="life_stage_ferret_geriatric">Geriatric</string>
 
 </resources>

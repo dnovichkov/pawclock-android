@@ -88,4 +88,13 @@ sealed interface SpeciesParams {
      * [MouseAgeCalculator] / [MouseLifeStageCalculator]. См. §4.6 спецификации.
      */
     data object Mouse : SpeciesParams
+
+    /**
+     * Параметры хорька.
+     *
+     * У хорька нет подкатегорий (кусочная формула §4.7 едина для всех), поэтому это
+     * `data object` без полей — маркер, передаваемый в [FerretAgeCalculator] /
+     * [FerretLifeStageCalculator]. См. §4.7 спецификации.
+     */
+    data object Ferret : SpeciesParams
 }

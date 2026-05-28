@@ -218,6 +218,23 @@ class CalculatePetAgeUseCaseTest {
         }
 
     @Test
+    fun `ferret 3 years returns approx 48 human years and Senior`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 5L,
+                    name = "Frankie",
+                    species = Species.Ferret,
+                    birthDate = fixedToday.minusYears(3),
+                )
+            val result = useCase().invoke(pet)
+            assertEquals(3.0, result.ageInYears, absoluteTolerance = 0.01)
+            assertEquals(48.0, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Ferret.Senior, result.lifeStage)
+            assertEquals(CalculationMethod.EPIGENETIC, result.method)
+        }
+
+    @Test
     fun `birthDate in future throws IllegalArgumentException`() =
         runTest {
             val pet = dog(birthDate = fixedToday.plusDays(1))

@@ -260,23 +260,24 @@
 - [x] ➕ cross-module sync (обнаружено, как в Tasks 2–4): добавлены ветки `Rat`/`Mouse` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Rat`/`SpeciesParams.Mouse` (data object без подкатегории); диспетчер `lifeStageLabelRes` в `PetDetailScreen`/`QuickCalcResultSheet` дополнен ветками Rat/Mouse + под-функции + строковые ресурсы ru/en; `SpeciesTest` (implemented = 7)/`LifeStageTest` обновлены; null-примеры в `AgeCalculatorTest`/`LifeStageCalculatorTest` переключены с Mouse на Ferret; добавлены end-to-end domain-тесты Rat/Mouse (восстановление kover ≥90%)
 
 ### Task 6: FerretAgeCalculator + life stages (TDD)
-- [ ] write FAILING test `FerretAgeCalculatorTest` (по §4.7):
+- [x] write FAILING test `FerretAgeCalculatorTest` (по §4.7): покрыты 2мес=10, 6мес=30, 1г=40, 3г=48, 7л=64, throws on zero/negative + параметризованная таблица (10 кейсов) + непрерывность на стыках 0.5/1.0 + монотонность
   - `2 months (0.167 year) = +5·2 = 10 ЧГ`
   - `6 months = 30 ЧГ`
   - `1 year = 40 ЧГ`
   - `3 years = 40 + 4·2 = 48 ЧГ`
   - `7 years = 40 + 4·6 = 64 ЧГ`
-- [ ] verify tests fail — **Red**
-- [ ] create `FerretAgeCalculator : AgeCalculator`
-- [ ] implement кусочную формулу по §4.7
-- [ ] add KDoc со ссылкой на PMC «Senior Ferret» PMC7129291 + Oxbow Ferret Life Stages + §4.7
-- [ ] add ParameterizedTest
-- [ ] verify — **Green**
-- [ ] add `LifeStage.Ferret` подтипы (Kit, Juvenile, Adult, Senior, Geriatric) по §4.7
-- [ ] create `FerretLifeStageCalculator` + tests (senior с 3-4 лет)
-- [ ] add `expectedLifespanRange()` = 5..10 + tests
-- [ ] update `Species.Ferret.isImplemented = true` + `AgeCalculator.forSpecies()`
-- [ ] run tests
+- [x] verify tests fail — **Red** (написаны до реализации калькулятора)
+- [x] create `FerretAgeCalculator : AgeCalculator`
+- [x] implement кусочную формулу по §4.7 (3 непрерывных сегмента: age<0.5 → 60·age; 0.5–1 → 30+20·(age−0.5); ≥1 → 40+4·(age−1) — непрерывна на стыках 0.5/1.0, как §4.4/§4.5)
+- [x] add KDoc со ссылкой на PMC «Senior Ferret» PMC7129291 + Oxbow Ferret Life Stages + §4.7
+- [x] add ParameterizedTest
+- [x] verify — **Green**
+- [x] add `LifeStage.Ferret` подтипы (Kit, Juvenile, Adult, Senior, Geriatric) по §4.7
+- [x] create `FerretLifeStageCalculator` + tests (Kit<0.33, Juvenile<1, Adult<3, Senior 3–5, Geriatric 5+ — «senior с 3–4 лет»)
+- [x] add `expectedLifespanRange()` = 5..10 + tests (без параметра — у вида нет подкатегорий)
+- [x] update `Species.Ferret.isImplemented = true` + `AgeCalculator.forSpecies(Ferret)` + `LifeStageCalculator.forSpecies(Ferret)`
+- [x] run tests (прогнаны `:core:model:test`, `:core:calculator:test`, `:core:domain:test`, `:feature:quickcalc:test`, `:feature:pets:test`, `:app:compileDebugKotlin`, detekt, koverVerify — всё зелёное)
+- [x] ➕ cross-module sync (обнаружено, как в Tasks 2–5): добавлена ветка `Ferret` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Ferret` (data object без подкатегории); диспетчер `lifeStageLabelRes` в `PetDetailScreen`/`QuickCalcResultSheet` дополнен веткой Ferret + под-функция + строковые ресурсы ru/en; `SpeciesTest` (implemented = 8)/`LifeStageTest` обновлены; null-примеры в `AgeCalculatorTest`/`LifeStageCalculatorTest` переключены с Ferret на Reptile; добавлен end-to-end domain-тест Ferret (восстановление kover ≥90%)
 
 ### Task 7: ScalarRatioFormula helper + BirdAgeCalculator + life stages (TDD)
 - [ ] write FAILING test `ScalarRatioFormulaTest` (helper для Bird/Reptile/Fish):

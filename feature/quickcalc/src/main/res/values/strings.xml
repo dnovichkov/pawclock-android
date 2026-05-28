@@ -92,5 +92,10 @@
     <string name="quick_calc_life_stage_mouse_adult">Взрослый</string>
     <string name="quick_calc_life_stage_mouse_senior">Пожилой</string>
     <string name="quick_calc_life_stage_mouse_end_of_life">Поздний возраст</string>
+    <string name="quick_calc_life_stage_ferret_kit">Детёныш</string>
+    <string name="quick_calc_life_stage_ferret_juvenile">Подросток</string>
+    <string name="quick_calc_life_stage_ferret_adult">Взрослый</string>
+    <string name="quick_calc_life_stage_ferret_senior">Пожилой</string>
+    <string name="quick_calc_life_stage_ferret_geriatric">Старческий</string>
 
 </resources>

@@ -204,6 +204,41 @@ class LifeStageTest {
     }
 
     @Test
+    fun `Ferret life stages all exist`() {
+        val stages = LifeStage.Ferret.all()
+        assertEquals(5, stages.size)
+        assertTrue(stages.contains(LifeStage.Ferret.Kit))
+        assertTrue(stages.contains(LifeStage.Ferret.Juvenile))
+        assertTrue(stages.contains(LifeStage.Ferret.Adult))
+        assertTrue(stages.contains(LifeStage.Ferret.Senior))
+        assertTrue(stages.contains(LifeStage.Ferret.Geriatric))
+    }
+
+    @Test
+    fun `Ferret stages have stable displayKeys`() {
+        assertEquals("ferret_kit", LifeStage.Ferret.Kit.displayKey)
+        assertEquals("ferret_juvenile", LifeStage.Ferret.Juvenile.displayKey)
+        assertEquals("ferret_adult", LifeStage.Ferret.Adult.displayKey)
+        assertEquals("ferret_senior", LifeStage.Ferret.Senior.displayKey)
+        assertEquals("ferret_geriatric", LifeStage.Ferret.Geriatric.displayKey)
+    }
+
+    @Test
+    fun `Ferret stages have monotonic ordinals from Kit to Geriatric`() {
+        val expectedOrder =
+            listOf(
+                LifeStage.Ferret.Kit,
+                LifeStage.Ferret.Juvenile,
+                LifeStage.Ferret.Adult,
+                LifeStage.Ferret.Senior,
+                LifeStage.Ferret.Geriatric,
+            )
+        expectedOrder.zipWithNext().forEach { (a, b) ->
+            assertTrue(a.ordinal < b.ordinal, "${a.displayKey}.ordinal should be < ${b.displayKey}.ordinal")
+        }
+    }
+
+    @Test
     fun `Dog Senior has displayKey dog_senior`() {
         assertEquals("dog_senior", LifeStage.Dog.Senior.displayKey)
     }

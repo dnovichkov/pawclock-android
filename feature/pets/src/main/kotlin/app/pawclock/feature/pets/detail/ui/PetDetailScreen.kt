@@ -359,6 +359,7 @@ internal fun lifeStageLabelRes(stage: LifeStage): Int =
         is LifeStage.GuineaPig -> guineaPigLifeStageLabelRes(stage)
         is LifeStage.Rat -> ratLifeStageLabelRes(stage)
         is LifeStage.Mouse -> mouseLifeStageLabelRes(stage)
+        is LifeStage.Ferret -> ferretLifeStageLabelRes(stage)
     }
 
 @androidx.annotation.StringRes
@@ -429,6 +430,16 @@ private fun mouseLifeStageLabelRes(stage: LifeStage.Mouse): Int =
         LifeStage.Mouse.Adult -> R.string.life_stage_mouse_adult
         LifeStage.Mouse.Senior -> R.string.life_stage_mouse_senior
         LifeStage.Mouse.EndOfLife -> R.string.life_stage_mouse_end_of_life
+    }
+
+@androidx.annotation.StringRes
+private fun ferretLifeStageLabelRes(stage: LifeStage.Ferret): Int =
+    when (stage) {
+        LifeStage.Ferret.Kit -> R.string.life_stage_ferret_kit
+        LifeStage.Ferret.Juvenile -> R.string.life_stage_ferret_juvenile
+        LifeStage.Ferret.Adult -> R.string.life_stage_ferret_adult
+        LifeStage.Ferret.Senior -> R.string.life_stage_ferret_senior
+        LifeStage.Ferret.Geriatric -> R.string.life_stage_ferret_geriatric
     }
 
 // Локаль-зависимое форматирование. Используем Locale.getDefault() явно вместо

@@ -41,6 +41,7 @@ sealed interface LifeStageCalculator {
                 Species.GuineaPig -> GuineaPigLifeStageCalculator
                 Species.Rat -> RatLifeStageCalculator
                 Species.Mouse -> MouseLifeStageCalculator
+                Species.Ferret -> FerretLifeStageCalculator
                 else -> null
             }
     }

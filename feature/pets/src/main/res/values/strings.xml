@@ -85,5 +85,10 @@
     <string name="life_stage_mouse_adult">Взрослый</string>
     <string name="life_stage_mouse_senior">Пожилой</string>
     <string name="life_stage_mouse_end_of_life">Поздний возраст</string>
+    <string name="life_stage_ferret_kit">Детёныш</string>
+    <string name="life_stage_ferret_juvenile">Подросток</string>
+    <string name="life_stage_ferret_adult">Взрослый</string>
+    <string name="life_stage_ferret_senior">Пожилой</string>
+    <string name="life_stage_ferret_geriatric">Старческий</string>
 
 </resources>

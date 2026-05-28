@@ -219,4 +219,34 @@ sealed class LifeStage(
             fun all(): List<Mouse> = listOf(Pup, Juvenile, Adult, Senior, EndOfLife)
         }
     }
+
+    /**
+     * Стадии жизни хорьков (PMC «Senior Ferret» PMC7129291 + Oxbow Ferret Life Stages,
+     * см. §4.7 спецификации).
+     *
+     * Пороги по возрасту (единые — у хорька нет подкатегорий; «senior с 3–4 лет» по §4.7):
+     *  - Kit: 0 — ~4 мес. (0–0.33, до отъёма/ювенильной фазы)
+     *  - Juvenile: ~4 мес. — 1 год (0.33–1.0)
+     *  - Adult: 1 — 3 года (1.0–3.0)
+     *  - Senior: 3 — 5 лет
+     *  - Geriatric: 5+ лет (приближение к верхней границе ЧЖ 5–10)
+     */
+    sealed class Ferret(
+        displayKey: String,
+        ordinal: Int,
+    ) : LifeStage(displayKey, ordinal) {
+        data object Kit : Ferret(displayKey = "ferret_kit", ordinal = 0)
+
+        data object Juvenile : Ferret(displayKey = "ferret_juvenile", ordinal = 1)
+
+        data object Adult : Ferret(displayKey = "ferret_adult", ordinal = 2)
+
+        data object Senior : Ferret(displayKey = "ferret_senior", ordinal = 3)
+
+        data object Geriatric : Ferret(displayKey = "ferret_geriatric", ordinal = 4)
+
+        companion object {
+            fun all(): List<Ferret> = listOf(Kit, Juvenile, Adult, Senior, Geriatric)
+        }
+    }
 }
