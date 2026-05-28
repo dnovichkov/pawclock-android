@@ -71,5 +71,15 @@
     <string name="life_stage_guinea_pig_adult">Adult</string>
     <string name="life_stage_guinea_pig_senior">Senior</string>
     <string name="life_stage_guinea_pig_geriatric">Geriatric</string>
+    <string name="life_stage_rat_pup">Pup</string>
+    <string name="life_stage_rat_juvenile">Juvenile</string>
+    <string name="life_stage_rat_adult">Adult</string>
+    <string name="life_stage_rat_senior">Senior</string>
+    <string name="life_stage_rat_end_of_life">End of life</string>
+    <string name="life_stage_mouse_pup">Pup</string>
+    <string name="life_stage_mouse_juvenile">Juvenile</string>
+    <string name="life_stage_mouse_adult">Adult</string>
+    <string name="life_stage_mouse_senior">Senior</string>
+    <string name="life_stage_mouse_end_of_life">End of life</string>
 
 </resources>

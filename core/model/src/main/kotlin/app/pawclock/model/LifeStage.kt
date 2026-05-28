@@ -161,4 +161,62 @@ sealed class LifeStage(
             fun all(): List<GuineaPig> = listOf(Pup, Juvenile, Adult, Senior, Geriatric)
         }
     }
+
+    /**
+     * Стадии жизни крыс (Sengupta 2013, см. §4.6 спецификации).
+     *
+     * Пороги по возрасту (единые — у крысы нет подкатегорий; «senior с 18 мес.» по §4.6):
+     *  - Pup: 0 — ~3 нед. (0–0.058, до отъёма)
+     *  - Juvenile: ~3 нед. — 3 мес. (0.058–0.25, до социальной зрелости)
+     *  - Adult: 3 мес. — 18 мес. (0.25–1.5)
+     *  - Senior: 18 мес. — 30 мес. (1.5–2.5)
+     *  - EndOfLife: 30+ мес. (приближение к верхней границе ЧЖ 2–3 года)
+     */
+    sealed class Rat(
+        displayKey: String,
+        ordinal: Int,
+    ) : LifeStage(displayKey, ordinal) {
+        data object Pup : Rat(displayKey = "rat_pup", ordinal = 0)
+
+        data object Juvenile : Rat(displayKey = "rat_juvenile", ordinal = 1)
+
+        data object Adult : Rat(displayKey = "rat_adult", ordinal = 2)
+
+        data object Senior : Rat(displayKey = "rat_senior", ordinal = 3)
+
+        data object EndOfLife : Rat(displayKey = "rat_end_of_life", ordinal = 4)
+
+        companion object {
+            fun all(): List<Rat> = listOf(Pup, Juvenile, Adult, Senior, EndOfLife)
+        }
+    }
+
+    /**
+     * Стадии жизни мышей (Dutta & Sengupta 2016, см. §4.6 спецификации).
+     *
+     * Пороги по возрасту (единые — у мыши нет подкатегорий; «senior с 12 мес.» по §4.6):
+     *  - Pup: 0 — ~3 нед. (0–0.058, до отъёма)
+     *  - Juvenile: ~3 нед. — 3 мес. (0.058–0.25, до социальной зрелости)
+     *  - Adult: 3 мес. — 12 мес. (0.25–1.0)
+     *  - Senior: 12 мес. — 24 мес. (1.0–2.0)
+     *  - EndOfLife: 24+ мес. (приближение к верхней границе ЧЖ 1–3 года)
+     */
+    sealed class Mouse(
+        displayKey: String,
+        ordinal: Int,
+    ) : LifeStage(displayKey, ordinal) {
+        data object Pup : Mouse(displayKey = "mouse_pup", ordinal = 0)
+
+        data object Juvenile : Mouse(displayKey = "mouse_juvenile", ordinal = 1)
+
+        data object Adult : Mouse(displayKey = "mouse_adult", ordinal = 2)
+
+        data object Senior : Mouse(displayKey = "mouse_senior", ordinal = 3)
+
+        data object EndOfLife : Mouse(displayKey = "mouse_end_of_life", ordinal = 4)
+
+        companion object {
+            fun all(): List<Mouse> = listOf(Pup, Juvenile, Adult, Senior, EndOfLife)
+        }
+    }
 }

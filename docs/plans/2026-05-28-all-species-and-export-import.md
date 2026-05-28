@@ -238,34 +238,26 @@
 - [x] ➕ cross-module sync (обнаружено, как в Tasks 2–3): добавлена ветка `GuineaPig` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.GuineaPig` (data object без подкатегории); диспетчер `lifeStageLabelRes` в `PetDetailScreen`/`QuickCalcResultSheet` дополнен веткой GuineaPig + под-функция + строковые ресурсы ru/en; `SpeciesTest` (implemented = 5)/`LifeStageTest` обновлены
 
 ### Task 5: RatAgeCalculator + MouseAgeCalculator + life stages (TDD)
-- [ ] write FAILING test `RatAgeCalculatorTest` (Sengupta 2013):
-  - `0.5 year = 13.8·0.5 + 1.4 = 8.3 ЧГ`
-  - `1 year = 15.2 ЧГ`
-  - `2 years = 29.0 ЧГ`
-  - `3 years = 42.8 ЧГ`
-  - `throws on age = 0 или negative`
-- [ ] verify tests fail — **Red**
-- [ ] create `RatAgeCalculator : AgeCalculator`
-- [ ] implement `13.8 · ageInYears + 1.4` (extract constants `RAT_COEFFICIENT`, `RAT_OFFSET`)
-- [ ] add KDoc со ссылкой на Sengupta 2013, Int J Prev Med 4(6):624-630 + §4.6
-- [ ] verify — **Green**
-- [ ] write FAILING test `MouseAgeCalculatorTest` (Dutta & Sengupta 2016 piecewise):
-  - `30 days (0.082 year) ≈ 4500 human-days = 12.33 human-years` (30·150ЧДней/365)
-  - `100 days ≈ 12.33 + 58·45/365 ≈ 19.5 ЧГ` (42-180 фаза: 45 ЧДней/день)
-  - `250 days ≈ ...` (180-365 фаза)
-  - `500 days ≈ ...` (365-730 фаза)
-  - `800 days ≈ ...` (>730 фаза)
-- [ ] verify tests fail — **Red**
-- [ ] create `MouseAgeCalculator : AgeCalculator`
-- [ ] implement кусочную формулу с конвертацией age в дни → суммирование human-days по фазам → /365 для возврата в годах
-- [ ] add KDoc со ссылкой на Dutta & Sengupta 2016, Life Sciences 152:244-248 + §4.6
-- [ ] add ParameterizedTest для обоих калькуляторов
-- [ ] verify — **Green**
-- [ ] add `LifeStage.Rat` и `LifeStage.Mouse` sealed подтипы (Pup, Juvenile, Adult, Senior, EndOfLife)
-- [ ] create `RatLifeStageCalculator` и `MouseLifeStageCalculator` + tests (Rat senior с 18 мес, Mouse senior с 12 мес — по §4.6 ссылкам)
-- [ ] add `expectedLifespanRange()` для обоих (Rat 2-3, Mouse 1-3) + tests
-- [ ] update `Species.Rat` и `Species.Mouse` `isImplemented = true` + `AgeCalculator.forSpecies()`
-- [ ] run tests
+- [x] write FAILING test `RatAgeCalculatorTest` (Sengupta 2013): покрыты 0.5y=8.3, 1y=15.2, 2y=29.0, 3y=42.8, throws on zero/negative + параметризованная таблица (7 кейсов) + монотонность
+- [x] verify tests fail — **Red** (написаны до реализации калькулятора)
+- [x] create `RatAgeCalculator : AgeCalculator`
+- [x] implement `13.8 · ageInYears + 1.4` (extract constants `RAT_COEFFICIENT`, `RAT_OFFSET`)
+- [x] add KDoc со ссылкой на Sengupta 2013, Int J Prev Med 4(6):624-630 + §4.6
+- [x] verify — **Green**
+- [x] write FAILING test `MouseAgeCalculatorTest` (Dutta & Sengupta 2016 piecewise): покрыты 30дн=12.33, 100дн=24.41, 200дн=35.92, 500дн=58.73, 800дн=78.32, throws on zero/negative + параметризованная таблица (9 кейсов с границами фаз) + монотонность
+  - ⚠️ эталонные значения §4.6 для возрастов >30 дней внутренне противоречивы («200дн ≈ 21 ЧГ» несовместимо с выведенным «30дн = 30·150/365 ≈ 12.33 ЧГ»). Реализация привязана к единственной математически выведенной опорной точке (30 дней) + чистой кусочной интеграции накопленных человеко-дней; тесты используют согласованные с моделью значения (см. KDoc `MouseAgeCalculator` + комментарий в тесте). Формула «12.33 + 58·45/365 ≈ 19.5» из плана ошибочна (стартует от 30-дневного значения вместо 42-дневного)
+- [x] verify tests fail — **Red**
+- [x] create `MouseAgeCalculator : AgeCalculator`
+- [x] implement кусочную формулу с конвертацией age в дни → суммирование human-days по фазам → /365 для возврата в годах
+- [x] add KDoc со ссылкой на Dutta & Sengupta 2016, Life Sciences 152:244-248 + §4.6
+- [x] add ParameterizedTest для обоих калькуляторов
+- [x] verify — **Green**
+- [x] add `LifeStage.Rat` и `LifeStage.Mouse` sealed подтипы (Pup, Juvenile, Adult, Senior, EndOfLife)
+- [x] create `RatLifeStageCalculator` и `MouseLifeStageCalculator` + tests (Rat senior с 18 мес = 1.5y; Mouse senior с 12 мес = 1.0y; EndOfLife Rat 2.5y / Mouse 2.0y)
+- [x] add `expectedLifespanRange()` для обоих (Rat 2-3, Mouse 1-3) + tests
+- [x] update `Species.Rat` и `Species.Mouse` `isImplemented = true` + `AgeCalculator.forSpecies()` + `LifeStageCalculator.forSpecies()`
+- [x] run tests (прогнаны `:core:model:test`, `:core:calculator:test`, `:core:domain:test`, `:feature:quickcalc:test`, `:feature:pets:test`, `:app:compileDebugKotlin`, detekt, koverVerify — всё зелёное)
+- [x] ➕ cross-module sync (обнаружено, как в Tasks 2–4): добавлены ветки `Rat`/`Mouse` в `CalculatePetAgeUseCase.resolveParams` + `SpeciesParams.Rat`/`SpeciesParams.Mouse` (data object без подкатегории); диспетчер `lifeStageLabelRes` в `PetDetailScreen`/`QuickCalcResultSheet` дополнен ветками Rat/Mouse + под-функции + строковые ресурсы ru/en; `SpeciesTest` (implemented = 7)/`LifeStageTest` обновлены; null-примеры в `AgeCalculatorTest`/`LifeStageCalculatorTest` переключены с Mouse на Ferret; добавлены end-to-end domain-тесты Rat/Mouse (восстановление kover ≥90%)
 
 ### Task 6: FerretAgeCalculator + life stages (TDD)
 - [ ] write FAILING test `FerretAgeCalculatorTest` (по §4.7):

@@ -75,5 +75,15 @@
     <string name="life_stage_guinea_pig_adult">Взрослый</string>
     <string name="life_stage_guinea_pig_senior">Пожилой</string>
     <string name="life_stage_guinea_pig_geriatric">Старческий</string>
+    <string name="life_stage_rat_pup">Детёныш</string>
+    <string name="life_stage_rat_juvenile">Подросток</string>
+    <string name="life_stage_rat_adult">Взрослый</string>
+    <string name="life_stage_rat_senior">Пожилой</string>
+    <string name="life_stage_rat_end_of_life">Поздний возраст</string>
+    <string name="life_stage_mouse_pup">Детёныш</string>
+    <string name="life_stage_mouse_juvenile">Подросток</string>
+    <string name="life_stage_mouse_adult">Взрослый</string>
+    <string name="life_stage_mouse_senior">Пожилой</string>
+    <string name="life_stage_mouse_end_of_life">Поздний возраст</string>
 
 </resources>

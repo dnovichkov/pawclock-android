@@ -181,6 +181,42 @@ class CalculatePetAgeUseCaseTest {
 
     // ─── Errors ───────────────────────────────────────────────────────────
 
+    // ─── Rat / Mouse (no subcategory) ──────────────────────────────────────
+
+    @Test
+    fun `rat 2 years returns approx 29 human years and Senior`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 3L,
+                    name = "Splinter",
+                    species = Species.Rat,
+                    birthDate = fixedToday.minusYears(2),
+                )
+            val result = useCase().invoke(pet)
+            assertEquals(2.0, result.ageInYears, absoluteTolerance = 0.01)
+            assertEquals(29.0, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Rat.Senior, result.lifeStage)
+            assertEquals(CalculationMethod.EPIGENETIC, result.method)
+        }
+
+    @Test
+    fun `mouse 2 years returns approx 74 human years and Senior`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 4L,
+                    name = "Jerry",
+                    species = Species.Mouse,
+                    birthDate = fixedToday.minusYears(2),
+                )
+            val result = useCase().invoke(pet)
+            assertEquals(2.0, result.ageInYears, absoluteTolerance = 0.01)
+            assertEquals(74.5, result.humanYears, absoluteTolerance = 0.3)
+            assertEquals(LifeStage.Mouse.Senior, result.lifeStage)
+            assertEquals(CalculationMethod.EPIGENETIC, result.method)
+        }
+
     @Test
     fun `birthDate in future throws IllegalArgumentException`() =
         runTest {

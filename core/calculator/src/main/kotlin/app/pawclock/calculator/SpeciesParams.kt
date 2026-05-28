@@ -70,4 +70,22 @@ sealed interface SpeciesParams {
      * [GuineaPigAgeCalculator] / [GuineaPigLifeStageCalculator]. См. §4.5 спецификации.
      */
     data object GuineaPig : SpeciesParams
+
+    /**
+     * Параметры крысы.
+     *
+     * У крысы нет подкатегорий (линейная формула §4.6 Sengupta 2013 едина для всех),
+     * поэтому это `data object` без полей — маркер, передаваемый в
+     * [RatAgeCalculator] / [RatLifeStageCalculator]. См. §4.6 спецификации.
+     */
+    data object Rat : SpeciesParams
+
+    /**
+     * Параметры мыши.
+     *
+     * У мыши нет подкатегорий (кусочная формула §4.6 Dutta & Sengupta 2016 едина для всех),
+     * поэтому это `data object` без полей — маркер, передаваемый в
+     * [MouseAgeCalculator] / [MouseLifeStageCalculator]. См. §4.6 спецификации.
+     */
+    data object Mouse : SpeciesParams
 }

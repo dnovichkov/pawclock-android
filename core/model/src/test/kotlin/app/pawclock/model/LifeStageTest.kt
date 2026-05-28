@@ -134,6 +134,76 @@ class LifeStageTest {
     }
 
     @Test
+    fun `Rat life stages all exist`() {
+        val stages = LifeStage.Rat.all()
+        assertEquals(5, stages.size)
+        assertTrue(stages.contains(LifeStage.Rat.Pup))
+        assertTrue(stages.contains(LifeStage.Rat.Juvenile))
+        assertTrue(stages.contains(LifeStage.Rat.Adult))
+        assertTrue(stages.contains(LifeStage.Rat.Senior))
+        assertTrue(stages.contains(LifeStage.Rat.EndOfLife))
+    }
+
+    @Test
+    fun `Rat stages have stable displayKeys`() {
+        assertEquals("rat_pup", LifeStage.Rat.Pup.displayKey)
+        assertEquals("rat_juvenile", LifeStage.Rat.Juvenile.displayKey)
+        assertEquals("rat_adult", LifeStage.Rat.Adult.displayKey)
+        assertEquals("rat_senior", LifeStage.Rat.Senior.displayKey)
+        assertEquals("rat_end_of_life", LifeStage.Rat.EndOfLife.displayKey)
+    }
+
+    @Test
+    fun `Rat stages have monotonic ordinals from Pup to EndOfLife`() {
+        val expectedOrder =
+            listOf(
+                LifeStage.Rat.Pup,
+                LifeStage.Rat.Juvenile,
+                LifeStage.Rat.Adult,
+                LifeStage.Rat.Senior,
+                LifeStage.Rat.EndOfLife,
+            )
+        expectedOrder.zipWithNext().forEach { (a, b) ->
+            assertTrue(a.ordinal < b.ordinal, "${a.displayKey}.ordinal should be < ${b.displayKey}.ordinal")
+        }
+    }
+
+    @Test
+    fun `Mouse life stages all exist`() {
+        val stages = LifeStage.Mouse.all()
+        assertEquals(5, stages.size)
+        assertTrue(stages.contains(LifeStage.Mouse.Pup))
+        assertTrue(stages.contains(LifeStage.Mouse.Juvenile))
+        assertTrue(stages.contains(LifeStage.Mouse.Adult))
+        assertTrue(stages.contains(LifeStage.Mouse.Senior))
+        assertTrue(stages.contains(LifeStage.Mouse.EndOfLife))
+    }
+
+    @Test
+    fun `Mouse stages have stable displayKeys`() {
+        assertEquals("mouse_pup", LifeStage.Mouse.Pup.displayKey)
+        assertEquals("mouse_juvenile", LifeStage.Mouse.Juvenile.displayKey)
+        assertEquals("mouse_adult", LifeStage.Mouse.Adult.displayKey)
+        assertEquals("mouse_senior", LifeStage.Mouse.Senior.displayKey)
+        assertEquals("mouse_end_of_life", LifeStage.Mouse.EndOfLife.displayKey)
+    }
+
+    @Test
+    fun `Mouse stages have monotonic ordinals from Pup to EndOfLife`() {
+        val expectedOrder =
+            listOf(
+                LifeStage.Mouse.Pup,
+                LifeStage.Mouse.Juvenile,
+                LifeStage.Mouse.Adult,
+                LifeStage.Mouse.Senior,
+                LifeStage.Mouse.EndOfLife,
+            )
+        expectedOrder.zipWithNext().forEach { (a, b) ->
+            assertTrue(a.ordinal < b.ordinal, "${a.displayKey}.ordinal should be < ${b.displayKey}.ordinal")
+        }
+    }
+
+    @Test
     fun `Dog Senior has displayKey dog_senior`() {
         assertEquals("dog_senior", LifeStage.Dog.Senior.displayKey)
     }

@@ -152,6 +152,8 @@ internal fun lifeStageLabelRes(stage: LifeStage): Int =
         is LifeStage.Rabbit -> rabbitLifeStageLabelRes(stage)
         is LifeStage.Hamster -> hamsterLifeStageLabelRes(stage)
         is LifeStage.GuineaPig -> guineaPigLifeStageLabelRes(stage)
+        is LifeStage.Rat -> ratLifeStageLabelRes(stage)
+        is LifeStage.Mouse -> mouseLifeStageLabelRes(stage)
     }
 
 @androidx.annotation.StringRes
@@ -202,6 +204,26 @@ private fun guineaPigLifeStageLabelRes(stage: LifeStage.GuineaPig): Int =
         LifeStage.GuineaPig.Adult -> R.string.quick_calc_life_stage_guinea_pig_adult
         LifeStage.GuineaPig.Senior -> R.string.quick_calc_life_stage_guinea_pig_senior
         LifeStage.GuineaPig.Geriatric -> R.string.quick_calc_life_stage_guinea_pig_geriatric
+    }
+
+@androidx.annotation.StringRes
+private fun ratLifeStageLabelRes(stage: LifeStage.Rat): Int =
+    when (stage) {
+        LifeStage.Rat.Pup -> R.string.quick_calc_life_stage_rat_pup
+        LifeStage.Rat.Juvenile -> R.string.quick_calc_life_stage_rat_juvenile
+        LifeStage.Rat.Adult -> R.string.quick_calc_life_stage_rat_adult
+        LifeStage.Rat.Senior -> R.string.quick_calc_life_stage_rat_senior
+        LifeStage.Rat.EndOfLife -> R.string.quick_calc_life_stage_rat_end_of_life
+    }
+
+@androidx.annotation.StringRes
+private fun mouseLifeStageLabelRes(stage: LifeStage.Mouse): Int =
+    when (stage) {
+        LifeStage.Mouse.Pup -> R.string.quick_calc_life_stage_mouse_pup
+        LifeStage.Mouse.Juvenile -> R.string.quick_calc_life_stage_mouse_juvenile
+        LifeStage.Mouse.Adult -> R.string.quick_calc_life_stage_mouse_adult
+        LifeStage.Mouse.Senior -> R.string.quick_calc_life_stage_mouse_senior
+        LifeStage.Mouse.EndOfLife -> R.string.quick_calc_life_stage_mouse_end_of_life
     }
 
 private const val SHEET_PADDING_DP: Int = 16
