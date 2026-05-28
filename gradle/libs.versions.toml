@@ -16,7 +16,7 @@ androidxCore = "1.16.0"
 # with 2.8.x for our usage (lifecycle-runtime-ktx, viewmodel-compose) и Activity 1.10 совместим.
 androidxLifecycle = "2.9.0"
 # Task 17: bumped 1.9.3 → 1.10.0 для alignment с lifecycle 2.9 (1.9.3 requires lifecycle 2.8.x).
-androidxActivity = "1.10.0"
+androidxActivity = "1.13.0"
 androidxAppcompat = "1.7.0"
 
 # Compose
