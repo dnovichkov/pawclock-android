@@ -465,22 +465,25 @@
 - ➕ FakePetRepository скопирован из feature/pets/test/fakes — пока `:core:testing` не оформлен как shared-fixtures (план говорит про этот модуль, но реализация отложена на Plan 2); используется как production-эквивалент для SavePetUseCase + GetPetByIdUseCase в JVM тестах
 
 ### Task 20: :feature:quickcalc — QuickCalculator TDD
-- [ ] write FAILING test `QuickCalcViewModelTest`:
+- [x] write FAILING test `QuickCalcViewModelTest`:
   - initial state empty
   - calculating with valid species + birthDate emits result (humanYears, lifeStage)
   - calculating without species/date → ValidationError
   - changing CalculationMethod (Wang / Size) recomputes for Dog
-- [ ] verify tests fail — **Red**
-- [ ] implement `QuickCalcViewModel`
-- [ ] verify все тесты — **Green**
-- [ ] create `QuickCalcScreen`:
-  - species selector
-  - subcategory dropdown
-  - birthDate picker
-  - calculation method toggle (Wang / Size) только для Dog
-  - bottom sheet с результатом (по §5.3): AgeBigCard, LifeStageChip, "Как это посчитано" expandable со формулой и DOI
-- [ ] write Compose UI test `QuickCalcScreenTest`
-- [ ] run `./gradlew :feature:quickcalc:test :feature:quickcalc:assembleDebug --no-daemon` — must pass before next task
+  14 тестов в `QuickCalcViewModelTest.kt`: initial-Idle, SelectSpecies(Dog/Cat) → exposed subcategories, changing-species-clears-subcategory, valid-dog-Calculate → Wang(5)≈56.7 ЧГ + MatureAdult, valid-cat-Calculate → 36 ЧГ + YoungAdult, missing-species → SpeciesRequired, missing-birthDate → BirthDateRequired, future-birthDate → BirthDateInFuture, Wang→SizeBased recomputes без явного Calculate, editing-birthDate-after-Success resets to Idle, default Medium/IndoorShortHair subcategory, SetMethod on Idle does not trigger calculation
+- [x] verify tests fail — **Red** — confirmed compileTestKotlin FAILED с 12 unresolved references на `QuickCalcViewModel`, `QuickCalcEvent`, `QuickCalcResult` до создания production-классов
+- [x] implement `QuickCalcViewModel` — @HiltViewModel с одной зависимостью на `CalculatePetAgeUseCase`; MVI handleEvent dispatcher; SetMethod на Success-состоянии триггерит автоматический пересчёт (UX-affordance для Wang↔Size toggle); subcategory дефолтит к Medium/IndoorShortHair если не указана; methodOverride передаётся в UseCase только для собак (для кошек = null, AAFP фиксирован); synthetic Pet с placeholder-именем "__quickcalc__" (Pet не сохраняется в БД и имя нигде не отображается)
+- [x] verify все тесты — **Green** — 14/14 тестов прошли с первой попытки; ktlint auto-format'ил `runCatching {...}.onSuccess` chain после первого билда
+- [x] create `QuickCalcScreen`:
+  - species selector — `QuickCalcSpeciesSelector` через `FlowRow + FilterChip` по `Species.implemented()` (Dog/Cat в Plan 1)
+  - subcategory dropdown — `QuickCalcSubcategorySelector` рендерится только когда `state.availableSubcategories.isNotEmpty()`; FlowRow + FilterChip с локализованными labels (Той/Маленькая/Средняя/.../Уличная)
+  - birthDate picker — `QuickCalcBirthDateField` использует read-only OutlinedTextField + `DatePickerDialog` через `pointerInput`-перехват, единообразно с PetEditor BirthDateField (Task 19)
+  - calculation method toggle (Wang / Size) только для Dog — `QuickCalcMethodToggle` с Material 3 `SingleChoiceSegmentedButtonRow`; рендерится inline в форме до Success-результата, и внутри bottom sheet'а после для realtime Wang↔Size toggle
+  - bottom sheet с результатом (по §5.3): AgeBigCard, LifeStageChip, "Как это посчитано" expandable со формулой и DOI — `QuickCalcResultSheet` через Material 3 `ModalBottomSheet`; AgeBigCard (`displayMedium` для числа ЧГ), LifeStageChip из `:core:designsystem`, inline "Как это посчитано" PawClockCard с объяснением Wang formula DOI 10.1016/j.cels.2020.06.006 или AKC/AAHA 2019 table — без collapsible (expandable Card отложен на Plan 2)
+- [x] write Compose UI test `QuickCalcScreenTest` — 7 androidTest в `feature/quickcalc/src/androidTest/.../QuickCalcScreenTest.kt` с `createComposeRule()`; используется stateless `QuickCalcContent` для подачи произвольных `QuickCalcState`; тесты: title rendering, Calculate FAB click → event, Dog chip → SelectSpecies, subcategory chips после species, validation banner отображает каждую ошибку bullet'ом, method toggle (Wang/SizeBased) → SetMethod event, hero "57 ЧГ" + "Зрелый взрослый" в result sheet для собаки, "36 ЧГ" + "Молодой взрослый" для кошки; assembleDebugAndroidTest BUILD SUCCESSFUL → APK готов к запуску в `nightly.yml`
+- [x] run `./gradlew :feature:quickcalc:test :feature:quickcalc:assembleDebug --no-daemon` — must pass before next task — BUILD SUCCESSFUL: testDebugUnitTest 14/14 PASSED, assembleDebug + assembleDebugAndroidTest, ktlintCheck (после auto-format) + detekt + lintDebug + koverVerify (≥80%) — все clean; :app:assembleDebug + :app:lintDebug по-прежнему проходят после wire-up'а QuickCalcScreen в `PawClockNavHost`
+- ➕ wired `Route.QuickCalculator` в `PawClockNavHost` — placeholder `PlaceholderScreen("Quick Calculator (Task 20)")` заменён на `QuickCalcScreen(onBack = { navController.popBackStack() })`; FAB-вход с PetsList в QuickCalculator появится в Task 21 (Settings)/Plan 2, когда будет полноценная нижняя навигация
+- ➕ result sheet содержит method toggle inline (Wang/SizeBased) — пользователь может переключать метод и видеть мгновенный пересчёт, что реализует UX-цель §3.2 "educational angle" о разнице методов; для кошек toggle не показывается (AAFP — единственный применимый метод)
 
 ### Task 21: :feature:settings — Settings + About TDD
 - [ ] write FAILING test `SettingsViewModelTest`:
