@@ -12,18 +12,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
+import app.pawclock.feature.pets.detail.ui.PetDetailScreen
+import app.pawclock.feature.pets.list.ui.PetsListScreen
 
 /**
- * Корневой граф навигации PawClock (Task 17 / Plan 1).
+ * Корневой граф навигации PawClock.
  *
- * На этом этапе все экраны — placeholder Composables, отображающие имя destination.
- * В Task 18..21 placeholder'ы заменяются на реальные экраны с ViewModel и feature-логикой.
+ * Реальные экраны для PetsList/PetDetail подключены в Task 18.
+ * Editor/QuickCalculator/Settings/About — placeholder'ы до Tasks 19-21.
  *
- * Стартовый destination — [Route.PetsList] (список питомцев).
- *
- * @param navController опционально-передаваемый [NavHostController] для тестов
- *   и preview'ев. По умолчанию создаётся через `rememberNavController()`.
+ * Стартовый destination — [Route.PetsList].
  */
 @Composable
 fun PawClockNavHost(navController: NavHostController = rememberNavController()) {
@@ -32,19 +30,25 @@ fun PawClockNavHost(navController: NavHostController = rememberNavController()) 
         startDestination = Route.PetsList,
     ) {
         composable<Route.PetsList> {
-            PlaceholderScreen("Pets List (Task 18)")
+            PetsListScreen(
+                onPetClick = { petId -> navController.navigate(Route.PetDetail(petId)) },
+                onAddPetClick = { navController.navigate(Route.PetEditor()) },
+            )
         }
-        composable<Route.PetDetail> { entry ->
-            val args = entry.toRoute<Route.PetDetail>()
-            PlaceholderScreen("Pet Detail #${args.petId} (Task 18)")
+        composable<Route.PetDetail> {
+            PetDetailScreen(
+                onBackClick = { navController.popBackStack() },
+                onEditClick = { petId -> navController.navigate(Route.PetEditor(petId)) },
+            )
         }
         composable<Route.PetEditor> { entry ->
-            val args = entry.toRoute<Route.PetEditor>()
+            // PetEditor реализуется в Task 19; пока placeholder.
+            val args = entry.arguments?.getString("petId")
             val title =
-                if (args.petId == null) {
+                if (args == null) {
                     "New Pet (Task 19)"
                 } else {
-                    "Edit Pet #${args.petId} (Task 19)"
+                    "Edit Pet #$args (Task 19)"
                 }
             PlaceholderScreen(title)
         }
@@ -61,8 +65,8 @@ fun PawClockNavHost(navController: NavHostController = rememberNavController()) 
 }
 
 /**
- * Заглушка экрана для Task 17 — отображает имя destination в центре экрана.
- * Заменяется на реальные экраны в Task 18..21.
+ * Заглушка экрана для destinations, ещё не реализованных в Plan 1.
+ * Заменяется на реальные экраны в Tasks 19-21.
  */
 @Composable
 private fun PlaceholderScreen(label: String) {

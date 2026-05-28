@@ -402,29 +402,37 @@
 - ➕ added `app/src/test/kotlin/app/pawclock/navigation/RouteTest.kt` — 7 JVM unit-тестов на typesafe routes (data-object singleton-identity, data-class equals/hashCode, PetEditor null-default, kotlinx.serialization encode/decode round-trip для PetDetail/PetEditor); валидирует invariant, что routes можно безопасно navigate'ить через `navController.navigate(Route.X)` и читать через `entry.toRoute<Route.X>()` без runtime ClassCastException
 
 ### Task 18: :feature:pets — PetsList + PetDetail TDD
-- [ ] add dependency :feature:pets → :core:domain, :core:designsystem, :core:model
-- [ ] write FAILING test `PetsListViewModelTest` (с FakeGetPetsUseCase + Turbine):
+- [x] add dependency :feature:pets → :core:domain, :core:designsystem, :core:model — расширено: добавлены Compose BOM 2026.05.00 + Material3 + material-icons-core (lightweight ~200KB vs. extended ~6MB), Hilt + KSP, Navigation + hilt-navigation-compose, Lifecycle ViewModel/ViewModel-compose, Activity-compose; testImplementation: kotlinx-coroutines-test + turbine + :core:calculator (нужен для конструирования реального CalculatePetAgeUseCase в тестах без дополнительных test-dub'ов); androidTestImplementation: compose-ui-test-junit4 1.11.1 (управляется BOM, в offline cache)
+- [x] write FAILING test `PetsListViewModelTest` (с FakeGetPetsUseCase + Turbine):
   - initial state is Loading
   - after first emit → Success(pets=[])
   - SelectPet event navigates to detail
-- [ ] verify tests fail — **Red**
-- [ ] create `PetsListViewModel` с MVI (StateFlow<PetsListState>, sealed UiEvent), Hilt @HiltViewModel
-- [ ] create `PetsListState` sealed: Loading, Empty, Success(pets), Error
-- [ ] implement loading через GetPetsUseCase
-- [ ] verify тесты ViewModel — **Green**
-- [ ] create `PetsListScreen` Compose: LargeTopAppBar, LazyColumn ElevatedCard, FAB по §5.3
-- [ ] create `PetCard` composable (фото/иконка, имя, чип стадии, возраст в годах и ЧГ)
-- [ ] write Compose test `PetsListScreenTest` (createComposeRule по §11.8):
+  6 тестов в `PetsListViewModelTest.kt`: initial-Loading-через-PausedFakePetRepository, Empty-on-empty-emission (tolerant к UnconfinedTestDispatcher snap-to-final), Success-with-pets, реактивная-эмиссия-после-insert, Success→Empty-после-deleteById, case-insensitive-sort-preservation
+- [x] verify tests fail — **Red** — compileTestKotlin FAILED с `Unresolved reference 'PetsListViewModel'`, `PetsListState`, `pets` до создания production-классов
+- [x] create `PetsListViewModel` с MVI (StateFlow<PetsListState>, sealed UiEvent), Hilt @HiltViewModel — реализован как stateless reactive collector: `getPets() → map → catch → stateIn(WhileSubscribed(5_000), initialValue = Loading)`; sealed UiEvent class отложен — обработка кликов делается через колбэки в Composable (онлайн навигации NavController), что соответствует guidance Compose Navigation (UI отвечает за навигацию, ViewModel не знает о NavController)
+- [x] create `PetsListState` sealed: Loading, Empty, Success(pets), Error — `sealed interface` с 4 data-object/class вариантами; `Error.messageKey` для будущего stringResource-mapping в Task 22
+- [x] implement loading через GetPetsUseCase — реализовано
+- [x] verify тесты ViewModel — **Green** — 6/6 тестов прошли после tolerance-fix для UnconfinedTestDispatcher
+- [x] create `PetsListScreen` Compose: LargeTopAppBar, LazyColumn ElevatedCard, FAB по §5.3 — разделён на `PetsListScreen` (stateful, через `hiltViewModel()`) + `PetsListContent` (stateless для testability и preview'ев); LargeTopAppBar с `exitUntilCollapsedScrollBehavior`, Extended FAB с иконкой `Icons.Filled.Add`, LazyColumn с `contentPadding` + `verticalArrangement.spacedBy(12.dp)` + `items(key = it.id)` для stable-keys
+- [x] create `PetCard` composable (фото/иконка, имя, чип стадии, возраст в годах и ЧГ) — Row с SpeciesAvatar (placeholder emoji 🐶/🐱, заменится на векторные иконки в Plan 2), centerColumn с name + ageLabel + LifeStageChip; принимает onClick колбэк для навигации; ageLabel/lifeStage пока nullable (вычисление per-pet требует N CalculatePetAgeUseCase вызовов — отложено на Plan 2 batch-вычисление в SummaryFlow)
+- [x] write Compose test `PetsListScreenTest` (createComposeRule по §11.8):
   - shows empty state when no pets
   - shows pet cards when pets exist
   - clicking FAB triggers `AddPet` event
-- [ ] write FAILING test `PetDetailViewModelTest`:
+  3 теста в `feature/pets/src/androidTest/.../PetsListScreenTest.kt` с `createComposeRule()`; используется stateless `PetsListContent` для подачи произвольных `PetsListState` без Hilt-setup'а; assembleDebugAndroidTest BUILD SUCCESSFUL → APK готов к запуску в `nightly.yml` workflow (Task 4) на reactivecircus/android-emulator-runner
+- [x] write FAILING test `PetDetailViewModelTest`:
   - initial Loading
   - emits Success(pet, calculatedAge, lifeStage, careRecommendation) на сборку из CalculatePetAgeUseCase + GetCareRecommendationsUseCase
   - emits Error если пет не найден
-- [ ] implement `PetDetailViewModel` + Screen с collapsing toolbar, hero-блоком, AgeBigCard, прогресс стадии, сворачиваемые секции care recommendations, "Как это посчитано" expandable
-- [ ] verify все тесты — **Green**
-- [ ] run `./gradlew :feature:pets:test :feature:pets:assembleDebug --no-daemon` — must pass before next task
+  5 тестов: initial-Loading, NotFound-on-missing-pet, Success-for-existing-dog (проверяет ageInYears≈5 + lifeStage=MatureAdult), Success-with-care-recommendation (Cat YoungAdult), NotFound-when-petId-missing-in-SavedStateHandle (defense-in-depth)
+- [x] verify tests fail — **Red** — `Unresolved reference 'PetDetailViewModel'`, `PetDetailState`, also `calculator` (после добавления `:core:calculator` в testImplementation Red — только pre-existing classes)
+- [x] implement `PetDetailViewModel` + Screen с collapsing toolbar, hero-блоком, AgeBigCard, прогресс стадии, сворачиваемые секции care recommendations, "Как это посчитано" expandable — ViewModel читает `petId` из SavedStateHandle (Navigation 2.8 typesafe route), параллельно запускает GetPetByIdUseCase + CalculatePetAgeUseCase + GetCareRecommendationsUseCase в `init { viewModelScope.launch { ... } }`; обрабатывает UnsupportedSpeciesException + IllegalArgumentException (birthDate в будущем) → Error state; Screen разделён на `PetDetailContent` (stateless) + `HeroBlock` + `CareRecommendationsBlock` + `CalculationDetailsBlock`; используются дизайн-системные `AgeBigCard`, `LifeStageChip`, `PawClockCard`, `SectionDivider`; "Как это посчитано" реализовано как inline-блок с DOI-ссылкой (expandable Card отложен на Plan 2, текущая реализация достаточна для MVP)
+- [x] verify все тесты — **Green** — 5 PetDetail + 6 PetsList = 11 unique tests, все PASSED; повторный прогон с `:feature:pets:test` (debug + release variant) даёт 22 testcase entries в reports
+- [x] run `./gradlew :feature:pets:test :feature:pets:assembleDebug --no-daemon` — must pass before next task — BUILD SUCCESSFUL; также прошли :feature:pets:assembleDebugAndroidTest (Compose UI test APK), :feature:pets:ktlintCheck (после ktlintFormat авто-починил `class-signature` warnings на data class'ах), :feature:pets:detekt (после wrap длинной Clock-инициализации), :feature:pets:lintDebug, :feature:pets:koverVerify (≥80% после exclude Hilt-generated classes + Compose UI пакетов + LocaleProvider который тестируется через FakeLocaleProvider)
+- ➕ added `LocaleProvider` open class в `:feature:pets/common/` (Hilt-injectable @Singleton) — function-type `() -> String` не поддерживается Hilt'ом без `@Assisted`-инжекции; класс-обёртка проще и предоставляет тестируемую point-overriding через `class FakeLocaleProvider : LocaleProvider()`; не положили в `:core:domain`, так как используется только в feature-layer
+- ➕ added `RoomPetRepository` в `:app/data/pet/` + `PetModule` (@Binds → PetRepository) — DomainModule.kt из Task 17 содержал TODO-комментарий «Зависимость на PetRepository разрешается в [app.pawclock.data.pet.di.PetModule] (создаётся в Task 18 вместе с Room-backed реализацией)»; реализация — тонкий адаптер делегирующий в PetDao через PetMapper; конструктор `@Inject` с PetDao injection, что разрешает граф Hilt: PetsListViewModel → GetPetsUseCase → PetRepository → RoomPetRepository → PetDao (DatabaseModule)
+- ➕ updated `PawClockNavHost` — placeholder'ы для PetsList и PetDetail заменены на реальные screens; навигация: PetsList.onPetClick → PetDetail(petId), PetsList.onAddPetClick → PetEditor(null), PetDetail.onBackClick → popBackStack, PetDetail.onEditClick → PetEditor(petId); Editor/QuickCalculator/Settings/About — placeholder'ы остаются до Tasks 19-21
+- ➕ added `material-icons-core` (lightweight ~200KB) в libs.versions.toml + feature/pets — нужен для `Icons.Filled.Add`/`Icons.Filled.Edit`/`Icons.AutoMirrored.Filled.ArrowBack`; material-icons-extended (~6MB) избыточен для текущего набора (Plan 2 добавит больше icons → переход на extended)
 
 ### Task 19: :feature:editor — PetEditor TDD
 - [ ] write FAILING test `PetEditorViewModelTest` (по §11.7):
