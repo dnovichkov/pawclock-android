@@ -11,10 +11,10 @@ javaToolchain = "17"
 # AndroidX core
 # Task 17: bumped androidxCore 1.15.0 → 1.16.0 to drop transitive constraint on lifecycle 2.8.7
 # (not in offline cache); core 1.16.0 requires only lifecycle 2.6.2 (cached).
-androidxCore = "1.16.0"
+androidxCore = "1.18.0"
 # Task 17: bumped 2.8.7 → 2.9.0 — only 2.9.x cached offline. Lifecycle 2.9 is API-compatible
 # with 2.8.x for our usage (lifecycle-runtime-ktx, viewmodel-compose) и Activity 1.10 совместим.
-androidxLifecycle = "2.9.0"
+androidxLifecycle = "2.10.0"
 # Task 17: bumped 1.9.3 → 1.10.0 для alignment с lifecycle 2.9 (1.9.3 requires lifecycle 2.8.x).
 androidxActivity = "1.10.0"
 androidxAppcompat = "1.7.0"
@@ -28,7 +28,7 @@ composeBom = "2026.05.00"
 composeMaterial3 = "1.4.0"
 # Task 17: bumped 2.8.4 → 2.9.0 — 2.8.4 отсутствует в offline cache. 2.9.0 поддерживает
 # typesafe routes через kotlinx.serialization (требуется для Route.kt).
-composeNavigation = "2.9.0"
+composeNavigation = "2.9.8"
 composeHiltNavigation = "1.2.0"
 
 # Hilt
