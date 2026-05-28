@@ -63,20 +63,18 @@ class PetDetailViewModel
                         return@launch
                     }
                     val calculated = calculatePetAge(pet = pet, methodOverride = null)
-                    val recommendation =
-                        runCatching {
-                            getCareRecommendations(
-                                species = pet.species,
-                                stage = calculated.lifeStage,
-                                locale = localeProvider.current(),
-                            )
-                        }.getOrNull()
+                    val recommendation = loadCareRecommendation(pet.species, calculated.lifeStage)
                     _state.value =
                         PetDetailState.Success(
                             pet = pet,
                             calculatedAge = calculated,
                             careRecommendation = recommendation,
                         )
+                } catch (e: kotlinx.coroutines.CancellationException) {
+                    // Структурированная отмена корутины должна пробрасываться ДО любых других
+                    // catch'ей. CancellationException на JVM наследуется от IllegalStateException,
+                    // поэтому если catch (IllegalStateException) поставить выше — он съест отмену.
+                    throw e
                 } catch (_: UnsupportedSpeciesException) {
                     _state.value = PetDetailState.Error(messageKey = ERROR_UNSUPPORTED_SPECIES)
                 } catch (_: IllegalArgumentException) {
@@ -88,10 +86,6 @@ class PetDetailViewModel
                     // (например, после миграции которая переименовала константы). Без этого
                     // catch'а корутина падает в default-handler и UI остаётся в Loading.
                     _state.value = PetDetailState.Error(messageKey = ERROR_DATA_CORRUPTED)
-                } catch (e: kotlinx.coroutines.CancellationException) {
-                    // Структурированная отмена корутины (smartcast в supervisorScope) НЕ
-                    // должна маппиться в error-state — пробрасываем дальше.
-                    throw e
                 } catch (_: RuntimeException) {
                     // Финальная защита: любая другая ошибка из use case'ов / mapper'а / IO
                     // не должна крашить ViewModel-корутину. Маппим в общий error-state.
@@ -99,6 +93,28 @@ class PetDetailViewModel
                 }
             }
         }
+
+        /**
+         * Загружает рекомендации по уходу, не блокируя расчёт возраста при IO-ошибке.
+         * Вынесено отдельным методом, чтобы явный try/catch перехватывал только Throwable
+         * use case'а и пробрасывал CancellationException — `runCatching` ловит её и
+         * нарушает структурированную отмену.
+         */
+        private suspend fun loadCareRecommendation(
+            species: app.pawclock.model.Species,
+            stage: app.pawclock.model.LifeStage,
+        ): app.pawclock.model.CareRecommendation? =
+            try {
+                getCareRecommendations(
+                    species = species,
+                    stage = stage,
+                    locale = localeProvider.current(),
+                )
+            } catch (e: kotlinx.coroutines.CancellationException) {
+                throw e
+            } catch (_: RuntimeException) {
+                null
+            }
 
         private companion object {
             const val ERROR_UNSUPPORTED_SPECIES: String = "pet_detail_error_unsupported_species"

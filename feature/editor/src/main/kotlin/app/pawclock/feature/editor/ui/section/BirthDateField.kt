@@ -62,7 +62,10 @@ internal fun BirthDateField(
             value = value?.toString().orEmpty(),
             onValueChange = { /* read-only */ },
             readOnly = true,
-            enabled = false,
+            // enabled намеренно остаётся true: при false Material 3 рендерит поле
+            // приглушённым цветом (выглядит как "недоступно"), TalkBack озвучивает
+            // как disabled, и isError-стиль не применяется. Тапы ловит родительский
+            // Box.clickable, поэтому read-only-сценарий работает без enabled = false.
             label = { Text(text = stringResource(R.string.pet_editor_birth_date_label)) },
             isError = isError,
             singleLine = true,

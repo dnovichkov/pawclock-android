@@ -106,10 +106,14 @@ internal fun QuickCalcContent(
         QuickCalcForm(state = state, onEvent = onEvent, padding = padding)
         // Result sheet поверх формы — показывается только при Success.
         if (state.result is QuickCalcResult.Success) {
+            // Species попадает в QuickCalcResultSheet, чтобы выбрать правильный
+            // explanation: для кошки — AAFP/AAHA 2021, а не Wang-2020. state.species
+            // не-null здесь, потому что validate() требует species перед расчётом
+            // (QuickCalcResult.Success недостижим при species == null).
             QuickCalcResultSheet(
+                species = state.species ?: Species.Dog,
                 calculatedAge = state.result.calculatedAge,
                 method = state.method,
-                showMethodToggle = state.species == Species.Dog,
                 onMethodChange = { onEvent(QuickCalcEvent.SetMethod(it)) },
                 onDismiss = { onEvent(QuickCalcEvent.DismissResult) },
             )

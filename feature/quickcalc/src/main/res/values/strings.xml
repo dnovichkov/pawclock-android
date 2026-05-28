@@ -54,6 +54,7 @@
     <string name="quick_calc_result_explanation_title">Как это посчитано</string>
     <string name="quick_calc_result_explanation_epigenetic">Формула Wang et al. (Cell Systems 2020, DOI 10.1016/j.cels.2020.06.006): ЧГ = 16 · ln(age) + 31. Основана на метилировании ДНК — более точна, чем традиционная формула «1 год = 7 лет».</string>
     <string name="quick_calc_result_explanation_size_based">Табличный метод AKC/AAHA 2019: возраст в человеческих годах берётся из опубликованной таблицы и зависит от размерного класса (Toy / Small / Medium / Large / Giant).</string>
+    <string name="quick_calc_result_explanation_aafp">Возрастные ориентиры AAHA/AAFP 2021: кусочно-линейная формула — котёнок (15 ЧГ за первый год) + молодой кот (+9 ЧГ за второй) + +4 ЧГ за каждый следующий. Не зависит от метода Wang.</string>
 
     <!-- Life stages — для бот.шита -->
     <string name="quick_calc_life_stage_dog_puppy">Щенок</string>

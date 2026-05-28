@@ -186,31 +186,48 @@ class PetEditorViewModel
 
         private fun loadExisting(petId: Long) {
             viewModelScope.launch {
-                val pet = getPetById(petId)
-                if (pet == null) {
+                try {
+                    val pet = getPetById(petId)
+                    if (pet == null) {
+                        _state.update {
+                            it.copy(
+                                isLoading = false,
+                                formErrorMessageKey = ERROR_PET_NOT_FOUND,
+                            )
+                        }
+                        return@launch
+                    }
                     _state.update {
-                        it.copy(
+                        PetEditorState(
+                            name = pet.name,
+                            species = pet.species,
+                            subcategory = pet.subcategory,
+                            birthDate = pet.birthDate,
+                            gender = pet.gender,
+                            weightKg = pet.weightKg?.toString().orEmpty(),
+                            notes = pet.notes.orEmpty(),
+                            photoPath = pet.photoPath,
+                            availableSubcategories =
+                                PetEditorState.subcategoriesFor(pet.species),
                             isLoading = false,
-                            formErrorMessageKey = ERROR_PET_NOT_FOUND,
+                            editingPetId = petId,
                         )
                     }
-                    return@launch
-                }
-                _state.update {
-                    PetEditorState(
-                        name = pet.name,
-                        species = pet.species,
-                        subcategory = pet.subcategory,
-                        birthDate = pet.birthDate,
-                        gender = pet.gender,
-                        weightKg = pet.weightKg?.toString().orEmpty(),
-                        notes = pet.notes.orEmpty(),
-                        photoPath = pet.photoPath,
-                        availableSubcategories =
-                            PetEditorState.subcategoriesFor(pet.species),
-                        isLoading = false,
-                        editingPetId = petId,
-                    )
+                } catch (e: kotlinx.coroutines.CancellationException) {
+                    // Структурированная отмена должна пробрасываться выше — иначе
+                    // отменённая корутина «успешно» завершается, нарушая контракт scope'а.
+                    throw e
+                } catch (_: IllegalStateException) {
+                    // PetMapper.toDomain бросает ISE при corrupt species/gender id из БД.
+                    // Без этого catch'а форма зависнет в isLoading = true навсегда.
+                    _state.update {
+                        it.copy(isLoading = false, formErrorMessageKey = ERROR_LOAD_FAILED)
+                    }
+                } catch (_: RuntimeException) {
+                    // Финальная защита от любых IO/маппер-исключений.
+                    _state.update {
+                        it.copy(isLoading = false, formErrorMessageKey = ERROR_LOAD_FAILED)
+                    }
                 }
             }
         }
@@ -230,5 +247,6 @@ class PetEditorViewModel
             const val ERROR_BIRTH_DATE_REQUIRED: String = "pet_editor_error_birth_date_required"
             const val ERROR_UNSUPPORTED_SPECIES: String = "pet_editor_error_unsupported_species"
             const val ERROR_PET_NOT_FOUND: String = "pet_editor_error_pet_not_found"
+            const val ERROR_LOAD_FAILED: String = "pet_editor_error_load_failed"
         }
     }

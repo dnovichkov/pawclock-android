@@ -19,6 +19,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import java.time.Clock
 import javax.inject.Singleton
 
 /**
@@ -64,6 +65,16 @@ object DomainModule {
     fun provideSettingsReader(settingsRepository: SettingsRepository): SettingsReader =
         DataStoreSettingsReader(settingsRepository)
 
+    /**
+     * Единый [Clock] для всего графа: гарантирует, что UI-валидация (QuickCalcViewModel),
+     * доменная валидация (SavePetUseCase) и расчёт возраста (CalculatePetAgeUseCase)
+     * используют одну и ту же "сегодняшнюю" дату. Иначе midnight-boundary могла бы
+     * привести к асимметрии "Save принимает → Calculate бросает IAE".
+     */
+    @Provides
+    @Singleton
+    fun provideClock(): Clock = Clock.systemDefaultZone()
+
     @Provides
     fun provideCalculatePetAgeUseCase(
         dogAgeCalculator: DogAgeCalculator,
@@ -71,6 +82,7 @@ object DomainModule {
         catAgeCalculator: CatAgeCalculator,
         catLifeStageCalculator: CatLifeStageCalculator,
         settingsReader: SettingsReader,
+        clock: Clock,
     ): CalculatePetAgeUseCase =
         CalculatePetAgeUseCase(
             dogAgeCalculator = dogAgeCalculator,
@@ -78,6 +90,7 @@ object DomainModule {
             catAgeCalculator = catAgeCalculator,
             catLifeStageCalculator = catLifeStageCalculator,
             settingsReader = settingsReader,
+            clock = clock,
         )
 
     @Provides
@@ -87,7 +100,10 @@ object DomainModule {
     fun provideGetPetByIdUseCase(petRepository: PetRepository): GetPetByIdUseCase = GetPetByIdUseCase(petRepository)
 
     @Provides
-    fun provideSavePetUseCase(petRepository: PetRepository): SavePetUseCase = SavePetUseCase(petRepository)
+    fun provideSavePetUseCase(
+        petRepository: PetRepository,
+        clock: Clock,
+    ): SavePetUseCase = SavePetUseCase(petRepository = petRepository, clock = clock)
 
     @Provides
     fun provideDeletePetUseCase(petRepository: PetRepository): DeletePetUseCase = DeletePetUseCase(petRepository)

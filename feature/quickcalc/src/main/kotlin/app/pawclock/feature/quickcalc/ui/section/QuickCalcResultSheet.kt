@@ -23,6 +23,7 @@ import app.pawclock.domain.pet.CalculatedAge
 import app.pawclock.feature.quickcalc.R
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.LifeStage
+import app.pawclock.model.Species
 
 /**
  * Bottom sheet с результатом Quick Calculator (§5.3 спецификации, Task 20).
@@ -43,13 +44,17 @@ import app.pawclock.model.LifeStage
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun QuickCalcResultSheet(
+    species: Species,
     calculatedAge: CalculatedAge,
     method: CalculationMethod,
-    showMethodToggle: Boolean,
     onMethodChange: (CalculationMethod) -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    // Toggle Wang ↔ SizeBased имеет смысл только для собак (для кошек метод фиксирован
+    // AAFP'ом). Раньше параметр пробрасывался из QuickCalcContent — после того, как
+    // species стал явным, дублирование исчезает и detekt LongParameterList уходит.
+    val showMethodToggle = species == Species.Dog
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     ModalBottomSheet(
         modifier = modifier,
@@ -88,13 +93,14 @@ internal fun QuickCalcResultSheet(
             }
 
             SectionDivider()
-            CalculationExplanation(method = calculatedAge.method)
+            CalculationExplanation(species = species, method = calculatedAge.method)
         }
     }
 }
 
 @Composable
 private fun CalculationExplanation(
+    species: Species,
     method: CalculationMethod,
     modifier: Modifier = Modifier,
 ) {
@@ -105,7 +111,7 @@ private fun CalculationExplanation(
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                text = stringResource(explanationTextRes(method)),
+                text = stringResource(explanationTextRes(species, method)),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -114,10 +120,21 @@ private fun CalculationExplanation(
 }
 
 @androidx.annotation.StringRes
-private fun explanationTextRes(method: CalculationMethod): Int =
-    when (method) {
-        CalculationMethod.EPIGENETIC -> R.string.quick_calc_result_explanation_epigenetic
-        CalculationMethod.SIZE_BASED -> R.string.quick_calc_result_explanation_size_based
+private fun explanationTextRes(
+    species: Species,
+    method: CalculationMethod,
+): Int =
+    // Для кошек CalculatePetAgeUseCase всегда выставляет method = EPIGENETIC как заглушку
+    // (см. CalculatedAge.method KDoc), поэтому method-based mapping показал бы Wang-2020
+    // объяснение для кота — что неверно по факту (на кота применяется AAFP/AAHA 2021).
+    // Корректно выбирать explanation сначала по species, потом по method.
+    when (species) {
+        Species.Cat -> R.string.quick_calc_result_explanation_aafp
+        else ->
+            when (method) {
+                CalculationMethod.EPIGENETIC -> R.string.quick_calc_result_explanation_epigenetic
+                CalculationMethod.SIZE_BASED -> R.string.quick_calc_result_explanation_size_based
+            }
     }
 
 @androidx.annotation.StringRes

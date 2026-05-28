@@ -50,6 +50,7 @@
     <string name="quick_calc_result_explanation_title">How is this calculated</string>
     <string name="quick_calc_result_explanation_epigenetic">Wang et al. formula (Cell Systems 2020, DOI 10.1016/j.cels.2020.06.006): HY = 16 · ln(age) + 31. Based on DNA methylation — more accurate than the traditional "1 year = 7 years" rule.</string>
     <string name="quick_calc_result_explanation_size_based">AKC/AAHA 2019 table-based method: human-year value is taken from a published table by weight class (Toy / Small / Medium / Large / Giant).</string>
+    <string name="quick_calc_result_explanation_aafp">AAHA/AAFP 2021 feline life-stage guidelines: piecewise formula — kitten (15 HY for the first year) + young adult (+9 HY for the second) + 4 HY per additional year. Independent of the Wang method.</string>
 
     <!-- Life stages -->
     <string name="quick_calc_life_stage_dog_puppy">Puppy</string>

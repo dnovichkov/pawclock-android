@@ -68,7 +68,7 @@ class QuickCalcViewModelTest {
                 settingsReader = settingsReader,
                 clock = fixedClock,
             )
-        return QuickCalcViewModel(calculatePetAge = calculatePetAge)
+        return QuickCalcViewModel(calculatePetAge = calculatePetAge, clock = fixedClock)
     }
 
     @BeforeEach

@@ -57,7 +57,7 @@ internal fun QuickCalcBirthDateField(
             value = value?.toString().orEmpty(),
             onValueChange = { /* read-only */ },
             readOnly = true,
-            enabled = false,
+            // enabled намеренно true: см. комментарий в BirthDateField (editor).
             label = { Text(text = stringResource(R.string.quick_calc_birth_date_label)) },
             isError = isError,
             singleLine = true,

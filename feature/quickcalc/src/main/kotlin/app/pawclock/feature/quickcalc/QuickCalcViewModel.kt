@@ -10,6 +10,7 @@ import app.pawclock.model.DogSize
 import app.pawclock.model.Pet
 import app.pawclock.model.Species
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.Clock
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -44,6 +45,7 @@ class QuickCalcViewModel
     @Inject
     constructor(
         private val calculatePetAge: CalculatePetAgeUseCase,
+        private val clock: Clock = Clock.systemDefaultZone(),
     ) : ViewModel() {
         private val _state = MutableStateFlow(QuickCalcState.Empty)
         val state: StateFlow<QuickCalcState> = _state.asStateFlow()
@@ -127,13 +129,17 @@ class QuickCalcViewModel
             val methodOverride = methodOverrideFor(species, snapshot.method)
 
             viewModelScope.launch {
-                runCatching {
-                    calculatePetAge(pet = syntheticPet, methodOverride = methodOverride)
-                }.onSuccess { calculatedAge ->
+                try {
+                    val calculatedAge =
+                        calculatePetAge(pet = syntheticPet, methodOverride = methodOverride)
                     _state.update {
                         it.copy(result = QuickCalcResult.Success(calculatedAge))
                     }
-                }.onFailure { throwable ->
+                } catch (e: kotlinx.coroutines.CancellationException) {
+                    // runCatching ловит CancellationException и нарушает структурированную
+                    // отмену — поэтому используем явный try/catch и пробрасываем отмену.
+                    throw e
+                } catch (throwable: Throwable) {
                     _state.update { it.copy(result = mapThrowableToResult(throwable)) }
                 }
             }
@@ -146,10 +152,13 @@ class QuickCalcViewModel
                 }
                 if (snapshot.birthDate == null) {
                     add(QuickCalcValidationError.BirthDateRequired)
-                } else if (!snapshot.birthDate.isBefore(LocalDate.now())) {
+                } else if (!snapshot.birthDate.isBefore(LocalDate.now(clock))) {
                     // Fast-fail на UI-уровне для better UX; UseCase сделает то же на доменном уровне.
                     // Сегодняшняя дата тоже отклоняется — CalculatePetAgeUseCase требует ageInYears > 0,
                     // иначе IAE. Симметрия с SavePetUseCase.
+                    // LocalDate.now(clock) — синхронизация с injected Clock, иначе тесты с
+                    // Clock.fixed(...) на UseCase'е расходятся с UI-валидацией и становятся flaky
+                    // после реальной даты, заложенной в тесте.
                     add(QuickCalcValidationError.BirthDateInFuture)
                 }
             }
