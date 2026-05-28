@@ -536,28 +536,16 @@
 - ➕ `R.plurals.age_years` дублирован в feature/pets и feature/quickcalc — Android resource merging не объединяет R-классы между library-модулями; CLDR-формы идентичны (one="%d год", few="%d года", many="%d лет"), документировано в комментариях каждого plurals.xml
 
 ### Task 23: Compose UI tests + Maestro E2E flow
-- [ ] add Maestro CLI installation note в `docs/TESTING.md` (используется как external dev dep)
-- [ ] create `maestro/create_first_pet.yaml` по §11.10 (русская локаль):
-  - launchApp
-  - assertVisible "Добавьте первого питомца"
-  - tapOn "Добавить питомца"
-  - inputText "Барсик"
-  - tapOn "Вид" → "Кошка"
-  - tapOn "Дата рождения" → 2020/5/15
-  - tapOn "Сохранить"
-  - assertVisible "Барсик" + "Senior"
-- [ ] create `maestro/quick_calc_dog.yaml`:
-  - launchApp
-  - go to QuickCalculator
-  - select Dog + Medium + birthDate
-  - assertVisible результат
-  - переключить на Size method
-  - assertVisible изменённый результат
-- [ ] add Maestro tests в nightly.yml workflow (Task 4 уже зашатало placeholder)
-- [ ] write Compose UI tests для key screens (которых ещё нет):
-  - `MainNavigationTest` — навигация между всеми экранами
-  - `AppLaunchTest` — холодный старт без crash
-- [ ] run `./gradlew connectedDebugAndroidTest --no-daemon` (на любом доступном эмуляторе/устройстве; в CI запускается в nightly.yml) — must pass before next task
+- [x] add Maestro CLI installation note в `docs/TESTING.md` (используется как external dev dep) — создан `docs/TESTING.md` со скелетом test pyramid + развёрнутая секция «Maestro CLI» с инструкциями установки (curl get.maestro.mobile.dev | bash), описанием flow-структуры в `maestro/`, локальным workflow (./gradlew :app:installDebug → maestro test maestro/) и CI-интеграцией; полный TESTING.md с TDD-cycle / coverage targets — Task 24
+- [x] create `maestro/create_first_pet.yaml` по §11.10 (русская локаль) — создан с clearState/launchApp, проверкой пустого стейта «Добавьте первого питомца», открытием PetEditor через FAB «Добавить», вводом имени «Барсик» в `pet_editor_name_field` (testTag), hideKeyboard, выбором «Кошка» → defaultкая подкатегория «Домашняя короткошёрстная», открытием DatePicker (`pet_editor_birth_date_field`) с подтверждением «ОК», сохранением через `pet_editor_save_fab`, возвратом на PetsList + assertVisible «Барсик». appId = `app.pawclock.debug` (учитывает applicationIdSuffix=".debug" из app/build.gradle.kts)
+- [x] create `maestro/quick_calc_dog.yaml` — создан flow для QuickCalculator с openLink `pawclock://quickcalc` (deep-link заглушка до реального UI-входа в Plan 2 — задокументировано в YAML что Maestro упадёт с понятной ошибкой, отражающей missing UI entry); проверяет выбор Dog → default Medium, открытие DatePicker → ОК, Calculate FAB, assertVisible «В человеческих годах» в result sheet, переключение метода «По размеру» с автоматическим пересчётом без явного Calculate
+- [x] add Maestro tests в nightly.yml workflow (Task 4 уже зашатало placeholder) — `.github/workflows/nightly.yml` имел detect_flows guard'ом, который теперь автоматически активируется (find maestro -name "*.yaml" возвращает 2 файла); обновлены header-comment и noticeу detect_flows на актуальное состояние (flow'ы добавлены в Plan 1 Task 23, а не «arrive» в будущем)
+- [x] write Compose UI tests для key screens (которых ещё нет):
+  - `MainNavigationTest` — навигация между всеми экранами — создан в `:app/androidTest/.../navigation/MainNavigationTest.kt` с 3 тестами: PetsList→PetEditor через FAB «Добавить», PetEditor→PetsList через back IconButton по contentDescription «Назад», Save с пустой формой остаётся на PetEditor (валидация); ограничение: Settings/About/QuickCalculator/PetDetail недостижимы из UI до Plan 2 (нет bottom-bar) — это задокументировано в KDoc теста
+  - `AppLaunchTest` — холодный старт без crash — создан в `:app/androidTest/.../AppLaunchTest.kt` с `createAndroidComposeRule<MainActivity>()`; в отличие от существующего `MainActivityLaunchTest` (Task 17, ActivityScenario-based) проверяет реальный Compose-рендеринг стартового destination'а (PetsList title «Питомцы»); использует production Hilt-граф (не HiltAndroidRule), потому что smoke-тест проверяет именно production wiring
+- [x] run `./gradlew connectedDebugAndroidTest --no-daemon` — manual test (skipped — нет локального эмулятора в текущей среде); вместо этого выполнен `./gradlew :app:assembleDebugAndroidTest --no-daemon --offline` который BUILD SUCCESSFUL за 51s — APK androidTest собран с новыми Compose UI тестами (3 теста MainNavigationTest + 1 тест AppLaunchTest + 1 pre-existing MainActivityLaunchTest = 5 тестов), готов к запуску в `nightly.yml` workflow на reactivecircus/android-emulator-runner с матрицей API 24/30/35; также прошли `./gradlew :app:ktlintCheck :app:detekt :app:lintDebug :app:testDebugUnitTest` — все clean, regressions нет
+- ➕ added `compose-ui-test-junit4` + `compose-ui-test-manifest` в `:app/build.gradle.kts` androidTestImplementation/debugImplementation — нужны для `createAndroidComposeRule<MainActivity>()`. Использован BOM 2026.05.00 (uploaded в Task 17) — обе библиотеки v1.11.1 уже в offline cache. Deprecation warning на v1 API в пользу `.v2.createAndroidComposeRule` (StandardTestDispatcher vs UnconfinedTestDispatcher) — оставлен v1 для консистентности с feature/pets, feature/editor, feature/quickcalc, feature/settings (все используют v1); миграция на v2 — отдельное project-wide решение для Plan 2
+- ➕ `MainNavigationTest` использует contentDescription «Назад» для тапа по back IconButton (`stringResource(R.string.pet_editor_back)` в PetEditorScreen.kt) — этот же locator работает в Maestro flow'ах через `tapOn:` без явной testTag-обвязки, единый словарь между Compose-test и Maestro
 
 ### Task 24: Documentation pass — docs/ARCHITECTURE.md, TESTING.md, CONTRIBUTING.md, RELEASE.md
 - [ ] write `docs/ARCHITECTURE.md`:

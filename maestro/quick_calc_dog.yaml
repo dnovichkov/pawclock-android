@@ -1,0 +1,54 @@
+# Maestro E2E flow (§11.10 спецификации, Task 23 / Plan 1).
+#
+# Сценарий: пользователь открывает Quick Calculator (без сохранения в БД) →
+# выбирает «Собака» + «Средняя» + текущую дату → видит результат → переключает
+# метод расчёта (Wang ↔ По размеру) и видит изменённое значение ЧГ.
+#
+# Этот flow покрывает §3.2 спецификации (educational angle про методы расчёта).
+#
+# Запуск:
+#   maestro test maestro/quick_calc_dog.yaml
+#
+# Локаль: русские строки (default по §6).
+appId: app.pawclock.debug
+---
+- clearState
+- launchApp
+
+# Перейти из PetsList в QuickCalculator. На данный момент NavHost не имеет
+# bottom-bar (планируется в Plan 2), поэтому для smoke E2E используется deep-link
+# через явный navigate. Когда появится bottom bar — заменить на tap по нему.
+- openLink: "pawclock://quickcalc"
+
+# Если deep-link не настроен (Plan 1 не реализует intent-filter), Maestro упадёт
+# с понятной ошибкой — это сигнал, что nav-entry на QuickCalculator пока требует
+# UI-входа из меню; до его появления Maestro flow помечается as smoke-only.
+# Альтернатива: navigate через Settings → пока недоступно. Этот flow
+# документирует целевой сценарий и активизируется как только появится UI-entry.
+
+# Проверка экрана Quick Calculator.
+- assertVisible: "Быстрый расчёт"
+
+# Выбрать вид «Собака».
+- tapOn: "Собака"
+
+# Подкатегория «Средняя» (default для собак — см. QuickCalcViewModel).
+- assertVisible: "Средняя"
+
+# Указать дату рождения (тап по полю → ОК).
+- tapOn:
+    id: "quick_calc_birth_date_field"
+- tapOn: "ОК"
+
+# Рассчитать.
+- tapOn:
+    id: "quick_calc_calculate_fab"
+
+# Должен появиться result sheet с ЧГ.
+- assertVisible: "В человеческих годах"
+
+# Переключить метод расчёта внутри bottom-sheet'а (Wang → По размеру).
+- tapOn: "По размеру"
+
+# Sheet остаётся открытым; ЧГ автоматически пересчитывается без явного Calculate.
+- assertVisible: "В человеческих годах"

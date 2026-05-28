@@ -5,8 +5,9 @@ name: Nightly
 #
 # Coverage: API 24 (minSdk), 30 (median field device), 35 (targetSdk).
 # Tests: Compose UI (connectedDebugAndroidTest) + Maestro E2E flows.
-# Maestro flows arrive in Plan 1 Task 23; until then the Maestro job is
-# guarded by a path check and skips cleanly if no flows exist.
+# Maestro flows arrived in Plan 1 Task 23 (maestro/*.yaml). The Maestro job
+# is still guarded by a path check so future flow removals do not break the
+# workflow — the check skips cleanly if no flows exist.
 
 on:
   schedule:
@@ -119,7 +120,7 @@ jobs:
             echo "has_flows=true" >> "$GITHUB_OUTPUT"
           else
             echo "has_flows=false" >> "$GITHUB_OUTPUT"
-            echo "::notice::No Maestro flows under maestro/. Skipping (added in Plan 1 Task 23)."
+            echo "::notice::No Maestro flows under maestro/. Skipping."
           fi
 
       - name: Set up JDK 17
