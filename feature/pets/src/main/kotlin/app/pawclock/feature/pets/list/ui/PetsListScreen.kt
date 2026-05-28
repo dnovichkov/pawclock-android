@@ -24,10 +24,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.pawclock.feature.pets.R
 import app.pawclock.feature.pets.list.PetsListState
 import app.pawclock.feature.pets.list.PetsListViewModel
 import app.pawclock.model.Pet
@@ -87,7 +89,7 @@ internal fun PetsListContent(
         modifier = modifier.fillMaxSize(),
         topBar = {
             LargeTopAppBar(
-                title = { Text(text = "Питомцы") },
+                title = { Text(text = stringResource(R.string.pets_list_title)) },
                 scrollBehavior = scrollBehavior,
             )
         },
@@ -95,7 +97,7 @@ internal fun PetsListContent(
             ExtendedFloatingActionButton(
                 onClick = onAddPetClick,
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text(text = "Добавить") },
+                text = { Text(text = stringResource(R.string.pets_list_add)) },
             )
         },
     ) { padding ->
@@ -136,12 +138,12 @@ private fun EmptyContent(padding: PaddingValues) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                text = "Добавьте первого питомца",
+                text = stringResource(R.string.pets_list_empty_title),
                 style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center,
             )
             Text(
-                text = "Нажмите на кнопку «Добавить», чтобы создать профиль вашего питомца.",
+                text = stringResource(R.string.pets_list_empty_body),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 textAlign = TextAlign.Center,
@@ -190,9 +192,10 @@ private fun ErrorContent(
                 .padding(padding),
         contentAlignment = Alignment.Center,
     ) {
-        // messageKey локализуется в Task 22. На этом этапе — fallback на сам ключ + поясняющий текст.
+        // messageKey остаётся технической метрикой логирования; для UI используется
+        // общий fallback-текст с подстановкой ключа.
         Text(
-            text = "Не удалось загрузить список питомцев (key=$messageKey).",
+            text = stringResource(R.string.pets_list_error, messageKey),
             color = MaterialTheme.colorScheme.error,
         )
     }

@@ -13,7 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.pawclock.feature.editor.R
 import app.pawclock.model.Species
 
 /**
@@ -34,7 +36,7 @@ internal fun SpeciesSelector(
         verticalArrangement = Arrangement.spacedBy(CHIP_LABEL_GAP_DP.dp),
     ) {
         Text(
-            text = "Вид *",
+            text = stringResource(R.string.pet_editor_species_label),
             style = MaterialTheme.typography.labelLarge,
         )
         FlowRow(
@@ -46,7 +48,7 @@ internal fun SpeciesSelector(
                     modifier = Modifier.testTag(speciesChipTag(species)),
                     selected = selected == species,
                     onClick = { onSelect(species) },
-                    label = { Text(text = speciesLabel(species)) },
+                    label = { Text(text = stringResource(speciesLabelRes(species))) },
                     border = FilterChipDefaults.filterChipBorder(enabled = true, selected = selected == species),
                 )
             }
@@ -54,11 +56,15 @@ internal fun SpeciesSelector(
     }
 }
 
-private fun speciesLabel(species: Species): String =
+@androidx.annotation.StringRes
+private fun speciesLabelRes(species: Species): Int =
     when (species) {
-        Species.Dog -> "Собака"
-        Species.Cat -> "Кошка"
-        else -> species.id
+        Species.Dog -> R.string.pet_editor_species_dog
+        Species.Cat -> R.string.pet_editor_species_cat
+        // Not-yet-implemented виды используют свой id как fallback-resource-name.
+        // Plan 2 добавит реальные строки и расширит список implemented(). До тех пор —
+        // делаем читаемый fallback на species_dog (нейтральный плейсхолдер, не падает).
+        else -> R.string.pet_editor_species_dog
     }
 
 internal fun speciesChipTag(species: Species): String = "species_chip_${species.id}"

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.pawclock.datastore.AppSettings
 import app.pawclock.datastore.SettingsRepository
+import app.pawclock.domain.locale.LocaleApplier
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,6 +32,7 @@ class SettingsViewModel
     @Inject
     constructor(
         private val repository: SettingsRepository,
+        private val localeApplier: LocaleApplier,
     ) : ViewModel() {
         val state: StateFlow<SettingsState> =
             repository
@@ -46,8 +48,13 @@ class SettingsViewModel
             when (event) {
                 is SettingsEvent.SetThemeMode ->
                     viewModelScope.launch { repository.setThemeMode(event.themeMode) }
-                is SettingsEvent.SetLanguageTag ->
+                is SettingsEvent.SetLanguageTag -> {
+                    // Применяем локаль немедленно — AppCompatDelegate триггерит Activity recreate,
+                    // что заставит Composables перечитать stringResource'ы под новой локалью.
+                    // Затем persistаем в DataStore — на следующем cold start значение уже на месте.
+                    localeApplier.applyLanguageTag(event.languageTag)
                     viewModelScope.launch { repository.setLanguageTag(event.languageTag) }
+                }
                 is SettingsEvent.SetDynamicColor ->
                     viewModelScope.launch { repository.setDynamicColor(event.enabled) }
                 is SettingsEvent.SetDefaultCalculationMethod ->

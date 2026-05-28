@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Plurals для возраста — §6 спецификации.
+
+  Лежат в :feature:pets потому что используются в PetCard/PetDetailScreen.
+  pluralStringResource(R.plurals.age_years, n, n) — Android resolver выбирает
+  правильную CLDR-форму по локали Activity'и (system или per-app).
+
+  Pure-Kotlin реализация тех же правил — `:core:domain/format/AgePluralFormatter`.
+-->
+<resources>
+    <plurals name="age_years">
+        <item quantity="one">%d год</item>
+        <item quantity="few">%d года</item>
+        <item quantity="many">%d лет</item>
+        <item quantity="other">%d года</item>
+    </plurals>
+    <plurals name="age_months">
+        <item quantity="one">%d месяц</item>
+        <item quantity="few">%d месяца</item>
+        <item quantity="many">%d месяцев</item>
+        <item quantity="other">%d месяца</item>
+    </plurals>
+</resources>

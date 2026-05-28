@@ -12,12 +12,15 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.pawclock.designsystem.components.AgeBigCard
 import app.pawclock.designsystem.components.LifeStageChip
 import app.pawclock.designsystem.components.PawClockCard
 import app.pawclock.designsystem.components.SectionDivider
 import app.pawclock.domain.pet.CalculatedAge
+import app.pawclock.feature.quickcalc.R
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.LifeStage
 
@@ -62,16 +65,18 @@ internal fun QuickCalcResultSheet(
             verticalArrangement = Arrangement.spacedBy(SECTION_SPACING_DP.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
+            val ageYears = calculatedAge.ageInYears.toInt().coerceAtLeast(0)
             AgeBigCard(
-                ageLabel = formatYears(calculatedAge.ageInYears),
-                humanYearsLabel = "${calculatedAge.humanYears.toInt()} ЧГ",
-                ageDescriptor = "Календарный возраст",
-                humanYearsDescriptor = "В человеческих годах",
+                ageLabel = pluralStringResource(R.plurals.age_years, ageYears, ageYears),
+                humanYearsLabel =
+                    stringResource(R.string.quick_calc_result_human_years_unit, calculatedAge.humanYears.toInt()),
+                ageDescriptor = stringResource(R.string.quick_calc_result_age_descriptor),
+                humanYearsDescriptor = stringResource(R.string.quick_calc_result_human_years_descriptor),
             )
 
             LifeStageChip(
                 stage = calculatedAge.lifeStage,
-                label = lifeStageLabel(calculatedAge.lifeStage),
+                label = stringResource(lifeStageLabelRes(calculatedAge.lifeStage)),
             )
 
             if (showMethodToggle) {
@@ -96,11 +101,11 @@ private fun CalculationExplanation(
     PawClockCard(modifier = modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.spacedBy(EXPL_GAP_DP.dp)) {
             Text(
-                text = "Как это посчитано",
+                text = stringResource(R.string.quick_calc_result_explanation_title),
                 style = MaterialTheme.typography.titleMedium,
             )
             Text(
-                text = explanationText(method),
+                text = stringResource(explanationTextRes(method)),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -108,36 +113,27 @@ private fun CalculationExplanation(
     }
 }
 
-private fun explanationText(method: CalculationMethod): String =
+@androidx.annotation.StringRes
+private fun explanationTextRes(method: CalculationMethod): Int =
     when (method) {
-        CalculationMethod.EPIGENETIC ->
-            "Формула Wang et al. (Cell Systems 2020, DOI 10.1016/j.cels.2020.06.006): " +
-                "ЧГ = 16 · ln(age) + 31. Основана на метилировании ДНК — более точна, " +
-                "чем традиционная формула «1 год = 7 лет»."
-        CalculationMethod.SIZE_BASED ->
-            "Табличный метод AKC/AAHA 2019: возраст в человеческих годах берётся из " +
-                "опубликованной таблицы и зависит от размерного класса (Toy / Small / " +
-                "Medium / Large / Giant)."
+        CalculationMethod.EPIGENETIC -> R.string.quick_calc_result_explanation_epigenetic
+        CalculationMethod.SIZE_BASED -> R.string.quick_calc_result_explanation_size_based
     }
 
-private fun lifeStageLabel(stage: LifeStage): String =
+@androidx.annotation.StringRes
+internal fun lifeStageLabelRes(stage: LifeStage): Int =
     when (stage) {
-        LifeStage.Dog.Puppy -> "Щенок"
-        LifeStage.Dog.YoungAdult -> "Молодой взрослый"
-        LifeStage.Dog.MatureAdult -> "Зрелый взрослый"
-        LifeStage.Dog.Senior -> "Старший"
-        LifeStage.Dog.EndOfLife -> "Поздний возраст"
-        LifeStage.Cat.Kitten -> "Котёнок"
-        LifeStage.Cat.YoungAdult -> "Молодой взрослый"
-        LifeStage.Cat.MatureAdult -> "Зрелый взрослый"
-        LifeStage.Cat.Senior -> "Старший"
-        LifeStage.Cat.EndOfLife -> "Поздний возраст"
+        LifeStage.Dog.Puppy -> R.string.quick_calc_life_stage_dog_puppy
+        LifeStage.Dog.YoungAdult -> R.string.quick_calc_life_stage_dog_young_adult
+        LifeStage.Dog.MatureAdult -> R.string.quick_calc_life_stage_dog_mature_adult
+        LifeStage.Dog.Senior -> R.string.quick_calc_life_stage_dog_senior
+        LifeStage.Dog.EndOfLife -> R.string.quick_calc_life_stage_dog_end_of_life
+        LifeStage.Cat.Kitten -> R.string.quick_calc_life_stage_cat_kitten
+        LifeStage.Cat.YoungAdult -> R.string.quick_calc_life_stage_cat_young_adult
+        LifeStage.Cat.MatureAdult -> R.string.quick_calc_life_stage_cat_mature_adult
+        LifeStage.Cat.Senior -> R.string.quick_calc_life_stage_cat_senior
+        LifeStage.Cat.EndOfLife -> R.string.quick_calc_life_stage_cat_end_of_life
     }
-
-private fun formatYears(years: Double): String {
-    val whole = years.toInt()
-    return "$whole лет"
-}
 
 private const val SHEET_PADDING_DP: Int = 16
 private const val SECTION_SPACING_DP: Int = 16

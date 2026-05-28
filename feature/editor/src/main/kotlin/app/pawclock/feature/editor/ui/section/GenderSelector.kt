@@ -12,7 +12,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.pawclock.feature.editor.R
 import app.pawclock.model.Gender
 
 /**
@@ -33,7 +35,7 @@ internal fun GenderSelector(
         verticalArrangement = Arrangement.spacedBy(CHIP_LABEL_GAP_DP.dp),
     ) {
         Text(
-            text = "Пол",
+            text = stringResource(R.string.pet_editor_gender_label),
             style = MaterialTheme.typography.labelLarge,
         )
         FlowRow(
@@ -46,7 +48,7 @@ internal fun GenderSelector(
                     onClick = {
                         if (selected == gender) onSelect(null) else onSelect(gender)
                     },
-                    label = { Text(text = genderLabel(gender)) },
+                    label = { Text(text = stringResource(genderLabelRes(gender))) },
                     border =
                         FilterChipDefaults.filterChipBorder(
                             enabled = true,
@@ -58,11 +60,12 @@ internal fun GenderSelector(
     }
 }
 
-private fun genderLabel(gender: Gender): String =
+@androidx.annotation.StringRes
+private fun genderLabelRes(gender: Gender): Int =
     when (gender) {
-        Gender.Male -> "Самец"
-        Gender.Female -> "Самка"
-        Gender.Unknown -> "Не указан"
+        Gender.Male -> R.string.pet_editor_gender_male
+        Gender.Female -> R.string.pet_editor_gender_female
+        Gender.Unknown -> R.string.pet_editor_gender_unknown
     }
 
 private const val CHIP_LABEL_GAP_DP: Int = 8

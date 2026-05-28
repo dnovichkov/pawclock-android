@@ -20,8 +20,10 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import app.pawclock.feature.settings.R
 import app.pawclock.feature.settings.about.AboutSource
 import app.pawclock.feature.settings.about.AboutSources
 
@@ -56,12 +58,12 @@ fun AboutScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "О приложении") },
+                title = { Text(text = stringResource(R.string.about_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Назад",
+                            contentDescription = stringResource(R.string.about_back),
                         )
                     }
                 },
@@ -113,18 +115,18 @@ private fun AppIdentityBlock(appVersion: String) {
         modifier = Modifier.padding(top = SECTION_TOP_PADDING_DP.dp),
     ) {
         Text(
-            text = "PawClock",
+            text = stringResource(R.string.about_app_name),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.SemiBold,
         )
         Text(
-            text = "Версия $appVersion",
+            text = stringResource(R.string.about_version, appVersion),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.testTag(VERSION_TEST_TAG),
         )
         Text(
-            text = "Расчёт возраста питомца в человеческих годах на основе научных источников.",
+            text = stringResource(R.string.about_app_tagline),
             style = MaterialTheme.typography.bodyMedium,
         )
     }
@@ -134,19 +136,16 @@ private fun AppIdentityBlock(appVersion: String) {
 private fun LicenseBlock() {
     Column(verticalArrangement = Arrangement.spacedBy(SECTION_INNER_GAP_DP.dp)) {
         Text(
-            text = "Лицензия",
+            text = stringResource(R.string.about_license_header),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
         )
         Text(
-            text = "Apache License 2.0",
+            text = stringResource(R.string.about_license_name),
             style = MaterialTheme.typography.bodyLarge,
         )
         Text(
-            text =
-                "Apache License, Version 2.0 — открытая лицензия. Вы можете использовать, изменять " +
-                    "и распространять приложение при условии сохранения уведомлений об авторских правах. " +
-                    "Полный текст: apache.org/licenses/LICENSE-2.0",
+            text = stringResource(R.string.about_license_body),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -157,18 +156,18 @@ private fun LicenseBlock() {
 private fun RepositoryBlock() {
     Column(verticalArrangement = Arrangement.spacedBy(SECTION_INNER_GAP_DP.dp)) {
         Text(
-            text = "Исходный код",
+            text = stringResource(R.string.about_repository_header),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
         )
         Text(
-            text = "github.com/dnovichkov/pawclock-android",
+            text = stringResource(R.string.about_repository_url),
             style = MaterialTheme.typography.bodyLarge,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.testTag(REPOSITORY_LINK_TEST_TAG),
         )
         Text(
-            text = "Сообщить о проблеме, предложить улучшение или добавить новый вид питомца — через GitHub Issues.",
+            text = stringResource(R.string.about_repository_body),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -179,15 +178,12 @@ private fun RepositoryBlock() {
 private fun DisclaimerBlock() {
     Column(verticalArrangement = Arrangement.spacedBy(SECTION_INNER_GAP_DP.dp)) {
         Text(
-            text = "Дисклеймер",
+            text = stringResource(R.string.about_disclaimer_header),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
         )
         Text(
-            text =
-                "Информация в приложении носит ознакомительный характер и не заменяет консультацию " +
-                    "ветеринарного врача. Рекомендации по уходу, питанию и частоте осмотров — это общие " +
-                    "ориентиры, а не индивидуальный медицинский план.",
+            text = stringResource(R.string.about_disclaimer_body),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.testTag(DISCLAIMER_TEST_TAG),
         )
@@ -198,7 +194,7 @@ private fun DisclaimerBlock() {
 private fun SourcesBlock() {
     Column(verticalArrangement = Arrangement.spacedBy(SECTION_INNER_GAP_DP.dp)) {
         Text(
-            text = "Научные источники",
+            text = stringResource(R.string.about_sources_header),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
             modifier = Modifier.testTag(SOURCES_HEADER_TEST_TAG),

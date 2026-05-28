@@ -14,8 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import app.pawclock.feature.settings.R
 import app.pawclock.model.ThemeMode
 
 /**
@@ -57,7 +59,7 @@ internal fun ThemeModeSelector(
                     onClick = null,
                 )
                 Text(
-                    text = themeModeLabel(option),
+                    text = stringResource(themeModeLabelRes(option)),
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -65,11 +67,12 @@ internal fun ThemeModeSelector(
     }
 }
 
-private fun themeModeLabel(themeMode: ThemeMode): String =
+@androidx.annotation.StringRes
+private fun themeModeLabelRes(themeMode: ThemeMode): Int =
     when (themeMode) {
-        ThemeMode.Light -> "Светлая"
-        ThemeMode.Dark -> "Тёмная"
-        ThemeMode.System -> "Как в системе"
+        ThemeMode.Light -> R.string.settings_theme_light
+        ThemeMode.Dark -> R.string.settings_theme_dark
+        ThemeMode.System -> R.string.settings_theme_system
     }
 
 internal fun themeModeOptionTag(themeMode: ThemeMode): String = "settings_theme_${themeMode.id}"

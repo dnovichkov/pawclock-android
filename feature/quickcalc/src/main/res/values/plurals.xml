@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Дублирующие plurals (age_years/age_months) — Android resource merging требует, чтобы
+  pluralStringResource(R.plurals.age_years, ...) в feature/quickcalc находил entry именно
+  в собственном модульном R-классе. CLDR-формы идентичны feature/pets — это намеренно,
+  чтобы UX согласован между экранами.
+-->
+<resources>
+    <plurals name="age_years">
+        <item quantity="one">%d год</item>
+        <item quantity="few">%d года</item>
+        <item quantity="many">%d лет</item>
+        <item quantity="other">%d года</item>
+    </plurals>
+</resources>

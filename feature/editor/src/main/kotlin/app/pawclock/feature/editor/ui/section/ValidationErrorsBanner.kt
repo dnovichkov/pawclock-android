@@ -9,8 +9,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.pawclock.domain.pet.PetValidationError
+import app.pawclock.feature.editor.R
 
 /**
  * Errored-banner со списком всех ошибок валидации.
@@ -33,7 +35,7 @@ internal fun ValidationErrorsBanner(
         ) {
             errors.forEach { error ->
                 Text(
-                    text = "• ${errorLabel(error)}",
+                    text = "• " + stringResource(errorLabelRes(error)),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onErrorContainer,
                 )
@@ -42,11 +44,12 @@ internal fun ValidationErrorsBanner(
     }
 }
 
-private fun errorLabel(error: PetValidationError): String =
+@androidx.annotation.StringRes
+private fun errorLabelRes(error: PetValidationError): Int =
     when (error) {
-        PetValidationError.NameBlank -> "Введите имя питомца"
-        PetValidationError.BirthDateInFuture -> "Дата рождения не может быть в будущем"
-        PetValidationError.BirthDateUnrealistic -> "Дата рождения слишком давно"
+        PetValidationError.NameBlank -> R.string.pet_editor_error_name_blank
+        PetValidationError.BirthDateInFuture -> R.string.pet_editor_error_birth_date_in_future
+        PetValidationError.BirthDateUnrealistic -> R.string.pet_editor_error_birth_date_unrealistic
     }
 
 private const val PADDING_DP: Int = 12

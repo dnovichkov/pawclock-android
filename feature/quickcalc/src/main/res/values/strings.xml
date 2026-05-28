@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Русские строки для :feature:quickcalc (Quick Calculator + result sheet).
+  Перевод: values-en/strings.xml.
+-->
+<resources>
+
+    <!-- TopAppBar / FAB -->
+    <string name="quick_calc_title">Быстрый расчёт</string>
+    <string name="quick_calc_back">Назад</string>
+    <string name="quick_calc_calculate">Рассчитать</string>
+    <string name="quick_calc_intro">Узнайте возраст питомца в человеческих годах без сохранения в список — выберите вид, размер/тип и дату рождения.</string>
+
+    <!-- Form fields -->
+    <string name="quick_calc_species_label">Вид *</string>
+    <string name="quick_calc_subcategory_label">Подкатегория</string>
+    <string name="quick_calc_birth_date_label">Дата рождения *</string>
+    <string name="quick_calc_method_label">Метод расчёта</string>
+
+    <!-- Species labels -->
+    <string name="quick_calc_species_dog">Собака</string>
+    <string name="quick_calc_species_cat">Кошка</string>
+
+    <!-- Subcategory labels (соответствуют DogSize/CatType id'шникам) -->
+    <string name="quick_calc_subcategory_toy">Той</string>
+    <string name="quick_calc_subcategory_small">Маленькая</string>
+    <string name="quick_calc_subcategory_medium">Средняя</string>
+    <string name="quick_calc_subcategory_large">Большая</string>
+    <string name="quick_calc_subcategory_giant">Гигантская</string>
+    <string name="quick_calc_subcategory_indoor_short_hair">Домашняя короткошёрстная</string>
+    <string name="quick_calc_subcategory_indoor_long_hair">Домашняя длинношёрстная</string>
+    <string name="quick_calc_subcategory_outdoor">Уличная</string>
+    <string name="quick_calc_subcategory_large_breed">Крупная порода</string>
+
+    <!-- Date picker -->
+    <string name="quick_calc_date_ok">ОК</string>
+    <string name="quick_calc_date_cancel">Отмена</string>
+
+    <!-- Method toggle -->
+    <string name="quick_calc_method_epigenetic">Wang (эпигенетика)</string>
+    <string name="quick_calc_method_size_based">По размеру</string>
+
+    <!-- Validation errors -->
+    <string name="quick_calc_error_species_required">Выберите вид питомца</string>
+    <string name="quick_calc_error_birth_date_required">Укажите дату рождения</string>
+    <string name="quick_calc_error_birth_date_in_future">Дата рождения не может быть в будущем</string>
+    <string name="quick_calc_error_unsupported_species">Этот вид пока не поддерживается</string>
+
+    <!-- Result sheet -->
+    <string name="quick_calc_result_age_descriptor">Календарный возраст</string>
+    <string name="quick_calc_result_human_years_descriptor">В человеческих годах</string>
+    <string name="quick_calc_result_human_years_unit">%1$d ЧГ</string>
+    <string name="quick_calc_result_explanation_title">Как это посчитано</string>
+    <string name="quick_calc_result_explanation_epigenetic">Формула Wang et al. (Cell Systems 2020, DOI 10.1016/j.cels.2020.06.006): ЧГ = 16 · ln(age) + 31. Основана на метилировании ДНК — более точна, чем традиционная формула «1 год = 7 лет».</string>
+    <string name="quick_calc_result_explanation_size_based">Табличный метод AKC/AAHA 2019: возраст в человеческих годах берётся из опубликованной таблицы и зависит от размерного класса (Toy / Small / Medium / Large / Giant).</string>
+
+    <!-- Life stages — для бот.шита -->
+    <string name="quick_calc_life_stage_dog_puppy">Щенок</string>
+    <string name="quick_calc_life_stage_dog_young_adult">Молодой взрослый</string>
+    <string name="quick_calc_life_stage_dog_mature_adult">Зрелый взрослый</string>
+    <string name="quick_calc_life_stage_dog_senior">Старший</string>
+    <string name="quick_calc_life_stage_dog_end_of_life">Поздний возраст</string>
+    <string name="quick_calc_life_stage_cat_kitten">Котёнок</string>
+    <string name="quick_calc_life_stage_cat_young_adult">Молодой взрослый</string>
+    <string name="quick_calc_life_stage_cat_mature_adult">Зрелый взрослый</string>
+    <string name="quick_calc_life_stage_cat_senior">Старший</string>
+    <string name="quick_calc_life_stage_cat_end_of_life">Поздний возраст</string>
+
+</resources>

@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import app.pawclock.feature.settings.R
 
 /**
  * Переключатель Material You dynamic color.
@@ -29,16 +31,18 @@ internal fun DynamicColorSwitch(
     ListItem(
         modifier = modifier.testTag(DYNAMIC_COLOR_SWITCH_TEST_TAG),
         headlineContent = {
-            Text(text = "Динамические цвета")
+            Text(text = stringResource(R.string.settings_dynamic_color_title))
         },
         supportingContent = {
             Text(
                 text =
-                    if (deviceSupportsDynamic) {
-                        "Цвета приложения подстраиваются под обои Android"
-                    } else {
-                        "Доступно с Android 12. На вашем устройстве используется фирменная палитра."
-                    },
+                    stringResource(
+                        if (deviceSupportsDynamic) {
+                            R.string.settings_dynamic_color_supporting_supported
+                        } else {
+                            R.string.settings_dynamic_color_supporting_unsupported
+                        },
+                    ),
                 style = MaterialTheme.typography.bodySmall,
             )
         },

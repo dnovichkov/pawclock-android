@@ -14,8 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import app.pawclock.feature.settings.R
 
 /**
  * Селектор языка приложения: System (null), Русский ("ru"), English ("en").
@@ -52,7 +54,7 @@ internal fun LanguageSelector(
                     onClick = null,
                 )
                 Text(
-                    text = option.label,
+                    text = stringResource(option.labelRes),
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -64,18 +66,19 @@ internal fun LanguageSelector(
  * Опция языка: маппит UI-label на BCP 47 tag (null = "как в системе").
  *
  * @property tag null означает следование системной локали; ненулевое значение —
- *   BCP 47 tag, который SettingsRepository передаст в `AppCompatDelegate.setApplicationLocales`.
- * @property label человеко-читаемая метка для UI.
+ *   BCP 47 tag, который передаётся в `AppCompatDelegate.setApplicationLocales`
+ *   через [app.pawclock.domain.locale.LocaleApplier] (см. SettingsViewModel).
+ * @property labelRes string-resource id для отображения в UI (локализованная метка).
  * @property id стабильный id для testTag и detekt-friendly enum-имени.
  */
 internal enum class LanguageOption(
     val tag: String?,
-    val label: String,
+    @androidx.annotation.StringRes val labelRes: Int,
     val id: String,
 ) {
-    System(tag = null, label = "Как в системе", id = "system"),
-    Russian(tag = "ru", label = "Русский", id = "ru"),
-    English(tag = "en", label = "English", id = "en"),
+    System(tag = null, labelRes = R.string.settings_language_system, id = "system"),
+    Russian(tag = "ru", labelRes = R.string.settings_language_russian, id = "ru"),
+    English(tag = "en", labelRes = R.string.settings_language_english, id = "en"),
 }
 
 internal fun languageOptionTag(option: LanguageOption): String = "settings_language_${option.id}"

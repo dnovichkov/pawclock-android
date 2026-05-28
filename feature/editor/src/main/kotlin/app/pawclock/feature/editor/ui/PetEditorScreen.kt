@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,6 +37,7 @@ import app.pawclock.feature.editor.PetEditorEvent
 import app.pawclock.feature.editor.PetEditorSaveResult
 import app.pawclock.feature.editor.PetEditorState
 import app.pawclock.feature.editor.PetEditorViewModel
+import app.pawclock.feature.editor.R
 import app.pawclock.feature.editor.ui.section.BirthDateField
 import app.pawclock.feature.editor.ui.section.GenderSelector
 import app.pawclock.feature.editor.ui.section.SpeciesSelector
@@ -106,9 +108,9 @@ internal fun PetEditorContent(
                     Text(
                         text =
                             if (state.editingPetId == null) {
-                                "Новый питомец"
+                                stringResource(R.string.pet_editor_title_new)
                             } else {
-                                "Редактирование"
+                                stringResource(R.string.pet_editor_title_edit)
                             },
                     )
                 },
@@ -116,7 +118,7 @@ internal fun PetEditorContent(
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Назад",
+                            contentDescription = stringResource(R.string.pet_editor_back),
                         )
                     }
                 },
@@ -127,7 +129,7 @@ internal fun PetEditorContent(
                 modifier = Modifier.testTag(SAVE_FAB_TEST_TAG),
                 onClick = { onEvent(PetEditorEvent.Save) },
                 icon = { Icon(Icons.Filled.Done, contentDescription = null) },
-                text = { Text(text = "Сохранить") },
+                text = { Text(text = stringResource(R.string.pet_editor_save)) },
             )
         },
     ) { padding ->
@@ -176,7 +178,7 @@ private fun FormContent(
                     .testTag(NAME_FIELD_TEST_TAG),
             value = state.name,
             onValueChange = { onEvent(PetEditorEvent.SetName(it)) },
-            label = { Text(text = "Имя *") },
+            label = { Text(text = stringResource(R.string.pet_editor_name_label)) },
             singleLine = true,
             isError = state.validationErrors.any { it.name == "NameBlank" },
         )
@@ -209,7 +211,7 @@ private fun FormContent(
             modifier = Modifier.fillMaxWidth(),
             value = state.weightKg,
             onValueChange = { onEvent(PetEditorEvent.SetWeight(it)) },
-            label = { Text(text = "Вес (кг)") },
+            label = { Text(text = stringResource(R.string.pet_editor_weight_label)) },
             singleLine = true,
         )
 
@@ -217,13 +219,13 @@ private fun FormContent(
             modifier = Modifier.fillMaxWidth(),
             value = state.notes,
             onValueChange = { onEvent(PetEditorEvent.SetNotes(it)) },
-            label = { Text(text = "Заметки") },
+            label = { Text(text = stringResource(R.string.pet_editor_notes_label)) },
             minLines = NOTES_MIN_LINES,
         )
 
         if (state.formErrorMessageKey != null) {
             Text(
-                text = formErrorMessage(state.formErrorMessageKey),
+                text = stringResource(formErrorMessageRes(state.formErrorMessageKey)),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium,
             )
@@ -238,15 +240,18 @@ private fun FormContent(
 }
 
 /**
- * Локализация form-error по messageKey (Task 22 заменит на stringResource).
+ * Маппит доменный messageKey (см. PetValidationError / SavePetUseCase) на string-resource id.
  */
-private fun formErrorMessage(messageKey: String): String =
+@androidx.annotation.StringRes
+private fun formErrorMessageRes(messageKey: String): Int =
     when (messageKey) {
-        "pet_editor_error_species_required" -> "Выберите вид питомца"
-        "pet_editor_error_birth_date_required" -> "Укажите дату рождения"
-        "pet_editor_error_pet_not_found" -> "Питомец не найден"
-        "pet_editor_error_unsupported_species" -> "Этот вид пока не поддерживается"
-        else -> messageKey
+        "pet_editor_error_species_required" -> R.string.pet_editor_error_species_required
+        "pet_editor_error_birth_date_required" -> R.string.pet_editor_error_birth_date_required
+        "pet_editor_error_pet_not_found" -> R.string.pet_editor_error_pet_not_found
+        "pet_editor_error_unsupported_species" -> R.string.pet_editor_error_unsupported_species
+        // Unknown key — fallback на generic species_required-сообщение чтобы не падать.
+        // В Plan 2 добавим централизованный errors-mapping в :core:domain.
+        else -> R.string.pet_editor_error_species_required
     }
 
 internal const val NAME_FIELD_TEST_TAG: String = "pet_editor_name_field"

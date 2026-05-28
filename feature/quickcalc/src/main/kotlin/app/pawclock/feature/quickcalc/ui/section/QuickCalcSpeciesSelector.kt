@@ -13,7 +13,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.pawclock.feature.quickcalc.R
 import app.pawclock.model.Species
 
 /**
@@ -34,7 +36,7 @@ internal fun QuickCalcSpeciesSelector(
         verticalArrangement = Arrangement.spacedBy(CHIP_LABEL_GAP_DP.dp),
     ) {
         Text(
-            text = "Вид *",
+            text = stringResource(R.string.quick_calc_species_label),
             style = MaterialTheme.typography.labelLarge,
         )
         FlowRow(
@@ -46,7 +48,7 @@ internal fun QuickCalcSpeciesSelector(
                     modifier = Modifier.testTag(quickCalcSpeciesChipTag(species)),
                     selected = selected == species,
                     onClick = { onSelect(species) },
-                    label = { Text(text = speciesLabel(species)) },
+                    label = { Text(text = stringResource(speciesLabelRes(species))) },
                     border = FilterChipDefaults.filterChipBorder(enabled = true, selected = selected == species),
                 )
             }
@@ -54,11 +56,14 @@ internal fun QuickCalcSpeciesSelector(
     }
 }
 
-private fun speciesLabel(species: Species): String =
+@androidx.annotation.StringRes
+private fun speciesLabelRes(species: Species): Int =
     when (species) {
-        Species.Dog -> "Собака"
-        Species.Cat -> "Кошка"
-        else -> species.id
+        Species.Dog -> R.string.quick_calc_species_dog
+        Species.Cat -> R.string.quick_calc_species_cat
+        // Not-yet-implemented виды используют species_dog как нейтральный fallback;
+        // Plan 2 расширит список implemented() и добавит реальные строки.
+        else -> R.string.quick_calc_species_dog
     }
 
 internal fun quickCalcSpeciesChipTag(species: Species): String = "quick_calc_species_chip_${species.id}"

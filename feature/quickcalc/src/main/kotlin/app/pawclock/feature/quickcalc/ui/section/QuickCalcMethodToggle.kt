@@ -11,7 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.pawclock.feature.quickcalc.R
 import app.pawclock.model.CalculationMethod
 
 /**
@@ -33,7 +35,7 @@ internal fun QuickCalcMethodToggle(
         verticalArrangement = Arrangement.spacedBy(LABEL_GAP_DP.dp),
     ) {
         Text(
-            text = "Метод расчёта",
+            text = stringResource(R.string.quick_calc_method_label),
             style = MaterialTheme.typography.labelLarge,
         )
         SingleChoiceSegmentedButtonRow(modifier = Modifier.fillMaxWidth()) {
@@ -49,17 +51,18 @@ internal fun QuickCalcMethodToggle(
                             count = methods.size,
                         ),
                 ) {
-                    Text(text = methodLabel(item))
+                    Text(text = stringResource(methodLabelRes(item)))
                 }
             }
         }
     }
 }
 
-private fun methodLabel(method: CalculationMethod): String =
+@androidx.annotation.StringRes
+private fun methodLabelRes(method: CalculationMethod): Int =
     when (method) {
-        CalculationMethod.EPIGENETIC -> "Wang (эпигенетика)"
-        CalculationMethod.SIZE_BASED -> "По размеру"
+        CalculationMethod.EPIGENETIC -> R.string.quick_calc_method_epigenetic
+        CalculationMethod.SIZE_BASED -> R.string.quick_calc_method_size_based
     }
 
 internal fun quickCalcMethodTag(method: CalculationMethod): String = "quick_calc_method_${method.name}"

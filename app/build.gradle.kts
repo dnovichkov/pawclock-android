@@ -67,6 +67,9 @@ kotlin {
 dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(libs.androidx.core.ktx)
+    // appcompat нужен для AppCompatDelegate.setApplicationLocales — in-app language picker
+    // (Task 22). Используется только адаптером LocaleHelper в :app/locale/, не feature-модулями.
+    implementation(libs.androidx.appcompat)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
 

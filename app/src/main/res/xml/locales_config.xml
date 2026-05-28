@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  LocaleConfig для Android 13+ (API 33).
+  Регистрирует поддерживаемые в приложении локали в System Settings → Languages.
+  Позволяет пользователю выбрать предпочитаемую локаль PawClock из системного UI
+  без необходимости менять язык всей системы.
+
+  Plan 1: ru (default) + en. Расширяется в Plan 2/3 по мере добавления переводов.
+
+  Ссылка: https://developer.android.com/guide/topics/resources/app-languages
+-->
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <locale android:name="ru" />
+    <locale android:name="en" />
+</locale-config>

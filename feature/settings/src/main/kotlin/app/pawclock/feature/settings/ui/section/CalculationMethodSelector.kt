@@ -14,8 +14,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import app.pawclock.feature.settings.R
 import app.pawclock.model.CalculationMethod
 
 /**
@@ -56,11 +58,11 @@ internal fun CalculationMethodSelector(
                 )
                 Column(verticalArrangement = Arrangement.spacedBy(LABEL_GAP_DP.dp)) {
                     Text(
-                        text = methodLabel(option),
+                        text = stringResource(methodLabelRes(option)),
                         style = MaterialTheme.typography.bodyLarge,
                     )
                     Text(
-                        text = methodSupportingText(option),
+                        text = stringResource(methodSupportingTextRes(option)),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -70,18 +72,18 @@ internal fun CalculationMethodSelector(
     }
 }
 
-private fun methodLabel(method: CalculationMethod): String =
+@androidx.annotation.StringRes
+private fun methodLabelRes(method: CalculationMethod): Int =
     when (method) {
-        CalculationMethod.EPIGENETIC -> "Эпигенетический (Wang 2020)"
-        CalculationMethod.SIZE_BASED -> "По размеру (AKC/AAHA 2019)"
+        CalculationMethod.EPIGENETIC -> R.string.settings_method_epigenetic_title
+        CalculationMethod.SIZE_BASED -> R.string.settings_method_size_based_title
     }
 
-private fun methodSupportingText(method: CalculationMethod): String =
+@androidx.annotation.StringRes
+private fun methodSupportingTextRes(method: CalculationMethod): Int =
     when (method) {
-        CalculationMethod.EPIGENETIC ->
-            "Формула на основе ДНК-метилирования. Едина для всех размеров собак."
-        CalculationMethod.SIZE_BASED ->
-            "Табличный метод с учётом размера: гиганты стареют быстрее малых пород."
+        CalculationMethod.EPIGENETIC -> R.string.settings_method_epigenetic_supporting
+        CalculationMethod.SIZE_BASED -> R.string.settings_method_size_based_supporting
     }
 
 internal fun calculationMethodOptionTag(method: CalculationMethod): String = "settings_method_${method.name}"

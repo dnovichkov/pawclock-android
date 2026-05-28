@@ -4,6 +4,7 @@ package app.pawclock.feature.settings
 
 import app.cash.turbine.test
 import app.pawclock.datastore.AppSettings
+import app.pawclock.feature.settings.fakes.FakeLocaleApplier
 import app.pawclock.feature.settings.fakes.FakeSettingsRepository
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.ThemeMode
@@ -53,7 +54,7 @@ class SettingsViewModelTest {
     fun `initial state reflects current AppSettings from repository (defaults)`() =
         runTest {
             val repository = FakeSettingsRepository()
-            val viewModel = SettingsViewModel(repository)
+            val viewModel = SettingsViewModel(repository, FakeLocaleApplier())
 
             viewModel.state.test {
                 val state = awaitItem()
@@ -77,7 +78,7 @@ class SettingsViewModelTest {
                             defaultCalculationMethod = CalculationMethod.SIZE_BASED,
                         ),
                 )
-            val viewModel = SettingsViewModel(repository)
+            val viewModel = SettingsViewModel(repository, FakeLocaleApplier())
 
             viewModel.state.test {
                 val state = awaitItem()
@@ -92,7 +93,7 @@ class SettingsViewModelTest {
     fun `SetThemeMode event persists new value through repository`() =
         runTest {
             val repository = FakeSettingsRepository()
-            val viewModel = SettingsViewModel(repository)
+            val viewModel = SettingsViewModel(repository, FakeLocaleApplier())
 
             viewModel.handleEvent(SettingsEvent.SetThemeMode(ThemeMode.Dark))
 
@@ -104,7 +105,7 @@ class SettingsViewModelTest {
     fun `SetThemeMode event eventually updates exposed state Flow`() =
         runTest {
             val repository = FakeSettingsRepository()
-            val viewModel = SettingsViewModel(repository)
+            val viewModel = SettingsViewModel(repository, FakeLocaleApplier())
 
             viewModel.state.test {
                 // Изначальное значение.
@@ -116,35 +117,54 @@ class SettingsViewModelTest {
         }
 
     @Test
-    fun `SetLanguageTag with non-null value persists`() =
+    fun `SetLanguageTag with non-null value persists and applies locale`() =
         runTest {
             val repository = FakeSettingsRepository()
-            val viewModel = SettingsViewModel(repository)
+            val applier = FakeLocaleApplier()
+            val viewModel = SettingsViewModel(repository, applier)
 
             viewModel.handleEvent(SettingsEvent.SetLanguageTag("en"))
 
             assertEquals("en", repository.writes.last().languageTag)
+            assertEquals(1, applier.applyCount, "LocaleApplier must be invoked once per SetLanguageTag")
+            assertEquals("en", applier.lastTag)
         }
 
     @Test
-    fun `SetLanguageTag with null falls back to system locale`() =
+    fun `SetLanguageTag with null falls back to system locale and applies null`() =
         runTest {
             val repository =
                 FakeSettingsRepository(
                     initial = AppSettings.Default.copy(languageTag = "ru"),
                 )
-            val viewModel = SettingsViewModel(repository)
+            val applier = FakeLocaleApplier()
+            val viewModel = SettingsViewModel(repository, applier)
 
             viewModel.handleEvent(SettingsEvent.SetLanguageTag(null))
 
             assertNull(repository.writes.last().languageTag)
+            assertNull(applier.lastTag, "Null tag must propagate to applier to clear app locale")
+        }
+
+    @Test
+    fun `events other than SetLanguageTag do not invoke LocaleApplier`() =
+        runTest {
+            val repository = FakeSettingsRepository()
+            val applier = FakeLocaleApplier()
+            val viewModel = SettingsViewModel(repository, applier)
+
+            viewModel.handleEvent(SettingsEvent.SetThemeMode(ThemeMode.Dark))
+            viewModel.handleEvent(SettingsEvent.SetDynamicColor(enabled = false))
+            viewModel.handleEvent(SettingsEvent.SetDefaultCalculationMethod(CalculationMethod.SIZE_BASED))
+
+            assertEquals(0, applier.applyCount, "LocaleApplier must only react to SetLanguageTag events")
         }
 
     @Test
     fun `SetDynamicColor toggles persisted value`() =
         runTest {
             val repository = FakeSettingsRepository()
-            val viewModel = SettingsViewModel(repository)
+            val viewModel = SettingsViewModel(repository, FakeLocaleApplier())
 
             viewModel.handleEvent(SettingsEvent.SetDynamicColor(enabled = false))
 
@@ -156,7 +176,7 @@ class SettingsViewModelTest {
     fun `SetDefaultCalculationMethod persists Wang↔Size choice`() =
         runTest {
             val repository = FakeSettingsRepository()
-            val viewModel = SettingsViewModel(repository)
+            val viewModel = SettingsViewModel(repository, FakeLocaleApplier())
 
             viewModel.handleEvent(SettingsEvent.SetDefaultCalculationMethod(CalculationMethod.SIZE_BASED))
 
@@ -167,7 +187,7 @@ class SettingsViewModelTest {
     fun `multiple events update state independently`() =
         runTest {
             val repository = FakeSettingsRepository()
-            val viewModel = SettingsViewModel(repository)
+            val viewModel = SettingsViewModel(repository, FakeLocaleApplier())
 
             viewModel.state.test {
                 // Default-снапшот.

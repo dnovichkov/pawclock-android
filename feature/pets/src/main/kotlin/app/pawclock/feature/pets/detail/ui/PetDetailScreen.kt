@@ -27,6 +27,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,6 +38,7 @@ import app.pawclock.designsystem.components.LifeStageChip
 import app.pawclock.designsystem.components.PawClockCard
 import app.pawclock.designsystem.components.SectionDivider
 import app.pawclock.domain.pet.CalculatedAge
+import app.pawclock.feature.pets.R
 import app.pawclock.feature.pets.detail.PetDetailState
 import app.pawclock.feature.pets.detail.PetDetailViewModel
 import app.pawclock.model.CareRecommendation
@@ -96,7 +99,10 @@ internal fun PetDetailContent(
                 title = { Text(text = topBarTitleFor(state)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Назад")
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.pet_detail_back),
+                        )
                     }
                 },
                 scrollBehavior = scrollBehavior,
@@ -105,7 +111,10 @@ internal fun PetDetailContent(
         floatingActionButton = {
             (state as? PetDetailState.Success)?.let { success ->
                 FloatingActionButton(onClick = { onEditClick(success.pet.id) }) {
-                    Icon(Icons.Filled.Edit, contentDescription = "Редактировать")
+                    Icon(
+                        Icons.Filled.Edit,
+                        contentDescription = stringResource(R.string.pet_detail_edit),
+                    )
                 }
             }
         },
@@ -119,12 +128,13 @@ internal fun PetDetailContent(
     }
 }
 
+@Composable
 private fun topBarTitleFor(state: PetDetailState): String =
     when (state) {
         is PetDetailState.Success -> state.pet.name
-        is PetDetailState.Loading -> "Загрузка…"
-        is PetDetailState.NotFound -> "Питомец"
-        is PetDetailState.Error -> "Ошибка"
+        is PetDetailState.Loading -> stringResource(R.string.pet_detail_loading_title)
+        is PetDetailState.NotFound -> stringResource(R.string.pet_detail_fallback_title)
+        is PetDetailState.Error -> stringResource(R.string.pet_detail_error_title)
     }
 
 @Composable
@@ -144,7 +154,7 @@ private fun NotFoundContent(padding: PaddingValues) {
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "Питомец не найден.\nВозможно, он был удалён.",
+            text = stringResource(R.string.pet_detail_not_found),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
@@ -162,7 +172,7 @@ private fun ErrorContent(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = "Ошибка: $messageKey",
+            text = stringResource(R.string.pet_detail_error_body, messageKey),
             color = MaterialTheme.colorScheme.error,
         )
     }
@@ -184,10 +194,10 @@ private fun SuccessContent(
     ) {
         HeroBlock(state.pet, state.calculatedAge)
 
-        SectionDivider(title = "Рекомендации по уходу")
+        SectionDivider(title = stringResource(R.string.pet_detail_section_care))
         CareRecommendationsBlock(state.careRecommendation)
 
-        SectionDivider(title = "Как это посчитано")
+        SectionDivider(title = stringResource(R.string.pet_detail_section_calculation))
         CalculationDetailsBlock(state.pet.species, state.calculatedAge)
     }
 }
@@ -202,19 +212,20 @@ private fun HeroBlock(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        val ageYears = calculated.ageInYears.toInt().coerceAtLeast(0)
         AgeBigCard(
-            ageLabel = formatYears(calculated.ageInYears),
-            humanYearsLabel = "${calculated.humanYears.toInt()} ЧГ",
-            ageDescriptor = "Возраст",
-            humanYearsDescriptor = "В человеческих годах",
+            ageLabel = pluralStringResource(R.plurals.age_years, ageYears, ageYears),
+            humanYearsLabel = stringResource(R.string.pet_detail_human_years_unit, calculated.humanYears.toInt()),
+            ageDescriptor = stringResource(R.string.pet_detail_age_descriptor),
+            humanYearsDescriptor = stringResource(R.string.pet_detail_human_years_descriptor),
         )
         LifeStageChip(
             stage = calculated.lifeStage,
-            label = lifeStageLabel(calculated.lifeStage),
+            label = stringResource(lifeStageLabelRes(calculated.lifeStage)),
         )
         if (pet.weightKg != null) {
             Text(
-                text = "Вес: ${pet.weightKg} кг",
+                text = stringResource(R.string.pet_detail_weight, pet.weightKg.toString()),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -226,7 +237,7 @@ private fun HeroBlock(
 private fun CareRecommendationsBlock(recommendation: CareRecommendation?) {
     if (recommendation == null) {
         Text(
-            text = "Для этой стадии пока нет рекомендаций.",
+            text = stringResource(R.string.pet_detail_care_empty),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -234,12 +245,29 @@ private fun CareRecommendationsBlock(recommendation: CareRecommendation?) {
     }
     PawClockCard(modifier = Modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            CareSection(label = "Стадия", body = recommendation.stageDescription)
-            CareSection(label = "Питание", body = recommendation.nutrition)
-            CareSection(label = "Активность", body = recommendation.activity)
-            CareSection(label = "Визиты к врачу", body = recommendation.veterinaryCheckFrequency)
-            recommendation.dentalCare?.let { CareSection(label = "Зубы", body = it) }
-            CareSection(label = "Тревожные сигналы", body = recommendation.warningSigns)
+            CareSection(
+                label = stringResource(R.string.pet_detail_care_stage),
+                body = recommendation.stageDescription,
+            )
+            CareSection(
+                label = stringResource(R.string.pet_detail_care_nutrition),
+                body = recommendation.nutrition,
+            )
+            CareSection(
+                label = stringResource(R.string.pet_detail_care_activity),
+                body = recommendation.activity,
+            )
+            CareSection(
+                label = stringResource(R.string.pet_detail_care_vet),
+                body = recommendation.veterinaryCheckFrequency,
+            )
+            recommendation.dentalCare?.let {
+                CareSection(label = stringResource(R.string.pet_detail_care_dental), body = it)
+            }
+            CareSection(
+                label = stringResource(R.string.pet_detail_care_warning_signs),
+                body = recommendation.warningSigns,
+            )
             Text(
                 text = recommendation.disclaimer,
                 style = MaterialTheme.typography.bodySmall,
@@ -247,7 +275,7 @@ private fun CareRecommendationsBlock(recommendation: CareRecommendation?) {
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
             )
             Text(
-                text = "Источник: ${recommendation.sourceName}",
+                text = stringResource(R.string.pet_detail_care_source, recommendation.sourceName),
                 style = MaterialTheme.typography.labelSmall,
                 color = MaterialTheme.colorScheme.outline,
             )
@@ -282,13 +310,14 @@ private fun CalculationDetailsBlock(
     val explanation =
         when (species) {
             Species.Dog ->
-                "Метод: ${calculated.method.name}. " +
-                    "Wang et al. (Cell Systems 2020) или AKC/AAHA 2019 size-table. " +
-                    "Возраст ${calculated.ageInYears.format1()} лет → ${calculated.humanYears.format1()} ЧГ."
-            Species.Cat ->
-                "Метод: AAHA/AAFP 2021. Кусочная формула: " +
-                    "1й год = 15, 2й = 24, далее +4/год. Поправки на outdoor (+15%) и large breed (+1/год)."
-            else -> "Метод неприменим для этого вида."
+                stringResource(
+                    R.string.pet_detail_calc_dog,
+                    calculated.method.name,
+                    calculated.ageInYears.format1(),
+                    calculated.humanYears.format1(),
+                )
+            Species.Cat -> stringResource(R.string.pet_detail_calc_cat)
+            else -> stringResource(R.string.pet_detail_calc_unsupported)
         }
     Text(
         text = explanation,
@@ -297,24 +326,20 @@ private fun CalculationDetailsBlock(
     )
 }
 
-private fun lifeStageLabel(stage: LifeStage): String =
+@androidx.annotation.StringRes
+internal fun lifeStageLabelRes(stage: LifeStage): Int =
     when (stage) {
-        LifeStage.Dog.Puppy -> "Щенок"
-        LifeStage.Dog.YoungAdult -> "Молодой взрослый"
-        LifeStage.Dog.MatureAdult -> "Зрелый взрослый"
-        LifeStage.Dog.Senior -> "Старший"
-        LifeStage.Dog.EndOfLife -> "Поздний возраст"
-        LifeStage.Cat.Kitten -> "Котёнок"
-        LifeStage.Cat.YoungAdult -> "Молодой взрослый"
-        LifeStage.Cat.MatureAdult -> "Зрелый взрослый"
-        LifeStage.Cat.Senior -> "Старший"
-        LifeStage.Cat.EndOfLife -> "Поздний возраст"
+        LifeStage.Dog.Puppy -> R.string.life_stage_dog_puppy
+        LifeStage.Dog.YoungAdult -> R.string.life_stage_dog_young_adult
+        LifeStage.Dog.MatureAdult -> R.string.life_stage_dog_mature_adult
+        LifeStage.Dog.Senior -> R.string.life_stage_dog_senior
+        LifeStage.Dog.EndOfLife -> R.string.life_stage_dog_end_of_life
+        LifeStage.Cat.Kitten -> R.string.life_stage_cat_kitten
+        LifeStage.Cat.YoungAdult -> R.string.life_stage_cat_young_adult
+        LifeStage.Cat.MatureAdult -> R.string.life_stage_cat_mature_adult
+        LifeStage.Cat.Senior -> R.string.life_stage_cat_senior
+        LifeStage.Cat.EndOfLife -> R.string.life_stage_cat_end_of_life
     }
-
-private fun formatYears(years: Double): String {
-    val whole = years.toInt()
-    return "$whole лет"
-}
 
 private fun Double.format1(): String = "%.1f".format(this)
 

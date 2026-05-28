@@ -17,6 +17,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import app.pawclock.feature.editor.R
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -59,7 +61,7 @@ internal fun BirthDateField(
         value = value?.toString().orEmpty(),
         onValueChange = { /* read-only */ },
         readOnly = true,
-        label = { Text(text = "Дата рождения *") },
+        label = { Text(text = stringResource(R.string.pet_editor_birth_date_label)) },
         isError = isError,
         singleLine = true,
     )
@@ -82,12 +84,12 @@ internal fun BirthDateField(
                         showDialog = false
                     },
                 ) {
-                    Text(text = "ОК")
+                    Text(text = stringResource(R.string.pet_editor_date_ok))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showDialog = false }) {
-                    Text(text = "Отмена")
+                    Text(text = stringResource(R.string.pet_editor_date_cancel))
                 }
             },
         ) {

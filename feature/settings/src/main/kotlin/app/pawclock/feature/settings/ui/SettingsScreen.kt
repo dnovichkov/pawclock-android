@@ -24,9 +24,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.pawclock.feature.settings.R
 import app.pawclock.feature.settings.SettingsEvent
 import app.pawclock.feature.settings.SettingsState
 import app.pawclock.feature.settings.SettingsViewModel
@@ -86,12 +88,12 @@ internal fun SettingsContent(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "Настройки") },
+                title = { Text(text = stringResource(R.string.settings_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Назад",
+                            contentDescription = stringResource(R.string.settings_back),
                         )
                     }
                 },
@@ -122,7 +124,7 @@ private fun SettingsBody(
                 .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(0.dp),
     ) {
-        SettingsSectionHeader(text = "Внешний вид")
+        SettingsSectionHeader(text = stringResource(R.string.settings_section_appearance))
         ThemeModeSelector(
             selected = state.themeMode,
             onSelect = { onEvent(SettingsEvent.SetThemeMode(it)) },
@@ -134,7 +136,7 @@ private fun SettingsBody(
 
         HorizontalDivider(modifier = Modifier.padding(vertical = DIVIDER_PADDING_DP.dp))
 
-        SettingsSectionHeader(text = "Язык")
+        SettingsSectionHeader(text = stringResource(R.string.settings_section_language))
         LanguageSelector(
             selected = state.languageTag,
             onSelect = { onEvent(SettingsEvent.SetLanguageTag(it)) },
@@ -142,7 +144,7 @@ private fun SettingsBody(
 
         HorizontalDivider(modifier = Modifier.padding(vertical = DIVIDER_PADDING_DP.dp))
 
-        SettingsSectionHeader(text = "Расчёт возраста собак")
+        SettingsSectionHeader(text = stringResource(R.string.settings_section_calculation))
         CalculationMethodSelector(
             selected = state.defaultCalculationMethod,
             onSelect = { onEvent(SettingsEvent.SetDefaultCalculationMethod(it)) },
@@ -156,8 +158,8 @@ private fun SettingsBody(
                     .fillMaxWidth()
                     .clickable(onClick = onOpenAbout)
                     .testTag(ABOUT_ROW_TEST_TAG),
-            headlineContent = { Text(text = "О приложении") },
-            supportingContent = { Text(text = "Версия, лицензия, источники") },
+            headlineContent = { Text(text = stringResource(R.string.settings_open_about_title)) },
+            supportingContent = { Text(text = stringResource(R.string.settings_open_about_supporting)) },
             trailingContent = {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,

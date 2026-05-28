@@ -9,8 +9,10 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.pawclock.feature.quickcalc.QuickCalcValidationError
+import app.pawclock.feature.quickcalc.R
 
 /**
  * Баннер с ошибками валидации Quick Calculator.
@@ -39,7 +41,7 @@ internal fun QuickCalcValidationErrorsBanner(
         ) {
             errors.forEach { error ->
                 Text(
-                    text = "• ${errorMessage(error)}",
+                    text = "• " + stringResource(errorMessageRes(error)),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -47,12 +49,13 @@ internal fun QuickCalcValidationErrorsBanner(
     }
 }
 
-private fun errorMessage(error: QuickCalcValidationError): String =
+@androidx.annotation.StringRes
+private fun errorMessageRes(error: QuickCalcValidationError): Int =
     when (error) {
-        QuickCalcValidationError.SpeciesRequired -> "Выберите вид питомца"
-        QuickCalcValidationError.BirthDateRequired -> "Укажите дату рождения"
-        QuickCalcValidationError.BirthDateInFuture -> "Дата рождения не может быть в будущем"
-        QuickCalcValidationError.UnsupportedSpecies -> "Этот вид пока не поддерживается"
+        QuickCalcValidationError.SpeciesRequired -> R.string.quick_calc_error_species_required
+        QuickCalcValidationError.BirthDateRequired -> R.string.quick_calc_error_birth_date_required
+        QuickCalcValidationError.BirthDateInFuture -> R.string.quick_calc_error_birth_date_in_future
+        QuickCalcValidationError.UnsupportedSpecies -> R.string.quick_calc_error_unsupported_species
     }
 
 private const val BANNER_PADDING_DP: Int = 12

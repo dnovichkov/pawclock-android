@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Русские строки для :feature:settings (SettingsScreen + AboutScreen).
+  Перевод: values-en/strings.xml.
+-->
+<resources>
+
+    <!-- Settings screen -->
+    <string name="settings_title">Настройки</string>
+    <string name="settings_back">Назад</string>
+
+    <string name="settings_section_appearance">Внешний вид</string>
+    <string name="settings_section_language">Язык</string>
+    <string name="settings_section_calculation">Расчёт возраста собак</string>
+
+    <string name="settings_open_about_title">О приложении</string>
+    <string name="settings_open_about_supporting">Версия, лицензия, источники</string>
+
+    <!-- Theme mode -->
+    <string name="settings_theme_light">Светлая</string>
+    <string name="settings_theme_dark">Тёмная</string>
+    <string name="settings_theme_system">Как в системе</string>
+
+    <!-- Dynamic color -->
+    <string name="settings_dynamic_color_title">Динамические цвета</string>
+    <string name="settings_dynamic_color_supporting_supported">Цвета приложения подстраиваются под обои Android</string>
+    <string name="settings_dynamic_color_supporting_unsupported">Доступно с Android 12. На вашем устройстве используется фирменная палитра.</string>
+
+    <!-- Language picker -->
+    <string name="settings_language_system">Как в системе</string>
+    <string name="settings_language_russian">Русский</string>
+    <string name="settings_language_english">English</string>
+
+    <!-- Calculation method -->
+    <string name="settings_method_epigenetic_title">Эпигенетический (Wang 2020)</string>
+    <string name="settings_method_epigenetic_supporting">Формула на основе ДНК-метилирования. Едина для всех размеров собак.</string>
+    <string name="settings_method_size_based_title">По размеру (AKC/AAHA 2019)</string>
+    <string name="settings_method_size_based_supporting">Табличный метод с учётом размера: гиганты стареют быстрее малых пород.</string>
+
+    <!-- About screen -->
+    <string name="about_title">О приложении</string>
+    <string name="about_back">Назад</string>
+    <string name="about_app_name">PawClock</string>
+    <string name="about_version">Версия %1$s</string>
+    <string name="about_app_tagline">Расчёт возраста питомца в человеческих годах на основе научных источников.</string>
+
+    <string name="about_license_header">Лицензия</string>
+    <string name="about_license_name">Apache License 2.0</string>
+    <string name="about_license_body">Apache License, Version 2.0 — открытая лицензия. Вы можете использовать, изменять и распространять приложение при условии сохранения уведомлений об авторских правах. Полный текст: apache.org/licenses/LICENSE-2.0</string>
+
+    <string name="about_repository_header">Исходный код</string>
+    <string name="about_repository_url" translatable="false">github.com/dnovichkov/pawclock-android</string>
+    <string name="about_repository_body">Сообщить о проблеме, предложить улучшение или добавить новый вид питомца — через GitHub Issues.</string>
+
+    <string name="about_disclaimer_header">Дисклеймер</string>
+    <string name="about_disclaimer_body">Информация в приложении носит ознакомительный характер и не заменяет консультацию ветеринарного врача. Рекомендации по уходу, питанию и частоте осмотров — это общие ориентиры, а не индивидуальный медицинский план.</string>
+
+    <string name="about_sources_header">Научные источники</string>
+
+</resources>

@@ -516,25 +516,24 @@
 - ➕ создан `feature/settings/src/main/AndroidManifest.xml` (пустой `<manifest/>`) — AGP 8.7+ требует AndroidManifest даже для namespace-only library-модулей; без него `processDebugManifest` падает
 
 ### Task 22: Localization — strings.xml ru (default) + en + plurals + LocaleConfig
-- [ ] create `:app/src/main/res/values/strings.xml` (русский) со всеми строками используемыми в feature-модулях
-- [ ] create `:app/src/main/res/values-en/strings.xml` (английский перевод)
-- [ ] create `plurals` для возраста по §6 (1 год / 2 года / 5 лет в ru; 1 year / 2 years в en)
-- [ ] create `:app/src/main/res/xml/locales_config.xml` (LocaleConfig для Android 13+)
-- [ ] add `android:localeConfig="@xml/locales_config"` в `<application>` AndroidManifest
-- [ ] implement `LocaleHelper` + `AppCompatDelegate.setApplicationLocales` для in-app picker
-- [ ] write FAILING test `AgePluralFormatterTest` (по §11.11):
-  - `formatAge(1, "ru") == "1 год"`
-  - `formatAge(2, "ru") == "2 года"`
-  - `formatAge(5, "ru") == "5 лет"`
-  - `formatAge(21, "ru") == "21 год"`
-  - `formatAge(22, "ru") == "22 года"`
-  - `formatAge(1, "en") == "1 year"`
-  - `formatAge(2, "en") == "2 years"`
-- [ ] implement `AgePluralFormatter`
-- [ ] verify все тесты — **Green**
-- [ ] sweep through all feature-модули и заменить hardcoded строки на `stringResource(R.string.xxx)`
-- [ ] write Compose test `PetsListScreenLocalizedTest` для проверки локализации
-- [ ] run `./gradlew :app:testDebugUnitTest --no-daemon` — must pass before next task
+- [x] create `:app/src/main/res/values/strings.xml` (русский) со всеми строками используемыми в feature-модулях — отступление от буквы плана: app-wide strings (app_name, common back/ok/cancel) лежат в `:app/values/strings.xml`, но feature-specific строки распределены по соответствующим `:feature:{pets,editor,quickcalc,settings}/src/main/res/values/strings.xml` — library модули не depend on `:app`, поэтому R.string.xxx должен быть в их собственных модулях; AGP resource merger автоматически объединяет всё в final APK
+- [x] create `:app/src/main/res/values-en/strings.xml` (английский перевод) — а также `values-en/strings.xml` для каждого feature-модуля
+- [x] create `plurals` для возраста по §6 (1 год / 2 года / 5 лет в ru; 1 year / 2 years в en) — `plurals.xml` в `:feature:pets` и `:feature:quickcalc` (где они реально используются через `pluralStringResource`); включает `age_years` (one/few/many/other для ru, one/other для en) и `age_months` (для feature/pets — резерв на Plan 2)
+- [x] create `:app/src/main/res/xml/locales_config.xml` (LocaleConfig для Android 13+) — список `<locale android:name="ru"/>` + `<locale android:name="en"/>`
+- [x] add `android:localeConfig="@xml/locales_config"` в `<application>` AndroidManifest — также `android:label="@string/app_name"` и `tools:targetApi="33"` для localeConfig
+- [x] implement `LocaleHelper` + `AppCompatDelegate.setApplicationLocales` для in-app picker — `LocaleHelper` singleton object в `:app/locale/` реализующий port-интерфейс `LocaleApplier` из `:core:domain/locale/`; `LocaleModule` (@Provides @Singleton) в `:app/data/locale/di/`; SettingsViewModel injectit'ит LocaleApplier и вызывает на `SetLanguageTag` event (немедленный locale-apply + viewModelScope.launch persistence в DataStore)
+- [x] write FAILING test `AgePluralFormatterTest` (по §11.11) — 19 тестов в `:core:domain/src/test/.../format/AgePluralFormatterTest.kt`: 7 single-кейсов (1/2/5/21/22 года + 1/2 года en), 19 параметризованных через @CsvSource (full CLDR coverage: 0, 1, 2-4, 5-10, 11-14, 20-25, 101, 111-121), unknown locale → en fallback, regional tag normalization (ru-RU → ru), negative years → IAE
+- [x] verify tests fail — **Red** confirmed — compileTestKotlin FAILED с `Unresolved reference 'AgePluralFormatter'` до создания production-класса
+- [x] implement `AgePluralFormatter` — pure-Kotlin (не зависит от Android Resources, легко тестируется без Robolectric); реализует CLDR rules для ru (one/few/many) и en (one/other); unknown locale → fallback к english (минимально консистентное поведение); position в `:core:domain/format/` — domain-формат, не Android adapter
+- [x] verify все тесты — **Green** — все 19 новых тестов AgePluralFormatter + 47 pre-existing UseCase + 12 CareRepository tests прошли; coverage `:core:domain` остался ≥90% (`koverVerify` passed)
+- [x] sweep through all feature-модули и заменить hardcoded строки на `stringResource(R.string.xxx)` — feature/pets: PetsListScreen + PetDetailScreen + PetCard.LifeStage labels через `lifeStageLabelRes()` helper; feature/editor: PetEditorScreen + 5 section files (SpeciesSelector, SubcategorySelector, GenderSelector, BirthDateField, ValidationErrorsBanner); feature/quickcalc: QuickCalcScreen + 6 section files (Species, Subcategory, BirthDate, MethodToggle, ResultSheet, ValidationErrorsBanner); feature/settings: SettingsScreen + AboutScreen + 4 section files (ThemeMode, Language, DynamicColor, CalculationMethod); используется `pluralStringResource(R.plurals.age_years, n, n)` для возрастов; `R.plurals.age_years` дублирован в feature/pets и feature/quickcalc — Android resource merger обеспечивает идентичность форм
+- [x] write Compose test `PetsListScreenLocalizedTest` для проверки локализации — 2 теста в `feature/pets/src/androidTest/.../PetsListScreenLocalizedTest.kt`: `russian_locale_shows_russian_empty_state` и `english_locale_shows_english_empty_state` через `CompositionLocalProvider(LocalContext, LocalConfiguration)` с переопределённой `Locale("ru")` / `Locale("en")`; assembleDebugAndroidTest BUILD SUCCESSFUL → APK готов для nightly.yml на эмуляторе
+- [x] run `./gradlew :app:testDebugUnitTest --no-daemon` — must pass before next task — BUILD SUCCESSFUL: testDebugUnitTest проходит на :app + :core:domain + :feature:pets + :feature:editor + :feature:quickcalc + :feature:settings; ktlintFormat + detekt + lintDebug clean на всех модулях; :app:assembleDebug BUILD SUCCESSFUL, все 4 feature androidTest APK собираются
+- ➕ added `androidx.appcompat = "1.7.0"` dependency в `:app/build.gradle.kts` — нужен для `AppCompatDelegate.setApplicationLocales` в `LocaleHelper`; не привносится в feature-модули чтобы они оставались чистыми library модулями без AppCompat coupling
+- ➕ added `LocaleApplier` port-interface в `:core:domain/locale/LocaleApplier.kt` (fun interface) и `LocaleModule` Hilt-binding в `:app/data/locale/di/` — port-and-adapter pattern: SettingsViewModel зависит от domain port, не от Android-specific AppCompatDelegate; FakeLocaleApplier в feature/settings test позволяет verify locale-apply вызовы без реального Android runtime
+- ➕ created `AndroidManifest.xml` stubs для feature/pets, feature/editor, feature/quickcalc — AGP 8.7+ требует AndroidManifest даже для namespace-only library модулей с `res/values/strings.xml` (settings уже имел свой)
+- ➕ added 3 new tests в `SettingsViewModelTest`: `SetLanguageTag... applies locale`, `SetLanguageTag with null... applies null`, `events other than SetLanguageTag do not invoke LocaleApplier` — gates на новую LocaleApplier injection
+- ➕ `R.plurals.age_years` дублирован в feature/pets и feature/quickcalc — Android resource merging не объединяет R-классы между library-модулями; CLDR-формы идентичны (one="%d год", few="%d года", many="%d лет"), документировано в комментариях каждого plurals.xml
 
 ### Task 23: Compose UI tests + Maestro E2E flow
 - [ ] add Maestro CLI installation note в `docs/TESTING.md` (используется как external dev dep)

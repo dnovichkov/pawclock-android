@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,6 +30,7 @@ import app.pawclock.feature.quickcalc.QuickCalcEvent
 import app.pawclock.feature.quickcalc.QuickCalcResult
 import app.pawclock.feature.quickcalc.QuickCalcState
 import app.pawclock.feature.quickcalc.QuickCalcViewModel
+import app.pawclock.feature.quickcalc.R
 import app.pawclock.feature.quickcalc.ui.section.QuickCalcBirthDateField
 import app.pawclock.feature.quickcalc.ui.section.QuickCalcMethodToggle
 import app.pawclock.feature.quickcalc.ui.section.QuickCalcResultSheet
@@ -81,12 +83,12 @@ internal fun QuickCalcContent(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(text = "Быстрый расчёт") },
+                title = { Text(text = stringResource(R.string.quick_calc_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Назад",
+                            contentDescription = stringResource(R.string.quick_calc_back),
                         )
                     }
                 },
@@ -96,7 +98,7 @@ internal fun QuickCalcContent(
             ExtendedFloatingActionButton(
                 modifier = Modifier.testTag(CALCULATE_FAB_TEST_TAG),
                 onClick = { onEvent(QuickCalcEvent.Calculate) },
-                text = { Text(text = "Рассчитать") },
+                text = { Text(text = stringResource(R.string.quick_calc_calculate)) },
                 icon = { /* без иконки — текстовая FAB достаточно выразительна */ },
             )
         },
@@ -133,9 +135,7 @@ private fun QuickCalcForm(
         Box(Modifier.padding(top = TOP_GAP_DP.dp))
 
         Text(
-            text =
-                "Узнайте возраст питомца в человеческих годах без сохранения в список — " +
-                    "выберите вид, размер/тип и дату рождения.",
+            text = stringResource(R.string.quick_calc_intro),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
