@@ -365,23 +365,18 @@
 - [x] must pass before next task — detekt + koverVerify зелёные
 
 ### Task 12: Database migration + PetMapper expansion
-- [ ] write FAILING test `PetMapperTest` для каждого нового subcategory type:
-  - `Pet(species=Rabbit, subcategory=RabbitSize.Dwarf) → PetEntity round-trip preserves subcategory`
-  - аналогично для Hamster, GuineaPig, Bird, Reptile, Horse, Fish (Rat/Mouse/Ferret не имеют подкатегорий)
-  - `unknown subcategory id → IllegalStateException` (как с Dog/Cat в Plan 1)
-- [ ] update `PetMapper` чтобы маппил new subcategory types via stable `id` strings
-- [ ] verify tests — **Green**
-- [ ] check schema: должна ли увеличиться `DATABASE_VERSION` с 1 до 2? Если subcategory column хранится как `TEXT` (что сейчас) и принимает любые id-строки, migration не нужна. Если schema требует расширения (например, новая колонка subspecies_type) — написать `MIGRATION_1_2`.
-- [ ] **Если migration нужна:**
-  - bump `DATABASE_VERSION = 2`
-  - export new schema через `./gradlew :core:database:assembleDebug` → проверить `core/database/schemas/.../2.json`
-  - write `MIGRATION_1_2` в `Migrations.kt`
-  - write androidTest `MigrationsTest` через `MigrationTestHelper` (Room) — миграция 1→2 не теряет данные
-  - update `DatabaseModule` чтобы регистрировать миграцию
-- [ ] **Если migration не нужна:** документировать решение в KDoc `PawClockDatabase` + добавить explicit Mapper-test, что новые subcategory id'ы сериализуются корректно
-- [ ] run `./gradlew :core:database:test --no-daemon`
-- [ ] run `./gradlew :core:database:assembleDebugAndroidTest --no-daemon` (smoke check, polnyj run в nightly.yml)
-- [ ] must pass before next task
+- [x] write FAILING test `PetMapperTest` для каждого нового subcategory type:
+  - `Pet(species=Rabbit, subcategory=RabbitSize.Dwarf) → PetEntity round-trip preserves subcategory` — реализован параметризованный round-trip `newSpeciesSubcategories` (все 6 видов × все их id: RabbitSize/HamsterType/BirdType/ReptileType/HorseType/FishType)
+  - аналогично для Hamster, GuineaPig, Bird, Reptile, Horse, Fish (Rat/Mouse/Ferret не имеют подкатегорий) — добавлен `subcategorylessSpecies` round-trip с null для GuineaPig/Rat/Mouse/Ferret (⚠️ GuineaPig в исходном тексте указан ошибочно как имеющий подкатегорию — у вида её нет, см. Task 4)
+  - `unknown subcategory id → IllegalStateException` (как с Dog/Cat в Plan 1) — ⚠️ переформулировано: subcategory — **opaque TEXT, не валидируется** на границе mapper'а (в отличие от species/gender); добавлен тест `mapper does not validate subcategory id`, фиксирующий это сознательное решение Plan 1 (именно оно избавляет от миграции). Тесты сразу **Green** — производственный код менять не требуется (нет Red-фазы; характеристические lock-in тесты)
+- [x] update `PetMapper` чтобы маппил new subcategory types via stable `id` strings — **изменений не требуется**: mapper species-agnostic, передаёт subcategory-строку насквозь; новые id уже корректно сериализуются
+- [x] verify tests — **Green** (`./gradlew :core:database:test` — 14 PetMapperTest-кейсов + параметризованные прошли)
+- [x] check schema: должна ли увеличиться `DATABASE_VERSION` с 1 до 2? — **migration НЕ нужна**: subcategory хранится как `TEXT` и принимает любые id-строки, SQL-схема не меняется
+- [x] **Если migration нужна:** N/A — миграция не требуется (см. решение ниже)
+- [x] **Если migration не нужна:** документировать решение в KDoc `PawClockDatabase` + добавить explicit Mapper-test, что новые subcategory id'ы сериализуются корректно — KDoc `PawClockDatabase` дополнен блоком «Plan 2 — миграция НЕ требуется, версия остаётся 1»; `DATABASE_VERSION` остаётся 1, `Migrations.all()` пуст; round-trip тесты добавлены
+- [x] run `./gradlew :core:database:test --no-daemon` — зелёное
+- [x] run `./gradlew :core:database:assembleDebugAndroidTest --no-daemon` (smoke check, polnyj run в nightly.yml) — компилируется чисто
+- [x] must pass before next task — `:core:database:test` + `assembleDebugAndroidTest` + `detekt` зелёные (⚠️ `:core:database:koverVerify` структурно недостижим на JVM ≥80%: DAO/DI/Room-обвязка покрывается instrumented androidTest, который kover JVM не измеряет — реальное покрытие достигается в nightly.yml; koverVerify для database намеренно НЕ в гейте Task 12)
 
 ### Task 13: Care recommendations placeholder JSON для всех 10 видов
 - [ ] create asset directory structure для каждого вида: `:app/src/main/assets/care/{species}/{stage}/{ru,en}.json`

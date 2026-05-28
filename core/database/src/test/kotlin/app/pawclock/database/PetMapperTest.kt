@@ -2,10 +2,16 @@ package app.pawclock.database
 
 import app.pawclock.database.entity.PetEntity
 import app.pawclock.database.mapper.PetMapper
+import app.pawclock.model.BirdType
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
+import app.pawclock.model.FishType
 import app.pawclock.model.Gender
+import app.pawclock.model.HamsterType
+import app.pawclock.model.HorseType
 import app.pawclock.model.Pet
+import app.pawclock.model.RabbitSize
+import app.pawclock.model.ReptileType
 import app.pawclock.model.Species
 import java.time.LocalDate
 import java.time.format.DateTimeParseException
@@ -14,6 +20,9 @@ import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.Arguments
+import org.junit.jupiter.params.provider.MethodSource
 
 /**
  * Pure JVM unit tests for [PetMapper] — Pet ↔ PetEntity boundary.
@@ -188,6 +197,53 @@ class PetMapperTest {
         assertEquals(CatType.Outdoor, CatType.fromId(restored.subcategory!!))
     }
 
+    /**
+     * Plan 2 Task 12: каждая новая подкатегория (RabbitSize, HamsterType, BirdType,
+     * ReptileType, HorseType, FishType) сериализуется через стабильный [id] и
+     * восстанавливается без потерь. Поскольку колонка `subcategory` — opaque TEXT,
+     * mapper передаёт строку насквозь и **не требует изменений** при добавлении видов
+     * (см. KDoc [app.pawclock.database.db.PawClockDatabase] — миграция не нужна).
+     */
+    @ParameterizedTest(name = "{0} subcategory {1} round-trips")
+    @MethodSource("newSpeciesSubcategories")
+    fun `new species subcategory id round-trips through entity`(
+        species: Species,
+        subcategoryId: String,
+    ) {
+        val pet = samplePet(species = species, subcategory = subcategoryId)
+
+        val entity = PetMapper.toEntity(pet)
+        val restored = PetMapper.toDomain(entity)
+
+        assertEquals(subcategoryId, entity.subcategory)
+        assertEquals(subcategoryId, restored.subcategory)
+        assertEquals(species, restored.species)
+    }
+
+    @ParameterizedTest(name = "{0} (no subcategory) round-trips with null")
+    @MethodSource("subcategorylessSpecies")
+    fun `species without subcategory round-trips with null`(species: Species) {
+        val pet = samplePet(species = species, subcategory = null)
+
+        val restored = PetMapper.toDomain(PetMapper.toEntity(pet))
+
+        assertNull(restored.subcategory)
+        assertEquals(species, restored.species)
+    }
+
+    @Test
+    fun `mapper does not validate subcategory id (opaque TEXT by design)`() {
+        // В отличие от species/gender, subcategory НЕ валидируется на границе mapper'а:
+        // колонка хранится как opaque TEXT, а типизация id в enum происходит в domain-слое.
+        // Это сознательное решение Plan 1 — оно и позволяет добавлять виды без миграции БД.
+        val pet = samplePet(species = Species.Rabbit, subcategory = "not_a_real_size")
+
+        val restored = PetMapper.toDomain(PetMapper.toEntity(pet))
+
+        assertEquals("not_a_real_size", restored.subcategory)
+        assertNull(RabbitSize.fromId(restored.subcategory!!))
+    }
+
     // Test-builder покрывает все 9 полей Pet — разбиение на отдельные функции лишь
     // ухудшит читаемость тестов. Long-parameter-list здесь не code smell в production-смысле.
     @Suppress("LongParameterList")
@@ -212,4 +268,32 @@ class PetMapperTest {
         notes = notes,
         photoPath = photoPath,
     )
+
+    companion object {
+        /**
+         * Все 6 видов с подкатегориями × все их значения id — repräsentative выборка
+         * по одному id на enum достаточна для контракта round-trip, но мы покрываем все
+         * значения, чтобы поймать опечатку в любом конкретном id при будущих правках.
+         */
+        @JvmStatic
+        fun newSpeciesSubcategories(): List<Arguments> =
+            buildList {
+                RabbitSize.entries.forEach { add(Arguments.of(Species.Rabbit, it.id)) }
+                HamsterType.entries.forEach { add(Arguments.of(Species.Hamster, it.id)) }
+                BirdType.entries.forEach { add(Arguments.of(Species.Bird, it.id)) }
+                ReptileType.entries.forEach { add(Arguments.of(Species.Reptile, it.id)) }
+                HorseType.entries.forEach { add(Arguments.of(Species.Horse, it.id)) }
+                FishType.entries.forEach { add(Arguments.of(Species.Fish, it.id)) }
+            }
+
+        /** Виды, у которых нет подкатегории (subcategory всегда null). */
+        @JvmStatic
+        fun subcategorylessSpecies(): List<Arguments> =
+            listOf(
+                Arguments.of(Species.GuineaPig),
+                Arguments.of(Species.Rat),
+                Arguments.of(Species.Mouse),
+                Arguments.of(Species.Ferret),
+            )
+    }
 }
