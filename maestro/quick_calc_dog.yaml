@@ -15,18 +15,17 @@ appId: app.pawclock.debug
 - clearState
 - launchApp
 
-# Перейти из PetsList в QuickCalculator. На данный момент NavHost не имеет
-# bottom-bar (планируется в Plan 2), поэтому для smoke E2E используется deep-link
-# через явный navigate. Когда появится bottom bar — заменить на tap по нему.
-- openLink: "pawclock://quickcalc"
+# Перейти из PetsList в QuickCalculator через IconButton в TopAppBar (с
+# contentDescription «Быстрый расчёт» — см. PetsListScreen.kt). Раньше тут был
+# openLink: "pawclock://quickcalc", но manifest не объявляет intent-filter под
+# эту схему (см. ADR-0005 — приложение полностью offline, никаких exported
+# deep-link сюрфейсов), и Maestro гарантированно падал. tapOn по
+# contentDescription устойчиво работает и точно отражает реальный пользовательский
+# путь в Plan 1 UI.
+- tapOn: "Быстрый расчёт"
 
-# Если deep-link не настроен (Plan 1 не реализует intent-filter), Maestro упадёт
-# с понятной ошибкой — это сигнал, что nav-entry на QuickCalculator пока требует
-# UI-входа из меню; до его появления Maestro flow помечается as smoke-only.
-# Альтернатива: navigate через Settings → пока недоступно. Этот flow
-# документирует целевой сценарий и активизируется как только появится UI-entry.
-
-# Проверка экрана Quick Calculator.
+# Проверка, что мы внутри Quick Calculator (заголовок экрана идентичен label'у
+# IconButton'а — assertVisible подтверждает переход на новый экран).
 - assertVisible: "Быстрый расчёт"
 
 # Выбрать вид «Собака».

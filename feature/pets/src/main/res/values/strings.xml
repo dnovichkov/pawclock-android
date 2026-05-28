@@ -45,6 +45,9 @@
     <string name="pet_detail_calc_dog">Метод: %1$s. Wang et al. (Cell Systems 2020) или AKC/AAHA 2019 size-table. Возраст %2$s лет → %3$s ЧГ.</string>
     <string name="pet_detail_calc_cat">Метод: AAHA/AAFP 2021. Кусочная формула: 1й год = 15, 2й = 24, далее +4/год. Поправки на outdoor (+15%%) и large breed (+1/год).</string>
     <string name="pet_detail_calc_unsupported">Метод неприменим для этого вида.</string>
+    <!-- Method labels (для подстановки в pet_detail_calc_dog %1$s). -->
+    <string name="pet_detail_method_epigenetic">Wang (эпигенетика)</string>
+    <string name="pet_detail_method_size_based">По размеру (AKC/AAHA)</string>
 
     <!-- Life stages -->
     <string name="life_stage_dog_puppy">Щенок</string>

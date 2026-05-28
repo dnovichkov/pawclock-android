@@ -20,11 +20,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
@@ -91,17 +94,34 @@ internal fun PetEditorContent(
     onSaved: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // Реакция на успешный save: уведомить навигатор + очистить saveResult.
+    val snackbarHostState = remember { SnackbarHostState() }
+    // Реакция на результат save:
+    //  - Success → уведомить навигатор + очистить saveResult;
+    //  - Error → показать snackbar с локализованным сообщением и очистить saveResult,
+    //    иначе ConsumeSaveResult никогда не отправляется и форма залипает в Error-состоянии.
+    val saveErrorMessage =
+        (state.saveResult as? PetEditorSaveResult.Error)?.let {
+            stringResource(formErrorMessageRes(it.messageKey))
+        }
     LaunchedEffect(state.saveResult) {
-        val result = state.saveResult
-        if (result is PetEditorSaveResult.Success) {
-            onSaved(result.petId)
-            onEvent(PetEditorEvent.ConsumeSaveResult)
+        when (val result = state.saveResult) {
+            is PetEditorSaveResult.Success -> {
+                onSaved(result.petId)
+                onEvent(PetEditorEvent.ConsumeSaveResult)
+            }
+            is PetEditorSaveResult.Error -> {
+                if (saveErrorMessage != null) {
+                    snackbarHostState.showSnackbar(saveErrorMessage)
+                }
+                onEvent(PetEditorEvent.ConsumeSaveResult)
+            }
+            null -> Unit
         }
     }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
         topBar = {
             TopAppBar(
                 title = {
@@ -249,9 +269,11 @@ private fun formErrorMessageRes(messageKey: String): Int =
         "pet_editor_error_birth_date_required" -> R.string.pet_editor_error_birth_date_required
         "pet_editor_error_pet_not_found" -> R.string.pet_editor_error_pet_not_found
         "pet_editor_error_unsupported_species" -> R.string.pet_editor_error_unsupported_species
-        // Unknown key — fallback на generic species_required-сообщение чтобы не падать.
-        // В Plan 2 добавим централизованный errors-mapping в :core:domain.
-        else -> R.string.pet_editor_error_species_required
+        "pet_editor_error_load_failed" -> R.string.pet_editor_error_load_failed
+        "pet_editor_error_save_failed" -> R.string.pet_editor_error_save_failed
+        // Unknown key — fallback на нейтральное load_failed-сообщение чтобы не вводить
+        // пользователя в заблуждение (раньше показывали species_required даже для IO-ошибок).
+        else -> R.string.pet_editor_error_load_failed
     }
 
 internal const val NAME_FIELD_TEST_TAG: String = "pet_editor_name_field"

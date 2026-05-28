@@ -24,6 +24,7 @@ import app.pawclock.feature.quickcalc.R
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.LifeStage
 import app.pawclock.model.Species
+import kotlin.math.roundToInt
 
 /**
  * Bottom sheet с результатом Quick Calculator (§5.3 спецификации, Task 20).
@@ -71,10 +72,13 @@ internal fun QuickCalcResultSheet(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             val ageYears = calculatedAge.ageInYears.toInt().coerceAtLeast(0)
+            // roundToInt вместо .toInt() — Wang(5) ≈ 56.74; truncate показал бы 56,
+            // тест QuickCalcScreenTest.resultSheet_isShownWhenStateHasSuccessResult ожидает «57 ЧГ»
+            // (проходит сейчас только потому, что инжектит уже округлённые humanYears=57.0).
             AgeBigCard(
                 ageLabel = pluralStringResource(R.plurals.age_years, ageYears, ageYears),
                 humanYearsLabel =
-                    stringResource(R.string.quick_calc_result_human_years_unit, calculatedAge.humanYears.toInt()),
+                    stringResource(R.string.quick_calc_result_human_years_unit, calculatedAge.humanYears.roundToInt()),
                 ageDescriptor = stringResource(R.string.quick_calc_result_age_descriptor),
                 humanYearsDescriptor = stringResource(R.string.quick_calc_result_human_years_descriptor),
             )

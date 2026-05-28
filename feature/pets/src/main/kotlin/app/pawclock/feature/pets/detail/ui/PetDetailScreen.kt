@@ -41,10 +41,12 @@ import app.pawclock.domain.pet.CalculatedAge
 import app.pawclock.feature.pets.R
 import app.pawclock.feature.pets.detail.PetDetailState
 import app.pawclock.feature.pets.detail.PetDetailViewModel
+import app.pawclock.model.CalculationMethod
 import app.pawclock.model.CareRecommendation
 import app.pawclock.model.LifeStage
 import app.pawclock.model.Pet
 import app.pawclock.model.Species
+import kotlin.math.roundToInt
 
 /**
  * Экран детального просмотра питомца (Task 18 / Plan 1, §5.3 спецификации).
@@ -213,9 +215,11 @@ private fun HeroBlock(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         val ageYears = calculated.ageInYears.toInt().coerceAtLeast(0)
+        // roundToInt вместо .toInt() — для канонического Wang-примера 5 лет ≈ 56.74 ЧГ:
+        // truncate показал бы «56 ЧГ», а целевое значение по тестам/документации = 57 ЧГ.
         AgeBigCard(
             ageLabel = pluralStringResource(R.plurals.age_years, ageYears, ageYears),
-            humanYearsLabel = stringResource(R.string.pet_detail_human_years_unit, calculated.humanYears.toInt()),
+            humanYearsLabel = stringResource(R.string.pet_detail_human_years_unit, calculated.humanYears.roundToInt()),
             ageDescriptor = stringResource(R.string.pet_detail_age_descriptor),
             humanYearsDescriptor = stringResource(R.string.pet_detail_human_years_descriptor),
         )
@@ -312,7 +316,7 @@ private fun CalculationDetailsBlock(
             Species.Dog ->
                 stringResource(
                     R.string.pet_detail_calc_dog,
-                    calculated.method.name,
+                    stringResource(methodLabelRes(calculated.method)),
                     calculated.ageInYears.format1(),
                     calculated.humanYears.format1(),
                 )
@@ -325,6 +329,13 @@ private fun CalculationDetailsBlock(
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }
+
+@androidx.annotation.StringRes
+internal fun methodLabelRes(method: CalculationMethod): Int =
+    when (method) {
+        CalculationMethod.EPIGENETIC -> R.string.pet_detail_method_epigenetic
+        CalculationMethod.SIZE_BASED -> R.string.pet_detail_method_size_based
+    }
 
 @androidx.annotation.StringRes
 internal fun lifeStageLabelRes(stage: LifeStage): Int =

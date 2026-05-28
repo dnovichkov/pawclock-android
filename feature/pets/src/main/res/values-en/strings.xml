@@ -41,6 +41,9 @@
     <string name="pet_detail_calc_dog">Method: %1$s. Wang et al. (Cell Systems 2020) or AKC/AAHA 2019 size-table. Age %2$s years → %3$s HY.</string>
     <string name="pet_detail_calc_cat">Method: AAHA/AAFP 2021. Piecewise formula: year 1 = 15, year 2 = 24, then +4/year. Adjustments: outdoor (+15%%) and large breed (+1/year).</string>
     <string name="pet_detail_calc_unsupported">Method not implemented for this species.</string>
+    <!-- Method labels (used as %1$s in pet_detail_calc_dog). -->
+    <string name="pet_detail_method_epigenetic">Wang (epigenetic)</string>
+    <string name="pet_detail_method_size_based">Size-based (AKC/AAHA)</string>
 
     <!-- Life stages -->
     <string name="life_stage_dog_puppy">Puppy</string>

@@ -166,6 +166,10 @@ class PetEditorViewModel
                             validationErrors = emptyList(),
                         )
                     }
+                } catch (e: kotlinx.coroutines.CancellationException) {
+                    // Структурированную отмену корутины пробрасываем выше — иначе scope
+                    // считает её «успешным завершением» и не очищает state.
+                    throw e
                 } catch (e: PetValidationException) {
                     _state.update {
                         it.copy(isSaving = false, validationErrors = e.errors)
@@ -178,6 +182,18 @@ class PetEditorViewModel
                                 PetEditorSaveResult.Error(
                                     messageKey = ERROR_UNSUPPORTED_SPECIES,
                                 ),
+                        )
+                    }
+                } catch (_: RuntimeException) {
+                    // Финальная защита от Room/IO/маппер-исключений: без catch'а коробка
+                    // зависнет в isSaving = true и Save FAB останется заблокированным,
+                    // а необработанное исключение свалит процесс через default
+                    // CoroutineExceptionHandler.
+                    _state.update {
+                        it.copy(
+                            isSaving = false,
+                            saveResult =
+                                PetEditorSaveResult.Error(messageKey = ERROR_SAVE_FAILED),
                         )
                     }
                 }
@@ -248,5 +264,6 @@ class PetEditorViewModel
             const val ERROR_UNSUPPORTED_SPECIES: String = "pet_editor_error_unsupported_species"
             const val ERROR_PET_NOT_FOUND: String = "pet_editor_error_pet_not_found"
             const val ERROR_LOAD_FAILED: String = "pet_editor_error_load_failed"
+            const val ERROR_SAVE_FAILED: String = "pet_editor_error_save_failed"
         }
     }
