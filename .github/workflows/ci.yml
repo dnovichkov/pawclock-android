@@ -42,7 +42,7 @@ jobs:
 
       - name: Publish test report
         if: always()
-        uses: dorny/test-reporter@v1
+        uses: dorny/test-reporter@v3
         with:
           name: Unit Tests
           path: '**/build/test-results/test*/TEST-*.xml'
