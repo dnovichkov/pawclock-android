@@ -1,52 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   English strings for PawClock.
-  Default locale is Russian (values/strings.xml). English is opt-in via system settings
-  or in-app picker (LocaleHelper).
+  Only app-wide strings live here. Per-screen strings live in their respective
+  :feature:* modules to avoid AGP resource merging shadows.
 -->
 <resources>
 
     <!-- App-wide -->
     <string name="app_name">PawClock</string>
-
-    <!-- Settings screen -->
-    <string name="settings_title">Settings</string>
-    <string name="settings_section_appearance">Appearance</string>
-    <string name="settings_section_language">Language</string>
-    <string name="settings_section_calculation">Age calculation</string>
-    <string name="settings_section_about">About</string>
-
-    <string name="settings_theme_label">Theme</string>
-    <string name="settings_theme_light">Light</string>
-    <string name="settings_theme_dark">Dark</string>
-    <string name="settings_theme_system">System</string>
-
-    <string name="settings_dynamic_color_label">Dynamic colors</string>
-    <string name="settings_dynamic_color_supporting">Colors adapt to your wallpaper (Android 12+)</string>
-    <string name="settings_dynamic_color_unsupported">Available on Android 12 and newer</string>
-
-    <string name="settings_language_system">System default</string>
-    <string name="settings_language_russian">Русский</string>
-    <string name="settings_language_english">English</string>
-
-    <string name="settings_method_label">Default method for dogs</string>
-    <string name="settings_method_epigenetic_title">Epigenetic (Wang 2020)</string>
-    <string name="settings_method_epigenetic_supporting">Uses biological age from DNA methylation</string>
-    <string name="settings_method_size_based_title">Size-based (AKC/AAHA)</string>
-    <string name="settings_method_size_based_supporting">Simple table by weight category</string>
-
-    <string name="settings_open_about">About PawClock</string>
-
-    <!-- About screen -->
-    <string name="about_title">About</string>
-    <string name="about_version_prefix">Version %1$s</string>
-    <string name="about_license_header">License</string>
-    <string name="about_license_name">Apache License 2.0</string>
-    <string name="about_license_body">PawClock is distributed under the Apache 2.0 license. Full text is available at apache.org/licenses/LICENSE-2.0.</string>
-    <string name="about_repository_header">Source code</string>
-    <string name="about_disclaimer_header">Disclaimer</string>
-    <string name="about_disclaimer_body">Information in this app is for general guidance only and is not a substitute for veterinary advice. Consult a licensed veterinarian for any concerns about your pet\'s health.</string>
-    <string name="about_sources_header">Sources</string>
 
     <!-- Common -->
     <string name="common_back">Back</string>

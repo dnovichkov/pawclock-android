@@ -11,10 +11,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.LargeTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -52,6 +55,8 @@ import app.pawclock.model.Pet
  *
  * @param onPetClick колбэк навигации на PetDetail для конкретного питомца.
  * @param onAddPetClick колбэк навигации на PetEditor для нового питомца.
+ * @param onOpenQuickCalc колбэк навигации на QuickCalculator (top-bar action).
+ * @param onOpenSettings колбэк навигации на Settings (top-bar action).
  * @param viewModel опционально-передаваемый ViewModel (по умолчанию — через Hilt).
  *   Параметр существует для preview'ев и androidTest'ов с подменой ViewModel'и.
  */
@@ -60,6 +65,8 @@ import app.pawclock.model.Pet
 fun PetsListScreen(
     onPetClick: (Long) -> Unit,
     onAddPetClick: () -> Unit,
+    onOpenQuickCalc: () -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: PetsListViewModel = hiltViewModel(),
 ) {
@@ -68,6 +75,8 @@ fun PetsListScreen(
         state = state,
         onPetClick = onPetClick,
         onAddPetClick = onAddPetClick,
+        onOpenQuickCalc = onOpenQuickCalc,
+        onOpenSettings = onOpenSettings,
         modifier = modifier,
     )
 }
@@ -82,6 +91,8 @@ internal fun PetsListContent(
     state: PetsListState,
     onPetClick: (Long) -> Unit,
     onAddPetClick: () -> Unit,
+    onOpenQuickCalc: () -> Unit = {},
+    onOpenSettings: () -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -91,6 +102,22 @@ internal fun PetsListContent(
             LargeTopAppBar(
                 title = { Text(text = stringResource(R.string.pets_list_title)) },
                 scrollBehavior = scrollBehavior,
+                actions = {
+                    IconButton(onClick = onOpenQuickCalc) {
+                        Icon(
+                            // material-icons-core не содержит "Calculate"; PlayArrow семантически
+                            // обозначает "запустить вычисление", и доступен без extended-icons (3+ МБ).
+                            imageVector = Icons.Filled.PlayArrow,
+                            contentDescription = stringResource(R.string.pets_list_open_quick_calc),
+                        )
+                    }
+                    IconButton(onClick = onOpenSettings) {
+                        Icon(
+                            imageVector = Icons.Filled.Settings,
+                            contentDescription = stringResource(R.string.pets_list_open_settings),
+                        )
+                    }
+                },
             )
         },
         floatingActionButton = {

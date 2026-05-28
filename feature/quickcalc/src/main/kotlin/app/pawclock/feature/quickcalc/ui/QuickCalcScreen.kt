@@ -111,7 +111,7 @@ internal fun QuickCalcContent(
                 method = state.method,
                 showMethodToggle = state.species == Species.Dog,
                 onMethodChange = { onEvent(QuickCalcEvent.SetMethod(it)) },
-                onDismiss = { /* sheet не закрывается явно — пересчёт через Calculate FAB */ },
+                onDismiss = { onEvent(QuickCalcEvent.DismissResult) },
             )
         }
     }

@@ -15,7 +15,10 @@ import java.time.LocalDate
  *  - имя должно быть непустым после `trim()`; `Pet`-конструктор уже отбрасывает blank-имена
  *    через `require(name.isNotBlank())`, но UseCase делает явную проверку, чтобы вернуть
  *    типизированную [PetValidationError.NameBlank] вместо `IllegalArgumentException`;
- *  - `birthDate` не может быть в будущем (строго `<= today`);
+ *  - `birthDate` должна быть строго в прошлом (запрещены как future-даты, так и `today`);
+ *    причина запрета `today`: [CalculatePetAgeUseCase] требует `ageInYears > 0`, иначе
+ *    бросает IAE — без этой симметрии Save принимал бы newborn'а, но Detail-экран сразу
+ *    падал бы в Error;
  *  - `birthDate` не может быть нереально давно (раньше, чем [EARLIEST_REALISTIC_BIRTH_YEAR]) —
  *    защита от случайного выбора 1900-х годов через старый API DatePicker.
  *
@@ -55,7 +58,7 @@ class SavePetUseCase(
         val today = LocalDate.now(clock)
         return buildList {
             if (pet.name.trim().isEmpty()) add(PetValidationError.NameBlank)
-            if (pet.birthDate.isAfter(today)) add(PetValidationError.BirthDateInFuture)
+            if (!pet.birthDate.isBefore(today)) add(PetValidationError.BirthDateInFuture)
             if (pet.birthDate.year < EARLIEST_REALISTIC_BIRTH_YEAR) {
                 add(PetValidationError.BirthDateUnrealistic)
             }

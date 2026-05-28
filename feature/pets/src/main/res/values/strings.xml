@@ -11,6 +11,8 @@
     <string name="pets_list_empty_title">Добавьте первого питомца</string>
     <string name="pets_list_empty_body">Нажмите на кнопку «Добавить», чтобы создать профиль вашего питомца.</string>
     <string name="pets_list_error">Не удалось загрузить список питомцев (key=%1$s).</string>
+    <string name="pets_list_open_quick_calc">Быстрый расчёт</string>
+    <string name="pets_list_open_settings">Настройки</string>
 
     <!-- PetDetailScreen -->
     <string name="pet_detail_loading_title">Загрузка…</string>

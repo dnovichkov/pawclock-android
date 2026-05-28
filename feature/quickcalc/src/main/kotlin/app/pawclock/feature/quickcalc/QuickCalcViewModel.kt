@@ -55,6 +55,8 @@ class QuickCalcViewModel
                 is QuickCalcEvent.SetBirthDate -> onSetBirthDate(event.birthDate)
                 is QuickCalcEvent.SetMethod -> onSetMethod(event.method)
                 QuickCalcEvent.Calculate -> performCalculation(_state.value)
+                QuickCalcEvent.DismissResult ->
+                    _state.update { it.copy(result = QuickCalcResult.Idle) }
             }
         }
 
@@ -144,8 +146,10 @@ class QuickCalcViewModel
                 }
                 if (snapshot.birthDate == null) {
                     add(QuickCalcValidationError.BirthDateRequired)
-                } else if (snapshot.birthDate.isAfter(LocalDate.now())) {
+                } else if (!snapshot.birthDate.isBefore(LocalDate.now())) {
                     // Fast-fail на UI-уровне для better UX; UseCase сделает то же на доменном уровне.
+                    // Сегодняшняя дата тоже отклоняется — CalculatePetAgeUseCase требует ageInYears > 0,
+                    // иначе IAE. Симметрия с SavePetUseCase.
                     add(QuickCalcValidationError.BirthDateInFuture)
                 }
             }

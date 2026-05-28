@@ -43,4 +43,11 @@ sealed interface QuickCalcEvent {
      * или [QuickCalcResult.ValidationError].
      */
     data object Calculate : QuickCalcEvent
+
+    /**
+     * Сброс result в [QuickCalcResult.Idle] — закрывает result-sheet'у при swipe-down
+     * или нажатии вне sheet'ы. Без него ModalBottomSheet анимируется к hidden, но
+     * recomposition заново показывает sheet'у, потому что `state.result` остаётся Success.
+     */
+    data object DismissResult : QuickCalcEvent
 }

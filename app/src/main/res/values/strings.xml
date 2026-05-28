@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Русские строки (default локаль для PawClock).
-  Содержит app-wide строки и Settings/About экраны.
-  Feature-specific строки лежат в соответствующих :feature:* модулях.
+  Содержит только app-wide строки. Settings/About-строки — в :feature:settings,
+  PetsList/PetDetail-строки — в :feature:pets, и т.д. Дубли удалены, чтобы
+  избежать резолва AGP в пользу :app overriding feature-модулей с другим текстом.
 
   Локализация: §6 спецификации. Английский перевод — values-en/strings.xml.
 -->
@@ -11,47 +12,7 @@
     <!-- App-wide -->
     <string name="app_name">PawClock</string>
 
-    <!-- Settings screen -->
-    <string name="settings_title">Настройки</string>
-    <string name="settings_section_appearance">Внешний вид</string>
-    <string name="settings_section_language">Язык</string>
-    <string name="settings_section_calculation">Расчёт возраста</string>
-    <string name="settings_section_about">О приложении</string>
-
-    <string name="settings_theme_label">Тема</string>
-    <string name="settings_theme_light">Светлая</string>
-    <string name="settings_theme_dark">Тёмная</string>
-    <string name="settings_theme_system">Системная</string>
-
-    <string name="settings_dynamic_color_label">Динамические цвета</string>
-    <string name="settings_dynamic_color_supporting">Цвета подстраиваются под обои (Android 12+)</string>
-    <string name="settings_dynamic_color_unsupported">Доступно с Android 12</string>
-
-    <string name="settings_language_system">Как в системе</string>
-    <string name="settings_language_russian">Русский</string>
-    <string name="settings_language_english">English</string>
-
-    <string name="settings_method_label">Метод по умолчанию для собак</string>
-    <string name="settings_method_epigenetic_title">Эпигенетическая (Wang 2020)</string>
-    <string name="settings_method_epigenetic_supporting">Учитывает биологический возраст по метилированию ДНК</string>
-    <string name="settings_method_size_based_title">По размеру (AKC/AAHA)</string>
-    <string name="settings_method_size_based_supporting">Простая таблица по весовой категории</string>
-
-    <string name="settings_open_about">О приложении</string>
-
-    <!-- About screen -->
-    <string name="about_title">О приложении</string>
-    <string name="about_version_prefix">Версия %1$s</string>
-    <string name="about_license_header">Лицензия</string>
-    <string name="about_license_name">Apache License 2.0</string>
-    <string name="about_license_body">PawClock распространяется по лицензии Apache 2.0. Полный текст лицензии доступен по адресу apache.org/licenses/LICENSE-2.0.</string>
-    <string name="about_repository_header">Исходный код</string>
-    <string name="about_repository_url" translatable="false">https://github.com/dnovichkov/pawclock-android</string>
-    <string name="about_disclaimer_header">Дисклеймер</string>
-    <string name="about_disclaimer_body">Информация в приложении носит ознакомительный характер и не заменяет консультацию ветеринарного врача. При любых сомнениях о здоровье вашего питомца обратитесь к специалисту.</string>
-    <string name="about_sources_header">Источники</string>
-
-    <!-- Plurals и общие -->
+    <!-- Common (используются несколькими модулями через :app fallback) -->
     <string name="common_back">Назад</string>
     <string name="common_ok">ОК</string>
     <string name="common_cancel">Отмена</string>

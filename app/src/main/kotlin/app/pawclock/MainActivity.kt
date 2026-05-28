@@ -3,12 +3,23 @@ package app.pawclock
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.pawclock.datastore.AppSettings
+import app.pawclock.datastore.SettingsRepository
 import app.pawclock.designsystem.theme.PawClockTheme
+import app.pawclock.model.ThemeMode
 import app.pawclock.navigation.PawClockNavHost
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
 
 /**
  * Корневая Activity PawClock (Task 17 / Plan 1).
@@ -16,25 +27,47 @@ import dagger.hilt.android.AndroidEntryPoint
  * `@AndroidEntryPoint` подключает Activity к Hilt-DI-графу, что необходимо для
  * `hiltViewModel<...>()` calls в Composable-функциях ниже по дереву (Task 18+).
  *
- * Сам Activity максимально тонкий: устанавливает Compose-content с темой и навигацией.
- * Никаких Fragment'ов, кастомного onCreate-логики, ручных биндингов нет.
- *
- * Стэк отображения:
- *  - [PawClockTheme] — Material You / fallback палитра (Task 16)
- *  - [Surface] — даёт background-цвет из темы, важно для edge-to-edge будущих
- *    задач (Plan 2 / Plan 3)
- *  - [PawClockNavHost] — корневой граф навигации с placeholder'ами (Task 17)
+ * Тема/dynamicColor читаются из [SettingsRepository] через [SettingsEntryPoint] — это
+ * самый дешёвый способ получить Singleton-зависимость из не-Composable / не-ViewModel
+ * контекста; полноценный root-ViewModel был бы избыточен для одного reactive-snapshot'а.
  */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @EntryPoint
+    @InstallIn(SingletonComponent::class)
+    interface SettingsEntryPoint {
+        fun settingsRepository(): SettingsRepository
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val settingsRepository =
+            EntryPointAccessors
+                .fromApplication(applicationContext, SettingsEntryPoint::class.java)
+                .settingsRepository()
         setContent {
-            PawClockTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
-                    PawClockNavHost()
-                }
-            }
+            ThemedApp(settingsRepository)
+        }
+    }
+}
+
+@Composable
+private fun ThemedApp(settingsRepository: SettingsRepository) {
+    val settings by settingsRepository
+        .observe()
+        .collectAsStateWithLifecycle(initialValue = AppSettings.Default)
+    val darkTheme =
+        when (settings.themeMode) {
+            ThemeMode.Light -> false
+            ThemeMode.Dark -> true
+            ThemeMode.System -> isSystemInDarkTheme()
+        }
+    PawClockTheme(
+        darkTheme = darkTheme,
+        dynamicColor = settings.dynamicColor,
+    ) {
+        Surface(modifier = Modifier.fillMaxSize()) {
+            PawClockNavHost()
         }
     }
 }

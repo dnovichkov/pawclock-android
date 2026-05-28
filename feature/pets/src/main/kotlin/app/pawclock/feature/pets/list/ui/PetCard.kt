@@ -1,5 +1,6 @@
 package app.pawclock.feature.pets.list.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import app.pawclock.designsystem.components.LifeStageChip
 import app.pawclock.designsystem.components.PawClockCard
@@ -91,7 +91,6 @@ fun PetCard(
  */
 @Composable
 private fun SpeciesAvatar(species: Species) {
-    val color: Color = MaterialTheme.colorScheme.primaryContainer
     val labelChar =
         when (species) {
             Species.Dog -> "🐶"
@@ -102,28 +101,16 @@ private fun SpeciesAvatar(species: Species) {
         modifier =
             Modifier
                 .size(AVATAR_SIZE_DP.dp)
-                .clip(CircleShape),
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer),
         contentAlignment = Alignment.Center,
     ) {
-        Box(
-            modifier =
-                Modifier
-                    .size(AVATAR_SIZE_DP.dp)
-                    .clip(CircleShape),
-        ) {
-            Text(
-                text = labelChar,
-                style = MaterialTheme.typography.headlineSmall,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier =
-                    Modifier
-                        .align(Alignment.Center)
-                        .padding(4.dp),
-            )
-        }
-        // Background через Spacer избегает overdraw vs. Box.background — простая абстракция.
-        @Suppress("UnusedExpression")
-        color
+        Text(
+            text = labelChar,
+            style = MaterialTheme.typography.headlineSmall,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier.padding(4.dp),
+        )
     }
 }
 

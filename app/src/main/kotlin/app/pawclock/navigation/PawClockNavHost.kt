@@ -31,6 +31,8 @@ fun PawClockNavHost(navController: NavHostController = rememberNavController()) 
             PetsListScreen(
                 onPetClick = { petId -> navController.navigate(Route.PetDetail(petId)) },
                 onAddPetClick = { navController.navigate(Route.PetEditor()) },
+                onOpenQuickCalc = { navController.navigate(Route.QuickCalculator) },
+                onOpenSettings = { navController.navigate(Route.Settings) },
             )
         }
         composable<Route.PetDetail> {

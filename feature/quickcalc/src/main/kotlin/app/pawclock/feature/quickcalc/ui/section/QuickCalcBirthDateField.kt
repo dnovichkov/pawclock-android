@@ -1,5 +1,7 @@
 package app.pawclock.feature.quickcalc.ui.section
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
@@ -15,7 +17,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import app.pawclock.feature.quickcalc.R
@@ -44,26 +45,24 @@ internal fun QuickCalcBirthDateField(
                 value?.atStartOfDay(ZoneId.of("UTC"))?.toInstant()?.toEpochMilli(),
         )
 
-    OutlinedTextField(
+    Box(
         modifier =
             modifier
                 .fillMaxWidth()
                 .testTag(QUICK_CALC_BIRTH_DATE_FIELD_TEST_TAG)
-                .pointerInput(Unit) {
-                    awaitPointerEventScope {
-                        while (true) {
-                            awaitPointerEvent()
-                            showDialog = true
-                        }
-                    }
-                },
-        value = value?.toString().orEmpty(),
-        onValueChange = { /* read-only */ },
-        readOnly = true,
-        label = { Text(text = stringResource(R.string.quick_calc_birth_date_label)) },
-        isError = isError,
-        singleLine = true,
-    )
+                .clickable { showDialog = true },
+    ) {
+        OutlinedTextField(
+            modifier = Modifier.fillMaxWidth(),
+            value = value?.toString().orEmpty(),
+            onValueChange = { /* read-only */ },
+            readOnly = true,
+            enabled = false,
+            label = { Text(text = stringResource(R.string.quick_calc_birth_date_label)) },
+            isError = isError,
+            singleLine = true,
+        )
+    }
 
     if (showDialog) {
         DatePickerDialog(

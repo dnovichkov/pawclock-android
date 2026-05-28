@@ -83,6 +83,19 @@ class PetDetailViewModel
                     // calendarAgeInYears бросает IAE если birthDate в будущем — defensive:
                     // должен быть пойман валидацией в SavePetUseCase, но защищаемся.
                     _state.value = PetDetailState.Error(messageKey = ERROR_INVALID_BIRTH_DATE)
+                } catch (_: IllegalStateException) {
+                    // PetMapper.toDomain бросает ISE при corrupt species/gender id из БД
+                    // (например, после миграции которая переименовала константы). Без этого
+                    // catch'а корутина падает в default-handler и UI остаётся в Loading.
+                    _state.value = PetDetailState.Error(messageKey = ERROR_DATA_CORRUPTED)
+                } catch (e: kotlinx.coroutines.CancellationException) {
+                    // Структурированная отмена корутины (smartcast в supervisorScope) НЕ
+                    // должна маппиться в error-state — пробрасываем дальше.
+                    throw e
+                } catch (_: RuntimeException) {
+                    // Финальная защита: любая другая ошибка из use case'ов / mapper'а / IO
+                    // не должна крашить ViewModel-корутину. Маппим в общий error-state.
+                    _state.value = PetDetailState.Error(messageKey = ERROR_UNEXPECTED)
                 }
             }
         }
@@ -90,5 +103,7 @@ class PetDetailViewModel
         private companion object {
             const val ERROR_UNSUPPORTED_SPECIES: String = "pet_detail_error_unsupported_species"
             const val ERROR_INVALID_BIRTH_DATE: String = "pet_detail_error_invalid_birth_date"
+            const val ERROR_DATA_CORRUPTED: String = "pet_detail_error_data_corrupted"
+            const val ERROR_UNEXPECTED: String = "pet_detail_error_unexpected"
         }
     }
