@@ -28,7 +28,7 @@ import org.junit.jupiter.api.Test
  * Источник: American Kennel Club + AAHA, 2019 AAHA Canine Life Stage Guidelines.
  */
 class DogAgeCalculatorSizeBasedPropertyTest {
-    private val calculator = DogAgeCalculator()
+    private val calculator = DogAgeCalculator
 
     private val config = PropTestConfig(iterations = PROPERTY_ITERATIONS)
 

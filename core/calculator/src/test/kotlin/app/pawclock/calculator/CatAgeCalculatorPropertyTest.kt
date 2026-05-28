@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test
  * DOI: 10.1177/1098612X21993657.
  */
 class CatAgeCalculatorPropertyTest {
-    private val calculator = CatAgeCalculator()
+    private val calculator = CatAgeCalculator
 
     private val config = PropTestConfig(iterations = PROPERTY_ITERATIONS)
 

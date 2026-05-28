@@ -1,9 +1,5 @@
 package app.pawclock.data.domain.di
 
-import app.pawclock.calculator.CatAgeCalculator
-import app.pawclock.calculator.CatLifeStageCalculator
-import app.pawclock.calculator.DogAgeCalculator
-import app.pawclock.calculator.DogLifeStageCalculator
 import app.pawclock.data.settings.DataStoreSettingsReader
 import app.pawclock.datastore.SettingsRepository
 import app.pawclock.domain.care.CareRepository
@@ -46,22 +42,6 @@ import javax.inject.Singleton
 object DomainModule {
     @Provides
     @Singleton
-    fun provideDogAgeCalculator(): DogAgeCalculator = DogAgeCalculator()
-
-    @Provides
-    @Singleton
-    fun provideDogLifeStageCalculator(): DogLifeStageCalculator = DogLifeStageCalculator()
-
-    @Provides
-    @Singleton
-    fun provideCatAgeCalculator(): CatAgeCalculator = CatAgeCalculator()
-
-    @Provides
-    @Singleton
-    fun provideCatLifeStageCalculator(): CatLifeStageCalculator = CatLifeStageCalculator()
-
-    @Provides
-    @Singleton
     fun provideSettingsReader(settingsRepository: SettingsRepository): SettingsReader =
         DataStoreSettingsReader(settingsRepository)
 
@@ -77,18 +57,10 @@ object DomainModule {
 
     @Provides
     fun provideCalculatePetAgeUseCase(
-        dogAgeCalculator: DogAgeCalculator,
-        dogLifeStageCalculator: DogLifeStageCalculator,
-        catAgeCalculator: CatAgeCalculator,
-        catLifeStageCalculator: CatLifeStageCalculator,
         settingsReader: SettingsReader,
         clock: Clock,
     ): CalculatePetAgeUseCase =
         CalculatePetAgeUseCase(
-            dogAgeCalculator = dogAgeCalculator,
-            dogLifeStageCalculator = dogLifeStageCalculator,
-            catAgeCalculator = catAgeCalculator,
-            catLifeStageCalculator = catLifeStageCalculator,
             settingsReader = settingsReader,
             clock = clock,
         )

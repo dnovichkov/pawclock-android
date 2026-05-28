@@ -1,10 +1,6 @@
 package app.pawclock.feature.quickcalc
 
 import app.cash.turbine.test
-import app.pawclock.calculator.CatAgeCalculator
-import app.pawclock.calculator.CatLifeStageCalculator
-import app.pawclock.calculator.DogAgeCalculator
-import app.pawclock.calculator.DogLifeStageCalculator
 import app.pawclock.domain.usecase.CalculatePetAgeUseCase
 import app.pawclock.feature.quickcalc.fakes.FakeSettingsReader
 import app.pawclock.model.CalculationMethod
@@ -61,10 +57,6 @@ class QuickCalcViewModelTest {
     private fun newViewModel(settingsReader: FakeSettingsReader = FakeSettingsReader()): QuickCalcViewModel {
         val calculatePetAge =
             CalculatePetAgeUseCase(
-                dogAgeCalculator = DogAgeCalculator(),
-                dogLifeStageCalculator = DogLifeStageCalculator(),
-                catAgeCalculator = CatAgeCalculator(),
-                catLifeStageCalculator = CatLifeStageCalculator(),
                 settingsReader = settingsReader,
                 clock = fixedClock,
             )

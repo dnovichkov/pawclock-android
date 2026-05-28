@@ -33,7 +33,7 @@ import org.junit.jupiter.params.provider.CsvSource
  * (обе подгруппы используют одну и ту же шкалу старения по AKC/AAHA 2019).
  */
 class DogAgeCalculatorSizeBasedTest {
-    private val calculator = DogAgeCalculator()
+    private val calculator = DogAgeCalculator
 
     @ParameterizedTest(name = "AKC table: Toy({0}y) = {1}")
     @CsvSource(

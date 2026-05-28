@@ -27,7 +27,7 @@ import org.junit.jupiter.params.provider.CsvSource
  * DOI: 10.1177/1098612X21993657
  */
 class CatAgeCalculatorTest {
-    private val calculator = CatAgeCalculator()
+    private val calculator = CatAgeCalculator
 
     @Test
     fun `1 year cat equals 15 human years`() {

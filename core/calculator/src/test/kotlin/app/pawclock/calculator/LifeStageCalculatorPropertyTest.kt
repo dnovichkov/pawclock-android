@@ -29,8 +29,8 @@ import org.junit.jupiter.api.Test
  * Источники: AAHA 2019 (собаки), AAHA/AAFP 2021 (кошки), DOI: 10.1177/1098612X21993657.
  */
 class LifeStageCalculatorPropertyTest {
-    private val dogCalculator = DogLifeStageCalculator()
-    private val catCalculator = CatLifeStageCalculator()
+    private val dogCalculator = DogLifeStageCalculator
+    private val catCalculator = CatLifeStageCalculator
 
     private val config = PropTestConfig(iterations = PROPERTY_ITERATIONS)
 

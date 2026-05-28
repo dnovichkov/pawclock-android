@@ -1,9 +1,5 @@
 package app.pawclock.domain.usecase
 
-import app.pawclock.calculator.CatAgeCalculator
-import app.pawclock.calculator.CatLifeStageCalculator
-import app.pawclock.calculator.DogAgeCalculator
-import app.pawclock.calculator.DogLifeStageCalculator
 import app.pawclock.domain.fakes.FakeSettingsReader
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.LifeStage
@@ -34,10 +30,6 @@ class CalculatePetAgeUseCaseTest {
 
     private fun useCase(defaultMethod: CalculationMethod = CalculationMethod.EPIGENETIC): CalculatePetAgeUseCase =
         CalculatePetAgeUseCase(
-            dogAgeCalculator = DogAgeCalculator(),
-            dogLifeStageCalculator = DogLifeStageCalculator(),
-            catAgeCalculator = CatAgeCalculator(),
-            catLifeStageCalculator = CatLifeStageCalculator(),
             settingsReader = FakeSettingsReader(defaultMethod),
             clock = fixedClock,
         )

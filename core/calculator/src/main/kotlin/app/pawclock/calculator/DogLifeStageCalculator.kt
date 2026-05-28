@@ -7,6 +7,7 @@ package app.pawclock.calculator
 
 import app.pawclock.model.DogSize
 import app.pawclock.model.LifeStage
+import app.pawclock.model.Species
 
 /**
  * Калькулятор стадии жизни собаки по возрасту и размеру.
@@ -32,7 +33,25 @@ import app.pawclock.model.LifeStage
  *
  * См. также спецификацию PawClock §4.1 и ADR-0006.
  */
-class DogLifeStageCalculator {
+data object DogLifeStageCalculator : LifeStageCalculator {
+    override val species: Species = Species.Dog
+
+    /**
+     * Унифицированная точка диспатча из [LifeStageCalculator]: делегирует в перегрузку
+     * [determine] с явным `size`.
+     *
+     * @throws IllegalArgumentException если [params] не является [SpeciesParams.Dog].
+     */
+    override fun determine(
+        ageInYears: Double,
+        params: SpeciesParams,
+    ): LifeStage {
+        require(params is SpeciesParams.Dog) {
+            "DogLifeStageCalculator requires SpeciesParams.Dog, got ${params::class.simpleName}"
+        }
+        return determine(ageInYears, params.size)
+    }
+
     /**
      * Возвращает стадию жизни собаки по возрасту и размеру.
      *
@@ -75,17 +94,15 @@ class DogLifeStageCalculator {
             DogSize.Giant -> 6.0..8.0
         }
 
-    internal companion object {
-        /**
-         * Возраст начала YoungAdult-стадии (≈ 9 месяцев — медиана AAHA-guidelines по
-         * половой зрелости: маленькие в 6–9 мес, гигантские в 12–18 мес; используем
-         * единый порог 0.75 для всех размеров — упрощение, оправданное для consumer-app).
-         */
-        internal const val YOUNG_ADULT_START: Double = 0.75
+    /**
+     * Возраст начала YoungAdult-стадии (≈ 9 месяцев — медиана AAHA-guidelines по
+     * половой зрелости: маленькие в 6–9 мес, гигантские в 12–18 мес; используем
+     * единый порог 0.75 для всех размеров — упрощение, оправданное для consumer-app).
+     */
+    internal const val YOUNG_ADULT_START: Double = 0.75
 
-        /**
-         * Возраст начала MatureAdult-стадии — социальная зрелость по AAHA 2019.
-         */
-        internal const val MATURE_ADULT_START: Double = 3.0
-    }
+    /**
+     * Возраст начала MatureAdult-стадии — социальная зрелость по AAHA 2019.
+     */
+    internal const val MATURE_ADULT_START: Double = 3.0
 }

@@ -159,17 +159,17 @@
 ## Implementation Steps
 
 ### Task 1: Sealed AgeCalculator interface + Dog/Cat migration
-- [ ] write FAILING test `AgeCalculatorTest` в `:core:domain` (или `:core:calculator`): убеждается, что `AgeCalculator.forSpecies(Species.Dog)` возвращает не-null, `.toHumanYears(pet)` для Dog и Cat работает; `AgeCalculator.forSpecies(Species.Rabbit)` возвращает `UnsupportedSpeciesCalculator` или throws `UnsupportedSpeciesException` (зависит от выбранной API)
-- [ ] verify tests fail — **Red**
-- [ ] create `sealed interface AgeCalculator` в `:core:calculator` с методом `fun toHumanYears(ageInYears: Double, params: SpeciesParams): Double` (где `SpeciesParams` — sealed marker-class с вариантами `Dog(size, method)`, `Cat(catType)`, `Rabbit(size)` и т.д.) ИЛИ паттерн с per-calculator конкретным методом (тип-safe через sealed Species → один-к-одному calculator); выбрать декомпозицию которая лучше совместима с экзишн UseCase
-- [ ] create `LifeStageCalculator` sealed interface аналогично (один-к-одному с calculator)
-- [ ] refactor `DogAgeCalculator` → `data object DogAgeCalculator : AgeCalculator` (сохраняем API toHumanYears(age, method, size?))
-- [ ] refactor `CatAgeCalculator` → `data object CatAgeCalculator : AgeCalculator`
-- [ ] refactor `CalculatePetAgeUseCase` чтобы использовать `AgeCalculator.forSpecies(pet.species)` вместо явного `when (pet.species) { Dog -> ..., Cat -> ... }`
-- [ ] add factory `AgeCalculator.Companion.forSpecies(Species): AgeCalculator?` — null для not-yet-implemented видов
-- [ ] verify все pre-existing тесты Plan 1 продолжают проходить — **Green** для refactor
-- [ ] write tests for refactor invariants: forSpecies(Dog) == DogAgeCalculator, forSpecies(Cat) == CatAgeCalculator, forSpecies(Rabbit) == null до Task 2
-- [ ] run `./gradlew :core:calculator:test :core:domain:test --no-daemon` — must pass before next task
+- [x] write FAILING test `AgeCalculatorTest` в `:core:domain` (или `:core:calculator`): убеждается, что `AgeCalculator.forSpecies(Species.Dog)` возвращает не-null, `.toHumanYears(pet)` для Dog и Cat работает; `AgeCalculator.forSpecies(Species.Rabbit)` возвращает `UnsupportedSpeciesCalculator` или throws `UnsupportedSpeciesException` (зависит от выбранной API) — создан `AgeCalculatorTest` + `LifeStageCalculatorTest` в `:core:calculator`; `forSpecies(Rabbit)` возвращает `null` (выбранный API)
+- [x] verify tests fail — **Red**
+- [x] create `sealed interface AgeCalculator` в `:core:calculator` с методом `fun toHumanYears(ageInYears: Double, params: SpeciesParams): Double` (где `SpeciesParams` — sealed marker-class с вариантами `Dog(size, method)`, `Cat(catType)`, `Rabbit(size)` и т.д.) ИЛИ паттерн с per-calculator конкретным методом (тип-safe через sealed Species → один-к-одному calculator); выбрать декомпозицию которая лучше совместима с экзишн UseCase — выбран `SpeciesParams` sealed-маркер (`Dog(method,size)`, `Cat(type)`); runtime `require(params is …)` в каждой реализации
+- [x] create `LifeStageCalculator` sealed interface аналогично (один-к-одному с calculator)
+- [x] refactor `DogAgeCalculator` → `data object DogAgeCalculator : AgeCalculator` (сохраняем API toHumanYears(age, method, size?)) — companion-константы перенесены в тело object (companion у object недоступен), путь доступа сохранён
+- [x] refactor `CatAgeCalculator` → `data object CatAgeCalculator : AgeCalculator`
+- [x] refactor `CalculatePetAgeUseCase` чтобы использовать `AgeCalculator.forSpecies(pet.species)` вместо явного `when (pet.species) { Dog -> ..., Cat -> ... }` — калькуляторы больше не инжектируются (конструктор сокращён до `settingsReader, clock`); `when` остался только в `resolveParams` для сборки `SpeciesParams` + выбора метода
+- [x] add factory `AgeCalculator.Companion.forSpecies(Species): AgeCalculator?` — null для not-yet-implemented видов
+- [x] verify все pre-existing тесты Plan 1 продолжают проходить — **Green** для refactor (обновлены 3 места конструирования UseCase + 9 calc-тестов с `()` → object-ссылка + `DomainModule`)
+- [x] write tests for refactor invariants: forSpecies(Dog) == DogAgeCalculator, forSpecies(Cat) == CatAgeCalculator, forSpecies(Rabbit) == null до Task 2
+- [x] run `./gradlew :core:calculator:test :core:domain:test --no-daemon` — must pass before next task (также прогнаны `:feature:quickcalc:test`, `:feature:pets:test`, `:app:compileDebugKotlin`, detekt + koverVerify — всё зелёное)
 
 ### Task 2: RabbitAgeCalculator + life stages (TDD)
 - [ ] write FAILING test `RabbitAgeCalculatorTest` (по §4.3, кусочная формула):
