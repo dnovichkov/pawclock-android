@@ -88,12 +88,27 @@ class ExportPetsUseCaseTest {
         }
 
     @Test
-    fun `csv export is not yet implemented`() =
+    fun `csv export yields header plus one data row per pet`() =
+        runTest {
+            val repo = FakePetRepository()
+            repo.seed(listOf(pet("Рекс"), pet("Мурка", Species.Cat, "indoor_short_hair")))
+            val useCase = ExportPetsUseCase(repo, clock)
+
+            val output = useCase(ExportFormat.CSV)
+
+            val rows = output.split("\r\n")
+            assertEquals("name,species_id,subcategory_id,birth_date,gender_id,weight_kg,notes", rows.first())
+            assertEquals(3, rows.size, "заголовок + по одной строке на каждого из двух питомцев")
+        }
+
+    @Test
+    fun `csv export of empty list yields header only`() =
         runTest {
             val useCase = ExportPetsUseCase(FakePetRepository(), clock)
 
-            // CSV-сериализатор появляется в Task 18; до тех пор ветка явно не реализована.
-            assertFailsWith<NotImplementedError> { useCase(ExportFormat.CSV) }
+            val output = useCase(ExportFormat.CSV)
+
+            assertEquals("name,species_id,subcategory_id,birth_date,gender_id,weight_kg,notes", output)
         }
 
     /** [PetRepository], у которого чтение всегда падает — для проверки проброса IO-ошибок. */

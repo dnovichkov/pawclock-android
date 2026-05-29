@@ -6,7 +6,7 @@ package app.pawclock.domain.export
  *  - [JSON] — каноничный формат с версионируемой схемой ([PetsExportSchema]); сохраняет типы
  *    и null-семантику, удобен для переноса между устройствами.
  *  - [CSV] — табличный формат (RFC 4180) для совместимости с Excel/Sheets; человекочитаем,
- *    но теряет вложенную структуру. Реализуется в Task 18.
+ *    но теряет вложенную структуру (нет `schema_version`/`exported_at` в теле файла).
  */
 enum class ExportFormat {
     JSON,

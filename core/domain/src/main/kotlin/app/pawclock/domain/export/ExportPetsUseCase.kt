@@ -24,14 +24,13 @@ class ExportPetsUseCase(
     /**
      * @param format формат экспорта ([ExportFormat.JSON] / [ExportFormat.CSV])
      * @return сериализованное содержимое бэкапа
-     * @throws NotImplementedError для [ExportFormat.CSV] до реализации в Task 18
      */
     suspend operator fun invoke(format: ExportFormat): String {
         val pets = petRepository.getAll()
         val exportedAt = clock.instant()
         return when (format) {
             ExportFormat.JSON -> PetsJsonSerializer.encode(pets, exportedAt)
-            ExportFormat.CSV -> TODO("CSV-сериализатор реализуется в Plan 2 Task 18")
+            ExportFormat.CSV -> PetsCsvSerializer.encode(pets, exportedAt)
         }
     }
 }

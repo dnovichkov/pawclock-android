@@ -493,19 +493,13 @@
 - [x] run `./gradlew :core:domain:test --no-daemon` — зелёное (также прогнаны `:core:domain:detekt`, `:core:domain:koverVerify` ≥90%, `:core:database:compileDebugKotlin`, `:app:compileDebugKotlin`, `:feature:pets:test`, `:feature:editor:test` — изменение интерфейса не сломало зависимые модули)
 
 ### Task 18: Export Pets — CSV serializer (TDD)
-- [ ] write FAILING test `PetsCsvSerializerTest`:
-  - `serializes single Dog pet to CSV with header row`
-  - `escapes commas and quotes in name/notes fields` (RFC 4180)
-  - `newlines in notes are escaped as quoted fields`
-  - `null fields are empty cells, not the string "null"`
-  - `birthDate is ISO-8601 string`
-  - `header row uses snake_case column names`
-- [ ] verify tests fail — **Red**
-- [ ] create `PetsCsvSerializer.encode(pets: List<Pet>, exportedAt: Instant): String` — pure-Kotlin RFC 4180 implementation; header = `name,species_id,subcategory_id,birth_date,gender_id,weight_kg,notes`
-- [ ] verify — **Green**
-- [ ] update `ExportPetsUseCase` чтобы поддерживать обе формы (когда `format = CSV`, использовать `PetsCsvSerializer`)
-- [ ] write tests для ExportPetsUseCase с CSV
-- [ ] run tests
+- [x] write FAILING test `PetsCsvSerializerTest`: покрыты `serializes single Dog pet to CSV with header row`, `escapes commas and quotes in name and notes fields` (RFC 4180, удвоение `""`), `newlines in notes are escaped as quoted fields` (встроенный `\n` не разрывает запись), `null fields are empty cells not the string null`, `birthDate is ISO-8601 string`, `header row uses snake_case column names` (6 тестов)
+- [x] verify tests fail — **Red** (тесты ссылались на несуществующий `PetsCsvSerializer` — заведомая compile-failure до реализации, как в Task 17)
+- [x] create `PetsCsvSerializer.encode(pets: List<Pet>, exportedAt: Instant): String` — pure-Kotlin RFC 4180 implementation; header = `name,species_id,subcategory_id,birth_date,gender_id,weight_kg,notes`; разделитель записей CRLF (`\r\n`), без финального line break; `escape()` единым проходом по `List<String?>` (null → пустая ячейка, `,`/`"`/`\r`/`\n` → закавычивание с удвоением кавычек); `exportedAt` принят для симметрии сигнатуры с `PetsJsonSerializer`, но в плоский CSV не пишется (преамбула сломала бы контракт «первая строка = заголовок»; `@Suppress("UNUSED_PARAMETER")` + KDoc)
+- [x] verify — **Green** (`PetsCsvSerializerTest` 6/0/0)
+- [x] update `ExportPetsUseCase` чтобы поддерживать обе формы (CSV-ветка `when` теперь вызывает `PetsCsvSerializer.encode`; удалён `TODO()`; обновлён KDoc `ExportFormat.CSV`)
+- [x] write tests для ExportPetsUseCase с CSV: `csv export yields header plus one data row per pet`, `csv export of empty list yields header only` (заменили временный тест `csv export is not yet implemented`)
+- [x] run tests — `./gradlew :core:domain:test :core:domain:detekt :core:domain:koverVerify` зелёное (kover ≥90%; изменение локализовано в `:core:domain`, CSV пока нигде не потребляется — Settings UI в Task 21)
 
 ### Task 19: Import Pets — JSON deserializer + ImportPetsUseCase (TDD)
 - [ ] write FAILING test `PetsJsonDeserializerTest`:
