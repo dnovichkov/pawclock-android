@@ -4,10 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.pawclock.domain.pet.UnsupportedSpeciesException
 import app.pawclock.domain.usecase.CalculatePetAgeUseCase
+import app.pawclock.model.BirdType
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
+import app.pawclock.model.FishType
+import app.pawclock.model.HamsterType
+import app.pawclock.model.HorseType
 import app.pawclock.model.Pet
+import app.pawclock.model.RabbitSize
+import app.pawclock.model.ReptileType
 import app.pawclock.model.Species
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Clock
@@ -184,11 +190,29 @@ class QuickCalcViewModel
                     )
             }
 
+        /**
+         * Дефолтная подкатегория, если пользователь её не выбрал (Plan 2, Task 16).
+         *
+         * Значения зеркалят дефолты [CalculatePetAgeUseCase] (срединная/самая распространённая
+         * категория), чтобы UX был мягче — можно «погуглить» возраст не выбирая подкатегорию.
+         * Виды без подкатегорий (GuineaPig/Rat/Mouse/Ferret) возвращают `""`: их `SpeciesParams`
+         * не используют subcategory, а пустая строка не резолвится ни в один enum (no-op).
+         */
         private fun defaultSubcategoryFor(species: Species): String =
             when (species) {
                 Species.Dog -> DogSize.Medium.id
                 Species.Cat -> CatType.IndoorShortHair.id
-                else -> ""
+                Species.Rabbit -> RabbitSize.Medium.id
+                Species.Hamster -> HamsterType.Syrian.id
+                Species.Bird -> BirdType.Budgerigar.id
+                Species.Reptile -> ReptileType.BeardedDragon.id
+                Species.Horse -> HorseType.LightHorse.id
+                Species.Fish -> FishType.Goldfish.id
+                Species.GuineaPig,
+                Species.Rat,
+                Species.Mouse,
+                Species.Ferret,
+                -> ""
             }
 
         /**

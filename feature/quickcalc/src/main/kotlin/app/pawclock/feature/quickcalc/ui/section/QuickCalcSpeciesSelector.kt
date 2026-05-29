@@ -21,10 +21,10 @@ import app.pawclock.feature.quickcalc.R
 import app.pawclock.model.Species
 
 /**
- * Селектор вида питомца для Quick Calculator (Task 20).
+ * Селектор вида питомца для Quick Calculator (Task 20 / Plan 1; расширен в Task 16 / Plan 2).
  *
- * В Plan 1 показывает только Dog/Cat (фильтр `Species.implemented()`); остальные виды
- * появятся в Plan 2.
+ * Итерирует `Species.implemented()` — после Plan 2 это все 12 видов. Иконка слева, метка
+ * вида локализуется через [speciesLabelRes].
  */
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -69,9 +69,16 @@ private fun speciesLabelRes(species: Species): Int =
     when (species) {
         Species.Dog -> R.string.quick_calc_species_dog
         Species.Cat -> R.string.quick_calc_species_cat
-        // Not-yet-implemented виды используют species_dog как нейтральный fallback;
-        // Plan 2 расширит список implemented() и добавит реальные строки.
-        else -> R.string.quick_calc_species_dog
+        Species.Rabbit -> R.string.quick_calc_species_rabbit
+        Species.Hamster -> R.string.quick_calc_species_hamster
+        Species.GuineaPig -> R.string.quick_calc_species_guinea_pig
+        Species.Rat -> R.string.quick_calc_species_rat
+        Species.Mouse -> R.string.quick_calc_species_mouse
+        Species.Ferret -> R.string.quick_calc_species_ferret
+        Species.Bird -> R.string.quick_calc_species_bird
+        Species.Reptile -> R.string.quick_calc_species_reptile
+        Species.Horse -> R.string.quick_calc_species_horse
+        Species.Fish -> R.string.quick_calc_species_fish
     }
 
 internal fun quickCalcSpeciesChipTag(species: Species): String = "quick_calc_species_chip_${species.id}"

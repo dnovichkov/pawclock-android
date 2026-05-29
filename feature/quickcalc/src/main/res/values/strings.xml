@@ -17,9 +17,19 @@
     <string name="quick_calc_birth_date_label">Дата рождения *</string>
     <string name="quick_calc_method_label">Метод расчёта</string>
 
-    <!-- Species labels -->
+    <!-- Species labels (Plan 2, Task 16 — все 12 видов) -->
     <string name="quick_calc_species_dog">Собака</string>
     <string name="quick_calc_species_cat">Кошка</string>
+    <string name="quick_calc_species_rabbit">Кролик</string>
+    <string name="quick_calc_species_hamster">Хомяк</string>
+    <string name="quick_calc_species_guinea_pig">Морская свинка</string>
+    <string name="quick_calc_species_rat">Крыса</string>
+    <string name="quick_calc_species_mouse">Мышь</string>
+    <string name="quick_calc_species_ferret">Хорёк</string>
+    <string name="quick_calc_species_bird">Птица</string>
+    <string name="quick_calc_species_reptile">Рептилия</string>
+    <string name="quick_calc_species_horse">Лошадь</string>
+    <string name="quick_calc_species_fish">Рыба</string>
 
     <!-- Subcategory labels (соответствуют DogSize/CatType id'шникам) -->
     <string name="quick_calc_subcategory_toy">Той</string>
@@ -31,6 +41,48 @@
     <string name="quick_calc_subcategory_indoor_long_hair">Домашняя длинношёрстная</string>
     <string name="quick_calc_subcategory_outdoor">Уличная</string>
     <string name="quick_calc_subcategory_large_breed">Крупная порода</string>
+
+    <!-- Subcategory labels для новых видов (Plan 2, Task 16; финальная вычитка — Task 22) -->
+    <string name="rabbit_size_dwarf">Карликовый</string>
+    <string name="rabbit_size_small">Малый</string>
+    <string name="rabbit_size_medium">Средний</string>
+    <string name="rabbit_size_large">Крупный</string>
+    <string name="rabbit_size_giant">Гигантский</string>
+    <string name="hamster_type_syrian">Сирийский</string>
+    <string name="hamster_type_dwarf">Карликовый</string>
+    <string name="hamster_type_roborovski">Роборовского</string>
+    <string name="hamster_type_chinese">Китайский</string>
+    <string name="hamster_type_winter_white">Джунгарский</string>
+    <string name="bird_type_budgerigar">Волнистый попугай</string>
+    <string name="bird_type_cockatiel">Корелла</string>
+    <string name="bird_type_canary">Канарейка</string>
+    <string name="bird_type_lovebird">Неразлучник</string>
+    <string name="bird_type_conure">Аратинга</string>
+    <string name="bird_type_amazon">Амазон</string>
+    <string name="bird_type_african_grey">Жако</string>
+    <string name="bird_type_cockatoo">Какаду</string>
+    <string name="bird_type_macaw">Ара</string>
+    <string name="bird_type_pigeon">Голубь</string>
+    <string name="reptile_type_box_turtle">Коробчатая черепаха</string>
+    <string name="reptile_type_red_eared_slider">Красноухая черепаха</string>
+    <string name="reptile_type_bearded_dragon">Бородатая агама</string>
+    <string name="reptile_type_ball_python">Королевский питон</string>
+    <string name="reptile_type_corn_snake">Маисовый полоз</string>
+    <string name="reptile_type_green_iguana">Зелёная игуана</string>
+    <string name="reptile_type_leopard_gecko">Леопардовый геккон</string>
+    <string name="reptile_type_crested_gecko">Реснитчатый геккон</string>
+    <string name="horse_type_pony">Пони</string>
+    <string name="horse_type_light_horse">Верховая</string>
+    <string name="horse_type_draft_horse">Тяжеловоз</string>
+    <string name="horse_type_thoroughbred">Чистокровная</string>
+    <string name="fish_type_goldfish">Золотая рыбка</string>
+    <string name="fish_type_koi">Кои</string>
+    <string name="fish_type_betta">Петушок</string>
+    <string name="fish_type_guppy">Гуппи</string>
+    <string name="fish_type_angelfish">Скалярия</string>
+    <string name="fish_type_neon_tetra">Неон</string>
+    <string name="fish_type_tropical">Тропическая</string>
+    <string name="fish_type_discus">Дискус</string>
 
     <!-- Date picker -->
     <string name="quick_calc_date_ok">ОК</string>
@@ -55,6 +107,12 @@
     <string name="quick_calc_result_explanation_epigenetic">Формула Wang et al. (Cell Systems 2020, DOI 10.1016/j.cels.2020.06.006): ЧГ = 16 · ln(age) + 31. Основана на метилировании ДНК — более точна, чем традиционная формула «1 год = 7 лет».</string>
     <string name="quick_calc_result_explanation_size_based">Табличный метод AKC/AAHA 2019: возраст в человеческих годах берётся из опубликованной таблицы и зависит от размерного класса (Toy / Small / Medium / Large / Giant).</string>
     <string name="quick_calc_result_explanation_aafp">Возрастные ориентиры AAHA/AAFP 2021: кусочно-линейная формула — котёнок (15 ЧГ за первый год) + молодой кот (+9 ЧГ за второй) + +4 ЧГ за каждый следующий. Не зависит от метода Wang.</string>
+    <string name="quick_calc_result_explanation_rabbit">Метод House Rabbit Society + AVMA: кусочная формула — 30 ЧГ/год до 4 месяцев, затем замедление; с 1 года = 21 ЧГ + 6 ЧГ за каждый следующий год. Размер влияет лишь на ожидаемую продолжительность жизни.</string>
+    <string name="quick_calc_result_explanation_hamster">Метод RVC VetCompass + Animallama: кусочная формула в месяцах — быстрый старт (1 ЧГ за 4 дня), 6 мес. ≈ 30 ЧГ, затем +3–4 ЧГ за каждый месяц жизни.</string>
+    <string name="quick_calc_result_explanation_guinea_pig">Метод Oxbow + Animallama: кусочная формула — отъём ≈ 6 ЧГ, 5 мес. ≈ 20 ЧГ, далее +8 ЧГ/год до 4 лет и +10 ЧГ/год после.</string>
+    <string name="quick_calc_result_explanation_rat">Метод Sengupta 2013 (Int J Prev Med 4(6):624–630): линейная формула ЧГ = 13.8 · возраст + 1.4.</string>
+    <string name="quick_calc_result_explanation_mouse">Метод Dutta &amp; Sengupta 2016 (Life Sciences 152:244–248): кусочная формула — накопление человеко-дней по фазам жизни мыши с убывающим темпом старения.</string>
+    <string name="quick_calc_result_explanation_ferret">Метод PMC «Senior Ferret» (PMC7129291): кусочная формула — +5 ЧГ/мес. до полугода, 1 год ≈ 40 ЧГ, далее +4 ЧГ за каждый следующий год.</string>
 
     <!-- Life stages — для бот.шита -->
     <string name="quick_calc_life_stage_dog_puppy">Щенок</string>

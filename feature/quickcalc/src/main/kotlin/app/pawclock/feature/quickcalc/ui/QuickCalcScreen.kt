@@ -152,6 +152,7 @@ private fun QuickCalcForm(
 
         if (state.availableSubcategories.isNotEmpty()) {
             QuickCalcSubcategorySelector(
+                species = state.species,
                 options = state.availableSubcategories,
                 selectedId = state.subcategory,
                 onSelect = { onEvent(QuickCalcEvent.SetSubcategory(it)) },

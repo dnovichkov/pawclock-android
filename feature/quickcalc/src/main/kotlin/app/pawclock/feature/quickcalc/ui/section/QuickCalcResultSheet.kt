@@ -128,21 +128,31 @@ private fun explanationTextRes(
     species: Species,
     method: CalculationMethod,
 ): Int =
-    // Для кошек CalculatePetAgeUseCase всегда выставляет method = EPIGENETIC как заглушку
-    // (см. CalculatedAge.method KDoc), поэтому method-based mapping показал бы Wang-2020
-    // объяснение для кота — что неверно по факту (на кота применяется AAFP/AAHA 2021).
-    // Корректно выбирать explanation сначала по species, потом по method.
+    // Объяснение выбирается сначала по виду, потом (только для собаки) по методу.
+    // Для остальных видов CalculatePetAgeUseCase всегда выставляет method = EPIGENETIC как
+    // заглушку (см. CalculatedAge.method KDoc), поэтому method-based mapping показал бы
+    // Wang-2020 объяснение, например, для кота — что неверно (применяется AAFP/AAHA 2021).
+    // Plan 2, Task 16 — все 12 видов покрыты исчерпывающим when (без else).
     when (species) {
+        Species.Dog -> dogExplanationRes(method)
         Species.Cat -> R.string.quick_calc_result_explanation_aafp
+        Species.Rabbit -> R.string.quick_calc_result_explanation_rabbit
+        Species.Hamster -> R.string.quick_calc_result_explanation_hamster
+        Species.GuineaPig -> R.string.quick_calc_result_explanation_guinea_pig
+        Species.Rat -> R.string.quick_calc_result_explanation_rat
+        Species.Mouse -> R.string.quick_calc_result_explanation_mouse
+        Species.Ferret -> R.string.quick_calc_result_explanation_ferret
         Species.Bird -> R.string.quick_calc_result_explanation_bird
         Species.Reptile -> R.string.quick_calc_result_explanation_reptile
         Species.Horse -> R.string.quick_calc_result_explanation_horse
         Species.Fish -> R.string.quick_calc_result_explanation_fish
-        else ->
-            when (method) {
-                CalculationMethod.EPIGENETIC -> R.string.quick_calc_result_explanation_epigenetic
-                CalculationMethod.SIZE_BASED -> R.string.quick_calc_result_explanation_size_based
-            }
+    }
+
+@androidx.annotation.StringRes
+private fun dogExplanationRes(method: CalculationMethod): Int =
+    when (method) {
+        CalculationMethod.EPIGENETIC -> R.string.quick_calc_result_explanation_epigenetic
+        CalculationMethod.SIZE_BASED -> R.string.quick_calc_result_explanation_size_based
     }
 
 // Маппинг стадии жизни в строковый ресурс разбит по виду (диспетчер + под-функции),

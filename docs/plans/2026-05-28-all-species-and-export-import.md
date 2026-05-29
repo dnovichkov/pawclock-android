@@ -436,23 +436,23 @@
 - [x] run `./gradlew :feature:editor:test :feature:editor:assembleDebug --no-daemon` — зелёное (также прогнаны `:feature:editor:compileDebugAndroidTestKotlin` для проверки Compose-тестов + `:feature:editor:detekt`)
 
 ### Task 16: UI расширение QuickCalculator для всех 12 видов
-- [ ] write FAILING test `QuickCalcViewModelTest`:
-  - `SelectSpecies(Rabbit) → availableSubcategories = RabbitSize values + default = Medium`
-  - аналогично для Hamster/Bird/Reptile/Fish/Horse
-  - `Calculate for Rabbit 5y Medium → ~45 ЧГ + Adult`
-  - `Calculate for Bird Budgerigar 3y → ~34.3 ЧГ + Adult`
-  - `Calculate for Horse 10y LightHorse → ~35.5 ЧГ + Senior`
-  - method toggle (Wang/Size) показывается только для Dog (остальные виды — единственный метод)
-- [ ] verify tests fail — **Red**
-- [ ] update `QuickCalcViewModel` чтобы корректно подставлять default subcategory для каждого вида + dispatchить через `AgeCalculator.forSpecies(species)?.toHumanYears(...)`
-- [ ] update Quick Calculator's species selector / subcategory selector / method toggle UI to support all 12 species
-- [ ] update `QuickCalcResultSheet` чтобы "Как это посчитано" блок показывал правильный источник (Wang для Dog EPIGENETIC, AKC для Dog SIZE_BASED, AAFP для Cat, House Rabbit Society для Rabbit, и т.д.) через mapping function
-- [ ] write Compose UI test `QuickCalcScreenTest`:
-  - `result sheet shows ~45 human years + Adult for Rabbit Medium 5y`
-  - `result sheet shows ~34 human years for Budgerigar 3y`
-  - `method toggle hidden for non-Dog species`
-- [ ] verify — **Green**
-- [ ] run `./gradlew :feature:quickcalc:test :feature:quickcalc:assembleDebug --no-daemon`
+- [x] write FAILING test `QuickCalcViewModelTest`:
+  - `SelectSpecies(Rabbit) → availableSubcategories = RabbitSize values + default = Medium` — добавлен `selecting Rabbit exposes RabbitSize subcategories` (как у Dog/Cat, subcategory НЕ предвыбирается; дефолт Medium применяется при расчёте, проверяется отдельным тестом `defaults to Medium`)
+  - аналогично для Hamster/Bird/Reptile/Fish/Horse — объединено в параметризованный `selecting species with subcategories exposes matching enum ids` + `selecting subcategoryless species exposes no subcategories` (GuineaPig/Rat/Mouse/Ferret)
+  - `Calculate for Rabbit 5y Medium → ~45 ЧГ + Adult` (добавлен; 4.999<5 → Adult)
+  - `Calculate for Bird Budgerigar 3y → ~34.3 ЧГ + Adult` (добавлен)
+  - `Calculate for Horse 10y LightHorse → ~35.5 ЧГ + Senior` — ⚠️ исправлено на **Adult**: Senior начинается с 15 лет (HorseLifeStageCalculator из Task 9, AAEP Senior Horse Care); 10y = Adult. План в чек-листе ошибочно указывал Senior
+  - method toggle (Wang/Size) показывается только для Dog — добавлен `setting method on non-Dog Success does not change fixed method` (для не-собаки SetMethod не меняет результат, метод остаётся EPIGENETIC)
+- [x] verify tests fail — **Red** (subcategory-exposure тесты падали: `subcategoriesFor` возвращал emptyList для новых видов; calc-тесты сразу зелёные — расчёт уже диспатчится через UseCase)
+- [x] update `QuickCalcViewModel` чтобы корректно подставлять default subcategory для каждого вида + dispatchить через `AgeCalculator.forSpecies(species)?.toHumanYears(...)` — `QuickCalcState.subcategoriesFor` + `defaultSubcategoryFor` расширены на все 12 видов (зеркалят дефолты `CalculatePetAgeUseCase`); сам dispatch уже идёт через UseCase (synthetic Pet), `when` не дублируется
+- [x] update Quick Calculator's species selector / subcategory selector / method toggle UI to support all 12 species — `speciesLabelRes` (exhaustive 12 видов), `QuickCalcSubcategorySelector` стал **species-aware** `(species, id)` (диспетчер по виду + per-species под-функции — id пересекаются между видами); method toggle уже показывался только для Dog (без изменений)
+- [x] update `QuickCalcResultSheet` чтобы "Как это посчитано" блок показывал правильный источник через mapping function — `explanationTextRes` стал исчерпывающим `when (species)` (Dog→method-based под-функция, Cat→AAFP, Rabbit→House Rabbit Society, Hamster→RVC, GuineaPig→Oxbow, Rat→Sengupta, Mouse→Dutta&Sengupta, Ferret→PMC, Bird/Reptile/Horse/Fish уже были); добавлены 6 строк объяснений ru+en
+- [x] write Compose UI test `QuickCalcScreenTest`:
+  - `result sheet shows ~45 human years + Adult for Rabbit Medium 5y` — `resultSheet_showsRabbitHumanYearsAndAdultStage`
+  - `result sheet shows ~34 human years for Budgerigar 3y` — `resultSheet_showsBirdHumanYears`
+  - `method toggle hidden for non-Dog species` — проверено внутри Rabbit-теста (`quickCalcMethodTag(...).assertDoesNotExist()`); + добавлен `subcategorySelector_showsRabbitSizeChipsForRabbit`
+- [x] verify — **Green** (`:feature:quickcalc:testDebugUnitTest` 22/0; androidTest компилируется)
+- [x] run `./gradlew :feature:quickcalc:test :feature:quickcalc:assembleDebug --no-daemon` — зелёное (также прогнаны `:feature:quickcalc:compileDebugAndroidTestKotlin`, `:feature:quickcalc:detekt`, `:app:assembleDebug` для проверки слияния ресурсов)
 
 ### Task 17: Export Pets — JSON serializer + ExportPetsUseCase (TDD)
 - [ ] write FAILING test `PetsJsonSerializerTest`:
