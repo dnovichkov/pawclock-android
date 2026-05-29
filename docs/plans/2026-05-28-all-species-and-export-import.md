@@ -522,19 +522,17 @@
 - [x] ➕ detekt (обнаружено): `PackageNaming.packagePattern` ослаблен до `[a-z]+(\.[a-z][A-Za-z0-9_]*)*` (разрешает `_` в сегментах пакета) — идиома для reserved-word пакета `import_`; задокументировано комментарием в `detekt.yml`
 
 ### Task 20: Import Pets — CSV deserializer (TDD)
-- [ ] write FAILING test `PetsCsvDeserializerTest`:
-  - `parses valid CSV with header row → List<PetExportEntry>`
-  - `handles quoted fields with commas and newlines (RFC 4180)`
-  - `throws on missing required column (name, species_id, birth_date)`
-  - `throws on row with unknown species_id`
-  - `accepts empty optional cells`
-  - `handles BOM (byte order mark) in UTF-8 encoded CSV from Excel`
-- [ ] verify tests fail — **Red**
-- [ ] create `PetsCsvDeserializer.decode(csv: String): PetsImportResult` — RFC 4180 parser
-- [ ] verify — **Green**
-- [ ] update `ImportPetsUseCase` чтобы определять формат по содержимому (JSON начинается с `{`, CSV — с `name,` или похожего) или принимать `ImportFormat` параметром
-- [ ] write tests для ImportPetsUseCase с CSV
-- [ ] run tests
+- [x] write FAILING test `PetsCsvDeserializerTest` (11 кейсов): valid CSV with header, quoted commas/newlines round-trip (через `PetsCsvSerializer`), missing required column, unknown species_id (fail-fast), empty optional cells → null, BOM из Excel, empty input, blank name, non-numeric weight_kg, unknown gender_id → warning, trailing blank line ignored
+  - ⚠️ «throws» переформулировано (как в Task 19): `decode` НЕ бросает на ошибках данных — возвращает `PetsImportResult.Failure` (Result-контракт sealed `PetsImportResult`); бросает уже `ImportPetsUseCase`. Тесты ассертят `assertIs<PetsImportResult.Failure>` + конкретный подтип `ImportException`
+- [x] verify tests fail — **Red** (compile-failure: `PetsCsvDeserializer`/`ImportEntryValidator` не существовали)
+- [x] create `PetsCsvDeserializer.decode(csv: String): PetsImportResult` — RFC 4180 parser (object, pure-Kotlin); конечный автомат с состоянием `inQuotes` (запятые/переносы/удвоенные кавычки внутри полей); разделитель записей CRLF **или** одиночный LF (терпим к разным инструментам); снятие ведущего BOM `U+FEFF` (иначе прилипает к первой колонке заголовка); пустые ячейки опциональных колонок → `null`; финальный перенос строки не создаёт пустую запись; non-numeric `weight_kg` → `MalformedData`
+- [x] verify — **Green** (`PetsCsvDeserializerTest` 11/0/0)
+- [x] update `ImportPetsUseCase` чтобы определять формат по содержимому (`detectFormat`: head после снятия BOM/пробелов начинается с `{`/`[` → JSON, иначе CSV) И принимать явный `format: ExportFormat?` параметр (`null` = авто); диспетчер `when (format ?: detectFormat) { JSON -> jsonDeserializer; CSV -> csvDeserializer }`
+- [x] write tests для ImportPetsUseCase с CSV (5 кейсов): auto-detect CSV, auto-detect JSON, explicit CSV maps fields, CSV REPLACE clears, propagates `UnknownSpecies` (suite вырос 9 → 14)
+- [x] run tests — `:core:domain:test` + `:core:domain:detekt` + `:core:domain:koverVerify` (≥90%) + `:app:compileDebugKotlin` — всё зелёное
+- [x] ➕ refactor (обнаружено, DRY): идентичная пост-валидация записей (пустое имя / неизвестный вид / плохая дата / gender warning) вынесена из `PetsJsonDeserializer` в общий `internal object ImportEntryValidator` — JSON и CSV делят одну протестированную политику вместо двух копий; 13 JSON-тестов подтверждают неизменность поведения
+- [x] ➕ refactor (обнаружено): введён `fun interface PetsDeserializer { decode(input): PetsImportResult }`; оба десериализатора реализуют его (Strategy, как `AgeCalculator` в Task 1), `ImportPetsUseCase` хранит обе стратегии и инжектируемо для тестов; конструктор сменил единый `deserializer` на `jsonDeserializer`/`csvDeserializer`
+- [x] ➕ detekt (обнаружено): `decode` переписан с 3 → 2 return (`firstOrNull ?: return` + единый `when`) под `ReturnCount` лимит 2; `parseRows` помечен `@Suppress("CyclomaticComplexMethod", "NestedBlockDepth")` — конечный автомат CSV неизбежно ветвист, декомпозиция его только запутала бы
 
 ### Task 21: Settings UI — Export/Import buttons + SAF integration
 - [ ] write FAILING test `SettingsViewModelTest`:

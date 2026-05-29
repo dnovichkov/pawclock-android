@@ -1,5 +1,6 @@
 package app.pawclock.domain.import_
 
+import app.pawclock.domain.export.ExportFormat
 import app.pawclock.domain.export.PetExportEntry
 import app.pawclock.domain.pet.PetRepository
 import app.pawclock.model.Gender
@@ -8,28 +9,34 @@ import app.pawclock.model.Species
 import java.time.LocalDate
 
 /**
- * Импортирует питомцев из строки-бэкапа в [PetRepository] (§3.5 спецификации, Plan 2 Task 19).
+ * Импортирует питомцев из строки-бэкапа в [PetRepository] (§3.5 спецификации, Plan 2 Task 19/20).
  *
- * Декодирует ввод через [PetsJsonDeserializer], конвертирует [PetExportEntry] в доменные [Pet]
- * (с `id = 0L` — Room назначит новый PK; `photoPath = null` — фото не переносится) и применяет
- * выбранную [ImportStrategy]. На [PetsImportResult.Failure] пробрасывает [ImportException] —
- * UI-слой (Task 21) ловит его и показывает локализованную ошибку.
+ * Декодирует ввод соответствующим формату [PetsDeserializer], конвертирует [PetExportEntry] в
+ * доменные [Pet] (с `id = 0L` — Room назначит новый PK; `photoPath = null` — фото не переносится)
+ * и применяет выбранную [ImportStrategy]. На [PetsImportResult.Failure] пробрасывает
+ * [ImportException] — UI-слой (Task 21) ловит его и показывает локализованную ошибку.
+ *
+ * Формат ([ExportFormat.JSON] / [ExportFormat.CSV]) определяется автоматически по содержимому
+ * (JSON начинается с `{` или `[`, иначе CSV), либо задаётся явно параметром `format` — SAF может
+ * вернуть файл любого из двух форматов.
  *
  * `dryRun = true` возвращает предпросмотр (количество и предупреждения) без мутации репозитория —
  * для confirm-диалога перед фактическим импортом.
  *
  * @param petRepository целевой репозиторий
- * @param deserializer декодер ввода (по умолчанию [PetsJsonDeserializer]; параметризован для тестов
- *   и для будущей диспетчеризации форматов в Task 20)
+ * @param jsonDeserializer декодер JSON (по умолчанию [PetsJsonDeserializer]; параметризован для тестов)
+ * @param csvDeserializer декодер CSV (по умолчанию [PetsCsvDeserializer]; параметризован для тестов)
  */
 class ImportPetsUseCase(
     private val petRepository: PetRepository,
-    private val deserializer: PetsJsonDeserializer = PetsJsonDeserializer,
+    private val jsonDeserializer: PetsDeserializer = PetsJsonDeserializer,
+    private val csvDeserializer: PetsDeserializer = PetsCsvDeserializer,
 ) {
     /**
      * @param content содержимое импортируемого файла
      * @param strategy стратегия слияния с существующими данными
      * @param dryRun если `true` — только предпросмотр, без записи в репозиторий
+     * @param format явный формат ввода; `null` — определить автоматически по содержимому
      * @return сводка импорта ([ImportSummary])
      * @throws ImportException если ввод не удалось разобрать
      */
@@ -37,7 +44,13 @@ class ImportPetsUseCase(
         content: String,
         strategy: ImportStrategy,
         dryRun: Boolean = false,
+        format: ExportFormat? = null,
     ): ImportSummary {
+        val deserializer =
+            when (format ?: detectFormat(content)) {
+                ExportFormat.JSON -> jsonDeserializer
+                ExportFormat.CSV -> csvDeserializer
+            }
         val success =
             when (val result = deserializer.decode(content)) {
                 is PetsImportResult.Failure -> throw result.error
@@ -74,6 +87,15 @@ class ImportPetsUseCase(
             notes = entry.notes,
             photoPath = null,
         )
+
+    /**
+     * Определяет формат по содержимому: JSON-документ начинается с `{` (объект схемы) или `[`,
+     * иначе считаем CSV (заголовок `name,...`). Ведущий BOM и пробелы игнорируются.
+     */
+    private fun detectFormat(content: String): ExportFormat {
+        val head = content.removePrefix("﻿").trimStart()
+        return if (head.startsWith("{") || head.startsWith("[")) ExportFormat.JSON else ExportFormat.CSV
+    }
 }
 
 /**

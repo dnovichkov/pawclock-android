@@ -1,10 +1,6 @@
 package app.pawclock.domain.import_
 
-import app.pawclock.domain.export.PetExportEntry
 import app.pawclock.domain.export.PetsExportSchema
-import app.pawclock.model.Gender
-import app.pawclock.model.Species
-import java.time.LocalDate
 import kotlinx.serialization.MissingFieldException
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
@@ -27,11 +23,11 @@ import kotlinx.serialization.json.jsonPrimitive
  *     т.к. несовместимая схема могла бы исказить данные);
  *  2. декод в [PetsExportSchema] → [ImportException.MissingRequiredField] при отсутствии
  *     обязательного поля, иначе [ImportException.MalformedData] (битый JSON / неверный тип);
- *  3. по каждой записи: пустое `name` / неизвестный `species_id` / некорректная `birth_date` —
- *     fail-fast ([ImportException.MalformedData] / [ImportException.UnknownSpecies]);
- *  4. неизвестный `gender_id` → [ImportWarning.UnknownGender] (lenient, не отказ).
+ *  3. достоверность каждой записи — делегируется [ImportEntryValidator] (общая с CSV-импортом
+ *     политика: пустое `name` / неизвестный `species_id` / некорректная `birth_date` — fail-fast;
+ *     неизвестный `gender_id` — lenient warning).
  */
-object PetsJsonDeserializer {
+object PetsJsonDeserializer : PetsDeserializer {
     private val json = Json { ignoreUnknownKeys = true }
 
     /**
@@ -39,7 +35,7 @@ object PetsJsonDeserializer {
      * @return [PetsImportResult.Success] с разобранными записями и предупреждениями,
      *   либо [PetsImportResult.Failure] с причиной отказа
      */
-    fun decode(input: String): PetsImportResult {
+    override fun decode(input: String): PetsImportResult {
         unsupportedVersion(input)?.let { return it }
         return parseAndValidate(input)
     }
@@ -59,7 +55,7 @@ object PetsJsonDeserializer {
             }.getOrNull() ?: return null
         val supported = PetsExportSchema.CURRENT_SCHEMA_VERSION
         return if (version > supported) {
-            fail(ImportException.UnsupportedSchemaVersion(version, supported))
+            PetsImportResult.Failure(ImportException.UnsupportedSchemaVersion(version, supported))
         } else {
             null
         }
@@ -69,56 +65,15 @@ object PetsJsonDeserializer {
         val schema =
             runCatching { json.decodeFromString(PetsExportSchema.serializer(), input) }
                 .getOrElse { return mapDecodeError(it) }
-        return validateEntries(schema.pets)
+        return ImportEntryValidator.validate(schema.pets)
     }
 
     private fun mapDecodeError(error: Throwable): PetsImportResult =
         when (error) {
-            is MissingFieldException -> fail(ImportException.MissingRequiredField(error.missingFields))
-            is SerializationException -> fail(ImportException.MalformedData("Malformed export schema", error))
+            is MissingFieldException ->
+                PetsImportResult.Failure(ImportException.MissingRequiredField(error.missingFields))
+            is SerializationException ->
+                PetsImportResult.Failure(ImportException.MalformedData("Malformed export schema", error))
             else -> throw error
         }
-
-    private fun validateEntries(entries: List<PetExportEntry>): PetsImportResult {
-        val warnings = mutableListOf<ImportWarning>()
-        for (entry in entries) {
-            val failure = validateEntry(entry, warnings)
-            if (failure != null) return failure
-        }
-        return PetsImportResult.Success(entries, warnings)
-    }
-
-    /**
-     * Проверяет одну запись и накапливает предупреждения. Возвращает [PetsImportResult.Failure]
-     * при фатальной ошибке (fail-fast) или `null`, если запись принята.
-     */
-    private fun validateEntry(
-        entry: PetExportEntry,
-        warnings: MutableList<ImportWarning>,
-    ): PetsImportResult.Failure? {
-        val structuralError =
-            when {
-                entry.name.isBlank() -> ImportException.MalformedData("Pet name must not be blank")
-                Species.fromString(entry.speciesId) == null -> ImportException.UnknownSpecies(entry.speciesId)
-                !isParseableDate(entry.birthDate) -> ImportException.MalformedData("Invalid birth_date format")
-                else -> null
-            }
-        if (structuralError != null) return fail(structuralError)
-        recordGenderWarning(entry, warnings)
-        return null
-    }
-
-    private fun isParseableDate(value: String): Boolean = runCatching { LocalDate.parse(value) }.isSuccess
-
-    private fun fail(error: ImportException): PetsImportResult.Failure = PetsImportResult.Failure(error)
-
-    private fun recordGenderWarning(
-        entry: PetExportEntry,
-        warnings: MutableList<ImportWarning>,
-    ) {
-        val genderId = entry.genderId ?: return
-        if (Gender.fromId(genderId) == null) {
-            warnings += ImportWarning.UnknownGender(entry.name, genderId)
-        }
-    }
 }
