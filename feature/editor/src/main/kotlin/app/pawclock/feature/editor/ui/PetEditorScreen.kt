@@ -211,6 +211,7 @@ private fun FormContent(
 
         if (state.availableSubcategories.isNotEmpty()) {
             SubcategorySelector(
+                species = state.species,
                 options = state.availableSubcategories,
                 selectedId = state.subcategory,
                 onSelect = { onEvent(PetEditorEvent.SetSubcategory(it)) },

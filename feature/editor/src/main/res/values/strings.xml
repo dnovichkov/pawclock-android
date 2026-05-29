@@ -38,6 +38,58 @@
     <string name="cat_type_outdoor">Уличная</string>
     <string name="cat_type_large_breed">Крупная порода</string>
 
+    <!-- Rabbit size (Plan 2, Task 15; финальный перевод — Task 22) -->
+    <string name="rabbit_size_dwarf">Карликовый</string>
+    <string name="rabbit_size_small">Малый</string>
+    <string name="rabbit_size_medium">Средний</string>
+    <string name="rabbit_size_large">Крупный</string>
+    <string name="rabbit_size_giant">Гигантский</string>
+
+    <!-- Hamster type -->
+    <string name="hamster_type_syrian">Сирийский</string>
+    <string name="hamster_type_dwarf">Карликовый</string>
+    <string name="hamster_type_roborovski">Роборовского</string>
+    <string name="hamster_type_chinese">Китайский</string>
+    <string name="hamster_type_winter_white">Джунгарский</string>
+
+    <!-- Bird type -->
+    <string name="bird_type_budgerigar">Волнистый попугай</string>
+    <string name="bird_type_cockatiel">Корелла</string>
+    <string name="bird_type_canary">Канарейка</string>
+    <string name="bird_type_lovebird">Неразлучник</string>
+    <string name="bird_type_conure">Аратинга</string>
+    <string name="bird_type_amazon">Амазон</string>
+    <string name="bird_type_african_grey">Жако</string>
+    <string name="bird_type_cockatoo">Какаду</string>
+    <string name="bird_type_macaw">Ара</string>
+    <string name="bird_type_pigeon">Голубь</string>
+
+    <!-- Reptile type -->
+    <string name="reptile_type_box_turtle">Коробчатая черепаха</string>
+    <string name="reptile_type_red_eared_slider">Красноухая черепаха</string>
+    <string name="reptile_type_bearded_dragon">Бородатая агама</string>
+    <string name="reptile_type_ball_python">Королевский питон</string>
+    <string name="reptile_type_corn_snake">Маисовый полоз</string>
+    <string name="reptile_type_green_iguana">Зелёная игуана</string>
+    <string name="reptile_type_leopard_gecko">Леопардовый геккон</string>
+    <string name="reptile_type_crested_gecko">Реснитчатый геккон</string>
+
+    <!-- Horse type -->
+    <string name="horse_type_pony">Пони</string>
+    <string name="horse_type_light_horse">Верховая</string>
+    <string name="horse_type_draft_horse">Тяжеловоз</string>
+    <string name="horse_type_thoroughbred">Чистокровная</string>
+
+    <!-- Fish type -->
+    <string name="fish_type_goldfish">Золотая рыбка</string>
+    <string name="fish_type_koi">Кои</string>
+    <string name="fish_type_betta">Петушок</string>
+    <string name="fish_type_guppy">Гуппи</string>
+    <string name="fish_type_angelfish">Скалярия</string>
+    <string name="fish_type_neon_tetra">Неон</string>
+    <string name="fish_type_tropical">Тропическая</string>
+    <string name="fish_type_discus">Дискус</string>
+
     <!-- Gender -->
     <string name="pet_editor_gender_label">Пол</string>
     <string name="pet_editor_gender_male">Самец</string>

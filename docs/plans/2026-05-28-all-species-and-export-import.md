@@ -413,27 +413,27 @@
 - [x] run `./gradlew :core:designsystem:test :feature:pets:test :feature:editor:test :feature:quickcalc:test --no-daemon` — всё зелёное (также прогнаны detekt по 4 модулям + `:app:assembleDebug` для проверки merge ресурсов)
 
 ### Task 15: UI расширение PetEditor для всех 12 видов
-- [ ] write FAILING test `PetEditorViewModelTest`:
+- [x] write FAILING test `PetEditorViewModelTest`:
   - `SelectSpecies(Rabbit) → availableSubcategories = RabbitSize values`
   - `SelectSpecies(Hamster) → HamsterType values`
   - `SelectSpecies(Bird) → BirdType values`
   - `SelectSpecies(Reptile) → ReptileType values`
   - `SelectSpecies(Fish) → FishType values`
   - `SelectSpecies(Horse) → HorseType values`
-  - `SelectSpecies(Rat) → emptyList` (нет подкатегории)
+  - `SelectSpecies(Rat) → emptyList` (нет подкатегории) — объединено в один параметризованный тест `selecting subcategoryless species exposes no subcategories` (Rat/Mouse/Ferret + ➕ GuineaPig — у него тоже нет подкатегорий, см. Task 4)
   - `SelectSpecies(Mouse) → emptyList`
   - `SelectSpecies(Ferret) → emptyList`
-- [ ] verify tests fail — **Red** (поскольку `subcategoriesFor(species)` пока возвращает emptyList для not-Dog/Cat)
-- [ ] update `PetEditorState.subcategoriesFor(species)` чтобы возвращать соответствующие subcategory enum'ы для всех 12 видов
-- [ ] update PetEditor `SpeciesSelector` чтобы показывал `Species.implemented()` (все 12 после Tasks 2-10) — UI автоматически расширится через iteration по списку
-- [ ] update PetEditor `SubcategorySelector` чтобы корректно рендерил label для каждого subcategory type (использует stringResource через mapping function)
-- [ ] add stringResource keys для всех новых subcategories (Task 22 будет добавлять переводы; здесь — структура key + ru default)
-- [ ] write Compose UI test `PetEditorScreenTest`:
-  - `selecting Rabbit shows RabbitSize chips`
-  - `selecting Bird shows BirdType chips`
-  - `selecting Rat hides subcategory section` (для видов без подкатегорий)
-- [ ] verify — **Green**
-- [ ] run `./gradlew :feature:editor:test :feature:editor:assembleDebug --no-daemon`
+- [x] verify tests fail — **Red** (поскольку `subcategoriesFor(species)` пока возвращал emptyList для not-Dog/Cat)
+- [x] update `PetEditorState.subcategoriesFor(species)` чтобы возвращать соответствующие subcategory enum'ы для всех 12 видов — exhaustive `when (Species?)` (8 видов с подкатегориями + 4 без + null); KDoc отмечает, что `label` — fallback, а локализация резолвится через `(species, id)`
+- [x] update PetEditor `SpeciesSelector` чтобы показывал `Species.implemented()` (все 12 после Tasks 2-10) — уже итерирует `Species.implemented()` (изменений не требуется; локализация имён видов — Task 22)
+- [x] update PetEditor `SubcategorySelector` чтобы корректно рендерил label для каждого subcategory type — ⚠️ `subcategoryLabelRes` стал **species-aware** `(species, id)`: id подкатегорий пересекаются между видами (`small`/`medium`/`large`/`giant` у Dog+Rabbit; `dwarf` у Rabbit+Hamster), плоский `when (id)` дал бы коллизии. Диспетчер по виду + per-species под-функции (низкая цикломатическая сложность); `species` прокинут из `PetEditorContent`
+- [x] add stringResource keys для всех новых subcategories — добавлены ключи `rabbit_size_*` (5), `hamster_type_*` (5), `bird_type_*` (10), `reptile_type_*` (8), `horse_type_*` (4), `fish_type_*` (8) в ru + en (en добавлен сразу во избежание missing-translation lint; финальная вычитка — Task 22)
+- [x] write Compose UI test `PetEditorScreenTest`:
+  - `selecting Rabbit shows RabbitSize chips` (`subcategorySelector_showsRabbitSizeChipsForRabbit` — проверяет «Карликовый»/«Гигантский», а не собачьи метки)
+  - `selecting Bird shows BirdType chips` (`subcategorySelector_showsBirdTypeChipsForBird`)
+  - `selecting Rat hides subcategory section` (`subcategorySelector_hiddenForSubcategorylessSpecies`)
+- [x] verify — **Green**
+- [x] run `./gradlew :feature:editor:test :feature:editor:assembleDebug --no-daemon` — зелёное (также прогнаны `:feature:editor:compileDebugAndroidTestKotlin` для проверки Compose-тестов + `:feature:editor:detekt`)
 
 ### Task 16: UI расширение QuickCalculator для всех 12 видов
 - [ ] write FAILING test `QuickCalcViewModelTest`:

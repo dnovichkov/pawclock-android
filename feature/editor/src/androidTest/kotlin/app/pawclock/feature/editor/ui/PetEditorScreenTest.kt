@@ -155,6 +155,68 @@ class PetEditorScreenTest {
     }
 
     @Test
+    fun subcategorySelector_showsRabbitSizeChipsForRabbit() {
+        val state =
+            PetEditorState.Empty.copy(
+                species = Species.Rabbit,
+                availableSubcategories = PetEditorState.subcategoriesFor(Species.Rabbit),
+            )
+        composeRule.setContent {
+            PetEditorContent(
+                state = state,
+                onEvent = { },
+                onBack = { },
+                onSaved = { },
+            )
+        }
+
+        // Локализованные RabbitSize метки, а не «собачьи» (id small/medium/large совпадают
+        // с DogSize, но species=Rabbit резолвит rabbit_size_*).
+        composeRule.onNodeWithText("Карликовый").assertIsDisplayed()
+        composeRule.onNodeWithText("Гигантский").assertIsDisplayed()
+    }
+
+    @Test
+    fun subcategorySelector_showsBirdTypeChipsForBird() {
+        val state =
+            PetEditorState.Empty.copy(
+                species = Species.Bird,
+                availableSubcategories = PetEditorState.subcategoriesFor(Species.Bird),
+            )
+        composeRule.setContent {
+            PetEditorContent(
+                state = state,
+                onEvent = { },
+                onBack = { },
+                onSaved = { },
+            )
+        }
+
+        composeRule.onNodeWithText("Корелла").assertIsDisplayed()
+        composeRule.onNodeWithText("Жако").assertIsDisplayed()
+    }
+
+    @Test
+    fun subcategorySelector_hiddenForSubcategorylessSpecies() {
+        // Rat не имеет подкатегорий → секция «Подкатегория» вообще не рендерится.
+        val state =
+            PetEditorState.Empty.copy(
+                species = Species.Rat,
+                availableSubcategories = PetEditorState.subcategoriesFor(Species.Rat),
+            )
+        composeRule.setContent {
+            PetEditorContent(
+                state = state,
+                onEvent = { },
+                onBack = { },
+                onSaved = { },
+            )
+        }
+
+        composeRule.onNodeWithText("Подкатегория").assertDoesNotExist()
+    }
+
+    @Test
     fun validationErrors_renderEachErrorAsBulletLine() {
         composeRule.setContent {
             PetEditorContent(
