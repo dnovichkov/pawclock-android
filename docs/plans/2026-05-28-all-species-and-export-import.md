@@ -398,19 +398,19 @@
 - [x] run tests — `:core:domain:test` + `:core:domain:detekt` + `:core:domain:koverVerify` (minBound=90) зелёные
 
 ### Task 14: Stylized species icons (vector drawables, §5.6)
-- [ ] research/select SVG-иконки для всех 12 видов в стиле Phosphor / Lucide (моно-линейные, 48dp viewBox); либо нарисовать собственные простые
-- [ ] add `ic_species_{dog,cat,rabbit,hamster,guinea_pig,rat,mouse,ferret,bird,reptile,horse,fish}.xml` как Android Vector Drawables в `:core:designsystem/src/main/res/drawable/`
-- [ ] create `SpeciesIcon` composable в `:core:designsystem` который маппит `Species` → соответствующий `painterResource` (when-блок exhaustive по sealed)
-- [ ] write FAILING test `SpeciesIconTest`:
-  - `Composable for Species.Dog renders successfully` (используя `createComposeRule` или Roborazzi screenshot test opt-in)
-  - все 12 видов имеют не-null painter (через `LocalContext.resources.getIdentifier`)
-- [ ] verify tests — **Green**
-- [ ] update `PetCard` composable в `:feature:pets` — заменить emoji avatar на `SpeciesIcon(pet.species)`
-- [ ] update PetEditor `SpeciesSelector` чтобы рядом с label каждого вида показывался `SpeciesIcon` (uniform layout, иконка слева)
-- [ ] update QuickCalculator `QuickCalcSpeciesSelector` аналогично
-- [ ] add Roborazzi screenshot tests opt-in (как в Plan 1) для каждой иконки (12 snapshots)
-- [ ] update `PetsListScreenTest` если поменялся node tree (emoji → drawable)
-- [ ] run `./gradlew :core:designsystem:test :feature:pets:test :feature:editor:test :feature:quickcalc:test --no-daemon`
+- [x] research/select SVG-иконки для всех 12 видов в стиле Phosphor / Lucide (моно-линейные, 48dp viewBox); либо нарисовать собственные простые — нарисованы собственные простые моно-силуэты (голова+уши для млекопитающих, профиль для bird/horse, силуэты для reptile/fish); viewport 24×24, монохромные (fillColor чёрный, перекрашиваются через Compose `Icon(tint=…)`)
+- [x] add `ic_species_{dog,cat,rabbit,hamster,guinea_pig,rat,mouse,ferret,bird,reptile,horse,fish}.xml` как Android Vector Drawables в `:core:designsystem/src/main/res/drawable/` — созданы 12 файлов (новый `res/drawable/` в модуле; ⚠️ `android:tint="?attr/colorControlNormal"` убран — appcompat-атрибут недоступен в модуле, tint задаётся в Compose)
+- [x] create `SpeciesIcon` composable в `:core:designsystem` который маппит `Species` → соответствующий `painterResource` (when-блок exhaustive по sealed) — `SpeciesIcon.kt`: composable + `@DrawableRes speciesIconRes(species)` с exhaustive `when` (R = `app.pawclock.core.designsystem.R`)
+- [x] write FAILING test `SpeciesIconTest`:
+  - `Composable for Species.Dog renders successfully` (используя `createComposeRule` или Roborazzi screenshot test opt-in) — рендер-проверка через opt-in `SpeciesIconScreenshotTest` (captureRoboImage по всем 12 видам; падение composable = падение capture)
+  - все 12 видов имеют не-null painter (через `LocalContext.resources.getIdentifier`) — реализовано через Robolectric + `ResourcesCompat.getDrawable` (резолв реальных ассетов модуля) + уникальность + исчерпываемость маппинга
+- [x] verify tests — **Green** (`SpeciesIconTest` 3/3 PASSED; `SpeciesIconScreenshotTest` SKIPPED — opt-in)
+- [x] update `PetCard` composable в `:feature:pets` — заменить emoji avatar на `SpeciesIcon(pet.species)` — `SpeciesAvatar` сохранил круг `primaryContainer`, emoji-`Text` заменён на `SpeciesIcon(tint=onPrimaryContainer)`
+- [x] update PetEditor `SpeciesSelector` чтобы рядом с label каждого вида показывался `SpeciesIcon` (uniform layout, иконка слева) — добавлен `leadingIcon = { SpeciesIcon(... size 18dp) }` в `FilterChip`
+- [x] update QuickCalculator `QuickCalcSpeciesSelector` аналогично — добавлен `leadingIcon` в `FilterChip`
+- [x] add Roborazzi screenshot tests opt-in (как в Plan 1) для каждой иконки (12 snapshots) — `SpeciesIconScreenshotTest` (цикл по `Species.all()` → 12 PNG `SpeciesIcon_{id}.png`); baseline PNG не коммитятся (как и Plan 1 — тесты opt-in/skipped в CI)
+- [x] update `PetsListScreenTest` если поменялся node tree (emoji → drawable) — изменений не требуется: тест ассертит имена питомцев + FAB, не аватар; emoji-ссылок в нём нет
+- [x] run `./gradlew :core:designsystem:test :feature:pets:test :feature:editor:test :feature:quickcalc:test --no-daemon` — всё зелёное (также прогнаны detekt по 4 модулям + `:app:assembleDebug` для проверки merge ресурсов)
 
 ### Task 15: UI расширение PetEditor для всех 12 видов
 - [ ] write FAILING test `PetEditorViewModelTest`:

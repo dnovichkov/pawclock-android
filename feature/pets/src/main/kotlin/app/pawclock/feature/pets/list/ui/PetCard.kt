@@ -18,6 +18,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import app.pawclock.designsystem.components.LifeStageChip
 import app.pawclock.designsystem.components.PawClockCard
+import app.pawclock.designsystem.components.SpeciesIcon
 import app.pawclock.model.LifeStage
 import app.pawclock.model.Pet
 import app.pawclock.model.Species
@@ -84,19 +85,14 @@ fun PetCard(
 }
 
 /**
- * Аватар вида — placeholder-кружок с инициалом вида.
+ * Аватар вида — кружок `primaryContainer` с векторной иконкой вида (§5.6, Task 14).
  *
- * В Plan 2 заменится на векторные иконки из Material Icons / собственного набора.
- * Цвет — `primaryContainer` (та же семантика, что у Puppy-стадии — «свежо, живое»).
+ * Заменил emoji-плейсхолдер Plan 1 на [SpeciesIcon] — теперь все 12 видов имеют узнаваемую
+ * иконку (а не «?»). Цвет иконки — `onPrimaryContainer` (контраст к фону кружка); сама иконка
+ * монохромная, поэтому [SpeciesIcon] перекрашивает её через tint.
  */
 @Composable
 private fun SpeciesAvatar(species: Species) {
-    val labelChar =
-        when (species) {
-            Species.Dog -> "🐶"
-            Species.Cat -> "🐱"
-            else -> "?"
-        }
     Box(
         modifier =
             Modifier
@@ -105,14 +101,18 @@ private fun SpeciesAvatar(species: Species) {
                 .background(MaterialTheme.colorScheme.primaryContainer),
         contentAlignment = Alignment.Center,
     ) {
-        Text(
-            text = labelChar,
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier.padding(4.dp),
+        SpeciesIcon(
+            species = species,
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier =
+                Modifier
+                    .padding(ICON_PADDING_DP.dp)
+                    .size(ICON_SIZE_DP.dp),
         )
     }
 }
 
 private const val AVATAR_SIZE_DP: Int = 48
+private const val ICON_SIZE_DP: Int = 28
+private const val ICON_PADDING_DP: Int = 4
 private const val SPACER_DP: Int = 12

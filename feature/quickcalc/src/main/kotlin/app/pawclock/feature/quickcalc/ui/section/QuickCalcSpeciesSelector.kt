@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import app.pawclock.designsystem.components.SpeciesIcon
 import app.pawclock.feature.quickcalc.R
 import app.pawclock.model.Species
 
@@ -49,6 +51,12 @@ internal fun QuickCalcSpeciesSelector(
                     selected = selected == species,
                     onClick = { onSelect(species) },
                     label = { Text(text = stringResource(speciesLabelRes(species))) },
+                    leadingIcon = {
+                        SpeciesIcon(
+                            species = species,
+                            modifier = Modifier.size(CHIP_ICON_DP.dp),
+                        )
+                    },
                     border = FilterChipDefaults.filterChipBorder(enabled = true, selected = selected == species),
                 )
             }
@@ -70,3 +78,4 @@ internal fun quickCalcSpeciesChipTag(species: Species): String = "quick_calc_spe
 
 private const val CHIP_LABEL_GAP_DP: Int = 8
 private const val CHIP_SPACING_DP: Int = 8
+private const val CHIP_ICON_DP: Int = 18

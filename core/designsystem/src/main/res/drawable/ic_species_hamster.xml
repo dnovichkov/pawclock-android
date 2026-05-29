@@ -1,0 +1,12 @@
+<!--
+  Иконка вида «Хомяк» (§5.6): круглая голова + два маленьких круглых уха сверху.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M5,13 a7,7 0 1,0 14,0 a7,7 0 1,0 -14,0 Z M5,6 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0 Z M15,6 a2,2 0 1,0 4,0 a2,2 0 1,0 -4,0 Z" />
+</vector>

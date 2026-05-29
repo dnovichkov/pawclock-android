@@ -1,0 +1,13 @@
+<!--
+  Иконка вида «Морская свинка» (§5.6): плотное горизонтальное овальное тело
+  без выраженной шеи + два небольших уха.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M3,13 a9,5.5 0 1,0 18,0 a9,5.5 0 1,0 -18,0 Z M4.5,6.5 a1.8,1.8 0 1,0 3.6,0 a1.8,1.8 0 1,0 -3.6,0 Z M15.9,6.5 a1.8,1.8 0 1,0 3.6,0 a1.8,1.8 0 1,0 -3.6,0 Z" />
+</vector>
