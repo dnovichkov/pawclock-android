@@ -34,6 +34,8 @@ class RoomPetRepository
         override fun observeAll(): Flow<List<Pet>> =
             petDao.observeAll().map { entities -> entities.map(PetMapper::toDomain) }
 
+        override suspend fun getAll(): List<Pet> = petDao.getAll().map(PetMapper::toDomain)
+
         override suspend fun getById(id: Long): Pet? = petDao.getById(id)?.let(PetMapper::toDomain)
 
         override suspend fun insert(pet: Pet): Long = petDao.insert(PetMapper.toEntity(pet))

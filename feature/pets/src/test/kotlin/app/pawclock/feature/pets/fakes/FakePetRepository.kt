@@ -29,6 +29,8 @@ class FakePetRepository : PetRepository {
 
     override fun observeAll(): Flow<List<Pet>> = state.asStateFlow()
 
+    override suspend fun getAll(): List<Pet> = state.value
+
     override suspend fun getById(id: Long): Pet? = state.value.firstOrNull { it.id == id }
 
     override suspend fun insert(pet: Pet): Long {
@@ -73,6 +75,8 @@ class FakePetRepository : PetRepository {
  */
 class PausedFakePetRepository : PetRepository {
     override fun observeAll(): Flow<List<Pet>> = kotlinx.coroutines.flow.emptyFlow()
+
+    override suspend fun getAll(): List<Pet> = emptyList()
 
     override suspend fun getById(id: Long): Pet? = null
 

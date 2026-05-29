@@ -13,6 +13,8 @@ import kotlinx.coroutines.flow.Flow
  * Контракт реализации:
  *  - [observeAll] — реактивный Flow, эмитирует новый список при каждом insert/update/delete.
  *    Сортировка определяется реализацией (обычно `ORDER BY name COLLATE NOCASE ASC`).
+ *  - [getAll] — одноразовый suspend-снимок всех питомцев (для экспорта, §3.5). В отличие от
+ *    [observeAll], не подписывается на изменения — экспорт читает текущее состояние один раз.
  *  - [getById] — одноразовый suspend, возвращает `null` если питомец не найден.
  *  - [insert] — возвращает авто-сгенерированный id (Long), который UI использует для навигации.
  *  - [update] — частичное обновление (реализация сравнивает по PK).
@@ -23,6 +25,8 @@ import kotlinx.coroutines.flow.Flow
  */
 interface PetRepository {
     fun observeAll(): Flow<List<Pet>>
+
+    suspend fun getAll(): List<Pet>
 
     suspend fun getById(id: Long): Pet?
 

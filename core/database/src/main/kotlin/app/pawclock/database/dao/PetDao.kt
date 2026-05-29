@@ -32,6 +32,9 @@ interface PetDao {
     @Query("SELECT * FROM pets ORDER BY name COLLATE NOCASE ASC")
     fun observeAll(): Flow<List<PetEntity>>
 
+    @Query("SELECT * FROM pets ORDER BY name COLLATE NOCASE ASC")
+    suspend fun getAll(): List<PetEntity>
+
     @Query("SELECT * FROM pets WHERE id = :id LIMIT 1")
     suspend fun getById(id: Long): PetEntity?
 

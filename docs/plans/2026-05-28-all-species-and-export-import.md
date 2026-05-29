@@ -455,15 +455,9 @@
 - [x] run `./gradlew :feature:quickcalc:test :feature:quickcalc:assembleDebug --no-daemon` — зелёное (также прогнаны `:feature:quickcalc:compileDebugAndroidTestKotlin`, `:feature:quickcalc:detekt`, `:app:assembleDebug` для проверки слияния ресурсов)
 
 ### Task 17: Export Pets — JSON serializer + ExportPetsUseCase (TDD)
-- [ ] write FAILING test `PetsJsonSerializerTest`:
-  - `serializes single Dog pet to JSON with all 9 fields`
-  - `serializes list of 3 pets (Dog, Cat, Rabbit) preserving subcategory types`
-  - `serialized JSON contains schema_version = 1` (forward-compat)
-  - `null fields are omitted` (не сериализуются как `null` строки)
-  - `birthDate is ISO-8601 string`
-  - `species id используется (а не Species.toString())`
-- [ ] verify tests fail — **Red**
-- [ ] create `PetsExportSchema` data class в `:core:domain/export/` с `@Serializable`:
+- [x] write FAILING test `PetsJsonSerializerTest`: покрыты `serializes single Dog pet with all populated fields` (⚠️ у `PetExportEntry` 7 полей, а не 9 — `id` и `photoPath` намеренно не экспортируются, см. ниже), `serializes list of three pets preserving subcategory types` (Dog/Cat/Rabbit), `serialized JSON contains schema version 1`, `null optional fields are omitted not serialized as null`, `birthDate is ISO-8601 date string`, `species id is used not Species toString` + `does not export id or photoPath` + `exportedAt is ISO-8601 instant string` (8 тестов)
+- [x] verify tests fail — **Red** (тесты ссылались на несуществующие `PetsExportSchema`/`PetsJsonSerializer`/`ExportFormat`/`PetRepository.getAll` — заведомая compile-failure до реализации)
+- [x] create `PetsExportSchema` data class в `:core:domain/export/` с `@Serializable`:
   ```kotlin
   data class PetsExportSchema(
       val schemaVersion: Int = 1,
@@ -481,20 +475,22 @@
       // photoPath не экспортируется — фото локальный artifact
   )
   ```
-- [ ] create `PetsJsonSerializer.encode(pets: List<Pet>, exportedAt: Instant): String` — pure-Kotlin без Android-зависимостей
-- [ ] verify — **Green**
-- [ ] write FAILING test `ExportPetsUseCaseTest` (с FakePetRepository, FakeClock):
-  - `export empty list → JSON with empty pets array`
-  - `export multiple pets → JSON content matches expected schema`
-  - `propagates IO exception from writer`
-- [ ] create `ExportPetsUseCase(petRepo, clock)` в `:core:domain/export/`:
+  — реализовано: snake_case-имена полей через `@SerialName` (`schema_version`, `exported_at`, `species_id`, `birth_date`, `subcategory_id`, `gender_id`, `weight_kg`); `CURRENT_SCHEMA_VERSION = 1` константа в companion; обязательные поля (name/species_id/birth_date) объявлены перед необязательными (Kotlin требует default-параметры после required), необязательные с дефолтом `null` (толерантность импорта в Task 19)
+- [x] create `PetsJsonSerializer.encode(pets: List<Pet>, exportedAt: Instant): String` — pure-Kotlin без Android-зависимостей (`Json { prettyPrint=true; encodeDefaults=true; explicitNulls=false }` — `schema_version` пишется, null'ы опускаются)
+- [x] verify — **Green** (`PetsJsonSerializerTest` 8/0/0)
+- [x] write FAILING test `ExportPetsUseCaseTest` (с FakePetRepository, FakeClock):
+  - `export empty list yields JSON with empty pets array`
+  - `export multiple pets matches repository content` + `uses clock instant as exportedAt`
+  - `propagates exception from repository` (⚠️ «IO exception from writer» переформулировано: UseCase возвращает String и не пишет в файл — запись через SAF в Task 21; тест проверяет проброс `IOException` из `getAll()` через приватный `ThrowingPetRepository`)
+  - `csv export is not yet implemented` (временный тест: CSV-ветка бросает `NotImplementedError` через `TODO()` до Task 18 — покрывает ветку `when`, удаляется в Task 18)
+- [x] create `ExportPetsUseCase(petRepo, clock)` в `:core:domain/export/`:
   - `suspend operator fun invoke(format: ExportFormat): String` где `enum ExportFormat { JSON, CSV }`
   - читает все pets через `petRepo.getAll()` (новый метод)
   - сериализует через `PetsJsonSerializer.encode()` или CSV serializer (Task 18)
-- [ ] update `PetRepository` interface добавить `suspend fun getAll(): List<Pet>` (вместо/в дополнение к `observe()`)
-- [ ] update `RoomPetRepository` соответственно
-- [ ] verify — **Green**
-- [ ] run `./gradlew :core:domain:test --no-daemon`
+- [x] update `PetRepository` interface добавить `suspend fun getAll(): List<Pet>` (в дополнение к `observeAll()` — одноразовый снимок для экспорта, не подписка)
+- [x] update `RoomPetRepository` соответственно (+ `PetDao.getAll()` `@Query` с `ORDER BY name COLLATE NOCASE ASC`; Room KSP перегенерировал DAO-impl; ➕ обновлены 3 тест-фейка `FakePetRepository` в `:core:domain`/`:feature:pets`/`:feature:editor` + `PausedFakePetRepository`)
+- [x] verify — **Green** (`ExportPetsUseCaseTest` 5/0/0)
+- [x] run `./gradlew :core:domain:test --no-daemon` — зелёное (также прогнаны `:core:domain:detekt`, `:core:domain:koverVerify` ≥90%, `:core:database:compileDebugKotlin`, `:app:compileDebugKotlin`, `:feature:pets:test`, `:feature:editor:test` — изменение интерфейса не сломало зависимые модули)
 
 ### Task 18: Export Pets — CSV serializer (TDD)
 - [ ] write FAILING test `PetsCsvSerializerTest`:
