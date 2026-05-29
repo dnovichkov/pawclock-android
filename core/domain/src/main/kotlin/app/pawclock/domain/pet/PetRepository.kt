@@ -19,6 +19,7 @@ import kotlinx.coroutines.flow.Flow
  *  - [insert] — возвращает авто-сгенерированный id (Long), который UI использует для навигации.
  *  - [update] — частичное обновление (реализация сравнивает по PK).
  *  - [deleteById] — возвращает количество удалённых строк (0 для отсутствующего id).
+ *  - [clearAll] — удаляет всех питомцев (для импорта со стратегией REPLACE, §3.5).
  *
  * Все suspend-методы должны вызываться из coroutine — реализация ответственна за
  * переключение на IO-диспетчер.
@@ -35,4 +36,6 @@ interface PetRepository {
     suspend fun update(pet: Pet)
 
     suspend fun deleteById(id: Long): Int
+
+    suspend fun clearAll()
 }

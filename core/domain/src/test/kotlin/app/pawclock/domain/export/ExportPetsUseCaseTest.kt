@@ -124,5 +124,7 @@ class ExportPetsUseCaseTest {
         override suspend fun deleteById(id: Long): Int = 0
 
         override suspend fun getAll(): List<Pet> = throw IOException("disk read failed")
+
+        override suspend fun clearAll() = error("not used")
     }
 }

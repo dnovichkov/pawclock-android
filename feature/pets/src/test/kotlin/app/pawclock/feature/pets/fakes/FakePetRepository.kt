@@ -57,6 +57,10 @@ class FakePetRepository : PetRepository {
         return before - state.value.size
     }
 
+    override suspend fun clearAll() {
+        state.value = emptyList()
+    }
+
     fun seed(pets: List<Pet>) {
         state.value = pets.sortedBy { it.name.lowercase() }
     }
@@ -85,6 +89,8 @@ class PausedFakePetRepository : PetRepository {
     override suspend fun update(pet: Pet) = error("not implemented for paused fake")
 
     override suspend fun deleteById(id: Long): Int = 0
+
+    override suspend fun clearAll() = error("not implemented for paused fake")
 
     fun getPetsUseCase(): GetPetsUseCase = GetPetsUseCase(this)
 

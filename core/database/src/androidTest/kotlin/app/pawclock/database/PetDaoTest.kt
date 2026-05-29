@@ -147,6 +147,24 @@ class PetDaoTest {
             assertNotEquals(id1, id2)
         }
 
+    @Test
+    fun clearAllRemovesEveryPet() =
+        runTest {
+            dao.insert(sampleEntity(name = "Рекс", speciesId = "dog"))
+            dao.insert(sampleEntity(name = "Мурка", speciesId = "cat"))
+
+            dao.clearAll()
+
+            assertTrue(dao.observeAll().first().isEmpty())
+        }
+
+    @Test
+    fun clearAllOnEmptyTableIsNoOp() =
+        runTest {
+            dao.clearAll()
+            assertTrue(dao.observeAll().first().isEmpty())
+        }
+
     // Test-builder. Long-parameter-list здесь не code smell — это просто фабрика
     // покрывающая все 8 nullable-полей PetEntity для granular-тестов.
     @Suppress("LongParameterList")

@@ -502,32 +502,24 @@
 - [x] run tests — `./gradlew :core:domain:test :core:domain:detekt :core:domain:koverVerify` зелёное (kover ≥90%; изменение локализовано в `:core:domain`, CSV пока нигде не потребляется — Settings UI в Task 21)
 
 ### Task 19: Import Pets — JSON deserializer + ImportPetsUseCase (TDD)
-- [ ] write FAILING test `PetsJsonDeserializerTest`:
-  - `parses valid export schema v1 → List<PetExportEntry>`
-  - `throws ImportException on missing required field (name, species_id, birth_date)`
-  - `throws on unknown species_id` (НЕ silent skip — fail-fast)
-  - `throws on malformed JSON`
-  - `throws on schema_version > 1` (forward-incompat) или показывает warning
-  - `accepts null optional fields (subcategory, gender, weight, notes)`
-- [ ] verify tests fail — **Red**
-- [ ] create `PetsJsonDeserializer.decode(json: String): PetsImportResult` где:
-  ```kotlin
-  sealed interface PetsImportResult {
-      data class Success(val entries: List<PetExportEntry>, val warnings: List<ImportWarning>) : PetsImportResult
-      data class Failure(val error: ImportException) : PetsImportResult
-  }
-  ```
-- [ ] verify — **Green**
-- [ ] write FAILING test `ImportPetsUseCaseTest`:
-  - `imports valid pets and inserts into PetRepository`
-  - `dry-run mode returns preview without insertion` (для UI confirm dialog)
-  - `replace strategy = clears existing pets before insert`
-  - `merge strategy = keeps existing pets, inserts new`
-  - `propagates ImportException for malformed input`
-- [ ] create `ImportPetsUseCase(petRepo, deserializer)` с параметрами `ImportStrategy { MERGE, REPLACE }` + `dryRun: Boolean`
-- [ ] verify — **Green**
-- [ ] add `PetRepository.clearAll()` для REPLACE strategy + test
-- [ ] run tests
+- [x] write FAILING test `PetsJsonDeserializerTest` (13 кейсов): valid schema v1, accepts null optional fields, missing name/species_id/birth_date (по отдельному тесту на каждое), unknown species_id (fail-fast), malformed JSON, empty input, schema_version>1 (forward-incompat), invalid birth_date format, blank name, unknown gender_id → warning, absent schema_version → default
+  - ⚠️ «throws ImportException» переформулировано: `decode` НЕ бросает на ошибках данных — возвращает `PetsImportResult.Failure(error)` (Result-тип по контракту sealed `PetsImportResult`); бросает уже `ImportPetsUseCase` на `Failure`. Тесты ассертят `assertIs<PetsImportResult.Failure>` + конкретный подтип `ImportException`
+  - ⚠️ `schema_version > 1` — выбран **fail-fast** (`UnsupportedSchemaVersion`), а не warning: несовместимая будущая схема могла бы исказить данные
+  - ➕ robustness (обнаружено): добавлена валидация `invalid birth_date format` + `blank name` → `MalformedData` (иначе `DateTimeParseException`/`IllegalArgumentException` от `LocalDate.parse`/`Pet.init` протекли бы из UseCase)
+- [x] verify tests fail — **Red** (заведомая compile-failure: типы `PetsJsonDeserializer`/`PetsImportResult`/`ImportException`/`ImportWarning` не существовали)
+- [x] create `PetsJsonDeserializer.decode(input: String): PetsImportResult` (object, pure-Kotlin, `ignoreUnknownKeys=true`) + sealed `PetsImportResult` (Success(entries, warnings)/Failure(error)) в `:core:domain/import_/`
+  - создан `ImportException` (sealed: `MalformedData`/`MissingRequiredField(fields)`/`UnknownSpecies(speciesId)`/`UnsupportedSchemaVersion(version, supported)`) — типизирован для маппинга на локализованные сообщения UI (Task 21)
+  - создан `ImportWarning` (sealed: `UnknownGender(petName, genderId)`) — неизвестный `gender_id` lenient (пол отброшен к null, запись принята), в отличие от вида (fail-fast). Даёт тестируемое предупреждение
+  - десериализатор переиспользует `PetExportEntry`/`PetsExportSchema` из пакета `export` — единый контракт схемы export↔import; порядок проверок: version → декод (MissingField/Malformed) → per-entry (blank name/unknown species/bad date) → gender warning
+  - ⚠️ пакет назван `import_` (подчёркивание) — `import` зарезервирован в Kotlin; detekt `PackageNaming` ослаблен (allow `_` в сегментах, см. ➕ ниже)
+- [x] verify — **Green** (`PetsJsonDeserializerTest` 13/0/0)
+- [x] write FAILING test `ImportPetsUseCaseTest` (10 кейсов): imports+inserts, dry-run preview без вставки, REPLACE clears, MERGE keeps+inserts, REPLACE dry-run не очищает, propagates ImportException (malformed + unknown species), maps entry fields → domain Pet, unknown gender → null + warning
+- [x] create `ImportPetsUseCase(petRepository, deserializer = PetsJsonDeserializer)` в `:core:domain/import_/`: `suspend operator fun invoke(content, strategy: ImportStrategy, dryRun=false): ImportSummary`; на `Failure` бросает `error`; конвертирует `PetExportEntry`→`Pet` (id=0L, photoPath=null); REPLACE → `clearAll()` затем insert; MERGE → insert поверх (без дедупа — у импорта нет стабильного ключа); `dryRun` короткозамыкает до любой мутации
+  - создан `ImportStrategy { MERGE, REPLACE }` + `ImportSummary(importedCount, warnings, dryRun)` (тип-сводка для confirm-диалога Task 21)
+- [x] verify — **Green** (`ImportPetsUseCaseTest` 10/0/0; suite `:core:domain:test` 22 новых теста зелёные)
+- [x] add `PetRepository.clearAll()` для REPLACE strategy + test — добавлен в интерфейс + `RoomPetRepository` (+ `PetDao.clearAll()` `@Query("DELETE FROM pets")`, KSP перегенерировал DAO-impl) + 3 fake (`:core:domain`/`:feature:pets`/`:feature:editor`) + `PausedFakePetRepository` + `ThrowingPetRepository` (тест экспорта); добавлены DAO androidTest `clearAllRemovesEveryPet` + `clearAllOnEmptyTableIsNoOp`
+- [x] run tests — `:core:domain:test` + `:core:domain:detekt` + `:core:domain:koverVerify` (≥90%) + `:core:database:test`/`compileDebugAndroidTestKotlin`/`detekt` + `:app:compileDebugKotlin` + `:feature:pets:test`/`:feature:editor:test` — всё зелёное
+- [x] ➕ detekt (обнаружено): `PackageNaming.packagePattern` ослаблен до `[a-z]+(\.[a-z][A-Za-z0-9_]*)*` (разрешает `_` в сегментах пакета) — идиома для reserved-word пакета `import_`; задокументировано комментарием в `detekt.yml`
 
 ### Task 20: Import Pets — CSV deserializer (TDD)
 - [ ] write FAILING test `PetsCsvDeserializerTest`:

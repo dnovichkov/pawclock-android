@@ -49,4 +49,7 @@ interface PetDao {
 
     @Query("DELETE FROM pets WHERE id = :id")
     suspend fun deleteById(id: Long): Int
+
+    @Query("DELETE FROM pets")
+    suspend fun clearAll()
 }

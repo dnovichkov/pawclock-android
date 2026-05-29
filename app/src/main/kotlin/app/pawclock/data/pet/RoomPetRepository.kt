@@ -43,4 +43,6 @@ class RoomPetRepository
         override suspend fun update(pet: Pet) = petDao.update(PetMapper.toEntity(pet))
 
         override suspend fun deleteById(id: Long): Int = petDao.deleteById(id)
+
+        override suspend fun clearAll() = petDao.clearAll()
     }
