@@ -595,41 +595,42 @@
 - [x] run `./gradlew :app:assembleDebugAndroidTest --no-daemon` — BUILD SUCCESSFUL (единственное предупреждение — pre-existing deprecation `createAndroidComposeRule` в `MainNavigationTest.kt`, не связано с Task 23; все 6 flow прошли YAML-валидацию multi-doc)
 
 ### Task 24: Final acceptance verification
-- [ ] verify all 12 species are implemented:
-  - `assert Species.values().filter { it.isImplemented }.size == 12` — добавить как property test в `:core:model`
-- [ ] verify all 12 species have a calculator:
-  - `forAll Species: AgeCalculator.forSpecies(it) != null` — добавить exhaustive test
-- [ ] verify coverage:
-  - `./gradlew :core:calculator:koverHtmlReport :core:domain:koverHtmlReport :core:database:koverHtmlReport`
-  - `:core:calculator` ≥ 95%
-  - `:core:domain` ≥ 90% (Export/Import включаются)
-  - `:core:database` ≥ 80%
-- [ ] verify lint clean:
-  - `./gradlew ktlintCheck detekt lintDebug` — zero errors
-- [ ] verify build clean:
-  - `./gradlew assembleDebug` — все 12 модулей, BUILD SUCCESSFUL
-- [ ] verify all unit tests pass:
-  - `./gradlew testDebugUnitTest` — all green
-- [ ] verify Maestro E2E (smoke build check):
-  - `./gradlew :app:assembleDebugAndroidTest` — BUILD SUCCESSFUL, готов к nightly.yml
-- [ ] verify Export/Import round-trip (через unit tests, не E2E):
-  - `RoundTripTest` (новый): create 12 pets (по 1 каждого вида) → export to JSON → clear → import JSON → assert content matches
-  - аналогичный test для CSV
-- [ ] verify APK size:
-  - `./gradlew :app:assembleRelease` (если keystore доступен; иначе :app:assembleDebug + проверка приближённо)
-  - `scripts/verify-bundle-size.sh` — debug < 15 MB, release < 8 MB (целевое из §7.5)
-- [ ] update `CHANGELOG.md` — переместить Plan 2 deliverables из `[Unreleased]` в `[1.0.0]` секцию (опционально; решение о версии — пользовательское при тегировании)
-- [ ] update `README.md` — статус видов в "Why PawClock" → 12/12 поддерживаемых
-- [ ] update `ADR-0006` если есть изменения в дефолте калькуляции для собак (не должно быть)
-- [ ] verify GitHub Actions workflows валидны:
-  - `scripts/verify-workflows.sh`
-- [ ] verify docs:
-  - `bash scripts/verify-docs.sh` — все обязательные секции на месте
-  - `bash scripts/verify-care-assets.sh` — все care JSON присутствуют для implemented видов
-- [ ] verify ADRs:
-  - `bash scripts/verify-adrs.sh` — все 7 ADR на месте + любые новые ADR (опционально: ADR-0008 для AgeCalculator strategy pattern, ADR-0009 для Export/Import schema)
-- [ ] add ➕ ADR-0008 "AgeCalculator sealed interface for species dispatch" в `docs/adr/`
-- [ ] add ➕ ADR-0009 "Export/Import JSON schema versioning" в `docs/adr/` (schemaVersion=1, forward-compat strategy)
+- [x] verify all 12 species are implemented:
+  - `assert Species.values().filter { it.isImplemented }.size == 12` — добавлен `Mvp1SpeciesAcceptanceTest` в `:core:model` (3 теста: ровно 12 implemented; каждый вид implemented; `implemented() == all()`); зелёный
+- [x] verify all 12 species have a calculator:
+  - `forAll Species: AgeCalculator.forSpecies(it) != null` — добавлен `Mvp1CalculatorAcceptanceTest` в `:core:calculator` (2 теста: каждый вид имеет не-null `AgeCalculator` и `LifeStageCalculator`, привязанный к самому себе через `.species == s`); зелёный
+- [x] verify coverage:
+  - `:core:calculator:koverVerify` (minBound=95) — **зелёный** (enforce сильнее, чем HtmlReport)
+  - `:core:domain:koverVerify` (minBound=90, Export/Import включены) — **зелёный**
+  - ⚠️ `:core:database` ≥ 80%: koverVerify структурно недостижим на JVM (DAO/DI/Room-обвязка покрывается instrumented androidTest, который kover JVM не измеряет) — решение зафиксировано в Task 12; реальное покрытие достигается в nightly.yml. Не в JVM-гейте сознательно
+- [x] verify lint clean:
+  - `./gradlew ktlintCheck` — **зелёный** (исправлены: `argument-list-wrapping` в новом `RoundTripTest` через ktlintFormat; `import-ordering` в `LifeStageCalculatorTest`; `package-name` для пакета `import_` отключён точечно в `.editorconfig` секцией `[**/import_/**.{kt,kts}]` — симметрично detekt-релаксации Task 19, т.к. `import` — reserved word)
+  - `./gradlew detekt` — **зелёный** (все модули)
+  - ⚠️ `./gradlew lintDebug` — **заблокирован тулчейн-багом AGP** `LintJarApiMigration.migrateClassNames` → `NegativeArraySizeException` при загрузке custom-lint-jar'ов (`lifecycle-lint`/`compose-runtime-lint`) на Kotlin 2.0.21 + AGP 8.7.3 + Compose 1.11.1. Это тот же бинарно-несовместимый тулчейн, что уже задокументирован в `lint.xml` (Task 17, «включить обратно когда Kotlin bump → 2.1.x»); краш происходит на этапе init реестра детекторов (до анализа), поэтому `severity=ignore` его не предотвращает. Не зависит от изменений Task 24. Статический анализ локально закрыт ktlint+detekt; `lintDebug` гоняется в CI-job `android-lint` (lint.yml)
+- [x] verify build clean:
+  - `./gradlew assembleDebug` — все 12 модулей, **BUILD SUCCESSFUL**
+- [x] verify all unit tests pass:
+  - `./gradlew testDebugUnitTest` — **BUILD SUCCESSFUL** (весь проект зелёный, включая 3 новых acceptance-теста: Mvp1Species 3/0, Mvp1Calculator 2/0, RoundTrip 2/0)
+- [x] verify Maestro E2E (smoke build check):
+  - `./gradlew :app:assembleDebugAndroidTest` — **BUILD SUCCESSFUL**, готов к nightly.yml
+- [x] verify Export/Import round-trip (через unit tests, не E2E):
+  - `RoundTripTest` (новый, `:core:domain`): создаёт 12 pets (по 1 каждого вида, с подкатегориями/полом/весом/заметками с запятыми/кавычками/`\n`) → export → `clearAll` → import → assert содержимое совпадает (id/photoPath нормализованы к 0L/null — не экспортируются by design)
+  - аналогичный CSV-кейс — оба теста зелёные (JSON + CSV)
+- [x] verify APK size:
+  - `./gradlew :app:bundleRelease` (без keystore → unsigned AAB) — собран `app-release.aab`
+  - `scripts/verify-bundle-size.sh`: AAB = **9.77 MB** — ✅ в пределах жёсткого лимита §8.5.2 (15 MB, энфорс в release.yml); ⚠️ превышает целевые §7.5 (8 MB) — закономерный рост с 2 до 12 видов (10 калькуляторов, 12 vector-иконок, 96 care-JSON, export/import, kotlinx.serialization). Оптимизация (Baseline Profiles, R8-тюнинг) отложена на Plan 3 (см. «Что НЕ входит в план»)
+- [x] update `CHANGELOG.md` — Plan 2 deliverables перенесены в новую секцию `[1.0.0]`; `[Unreleased]` оставлен пустым (его проверяет verify-docs.sh); ссылки compare/tag обновлены. Дата релиза проставляется при тегировании
+- [x] update `README.md` — статус → «полный MVP v1.0, все 12 групп животных»; «Why PawClock» расширен пунктом «самый широкий список видов» (USP §1.3) + экзотические формулы + перенос данных export/import
+- [x] update `ADR-0006` — изменений нет: дефолт калькуляции для собак (Wang 2020) не менялся в Plan 2 (как и ожидалось)
+- [x] verify GitHub Actions workflows валидны:
+  - `scripts/verify-workflows.sh` — ✅ 4 workflow найдены, fallback grep-check passed
+- [x] verify docs:
+  - `bash scripts/verify-docs.sh` — ✅ все обязательные файлы и секции на месте
+  - `bash scripts/verify-care-assets.sh` — ✅ All 116 care assets present and well-formed
+- [x] verify ADRs:
+  - `bash scripts/verify-adrs.sh` — ✅ All 9 ADRs validated (0001–0009 + template + обязательные секции); скрипт обновлён до 9 ADR
+- [x] add ➕ ADR-0008 "AgeCalculator sealed interface for species dispatch" в `docs/adr/` — создан (Strategy-pattern, sealed dispatch, SpeciesParams trade-off)
+- [x] add ➕ ADR-0009 "Export/Import schema versioning and format strategy" в `docs/adr/` — создан (schema_version=1, fail-fast на forward-incompat, JSON каноничный + CSV interop, исключение id/photoPath)
 
 ## Technical Details
 

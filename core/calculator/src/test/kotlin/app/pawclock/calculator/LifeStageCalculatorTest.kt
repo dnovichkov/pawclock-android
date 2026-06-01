@@ -1,9 +1,9 @@
 package app.pawclock.calculator
 
+import app.pawclock.model.CalculationMethod
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
 import app.pawclock.model.LifeStage
-import app.pawclock.model.CalculationMethod
 import app.pawclock.model.Species
 import kotlin.test.Test
 import kotlin.test.assertEquals

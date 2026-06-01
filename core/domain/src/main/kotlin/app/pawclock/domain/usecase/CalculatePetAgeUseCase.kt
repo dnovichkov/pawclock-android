@@ -139,17 +139,14 @@ class CalculatePetAgeUseCase(
     private fun resolveHamsterType(pet: Pet): HamsterType =
         pet.subcategory?.let(HamsterType::fromId) ?: HamsterType.Syrian
 
-    private fun resolveBirdType(pet: Pet): BirdType =
-        pet.subcategory?.let(BirdType::fromId) ?: BirdType.Budgerigar
+    private fun resolveBirdType(pet: Pet): BirdType = pet.subcategory?.let(BirdType::fromId) ?: BirdType.Budgerigar
 
     private fun resolveReptileType(pet: Pet): ReptileType =
         pet.subcategory?.let(ReptileType::fromId) ?: ReptileType.BeardedDragon
 
-    private fun resolveHorseType(pet: Pet): HorseType =
-        pet.subcategory?.let(HorseType::fromId) ?: HorseType.LightHorse
+    private fun resolveHorseType(pet: Pet): HorseType = pet.subcategory?.let(HorseType::fromId) ?: HorseType.LightHorse
 
-    private fun resolveFishType(pet: Pet): FishType =
-        pet.subcategory?.let(FishType::fromId) ?: FishType.Goldfish
+    private fun resolveFishType(pet: Pet): FishType = pet.subcategory?.let(FishType::fromId) ?: FishType.Goldfish
 
     private fun calendarAgeInYears(
         birthDate: LocalDate,
