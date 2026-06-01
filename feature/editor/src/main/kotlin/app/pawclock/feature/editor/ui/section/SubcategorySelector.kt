@@ -80,9 +80,11 @@ internal fun SubcategorySelector(
  *
  * Диспетчеризация по виду + per-species под-функции: id пересекаются между видами,
  * а единый плоский `when (id)` дал бы коллизии и зашкаливающую цикломатическую сложность.
+ *
+ * `internal` — для [SpeciesLocalizationTest] (Plan 2, Task 22).
  */
 @androidx.annotation.StringRes
-private fun subcategoryLabelRes(
+internal fun subcategoryLabelRes(
     species: Species?,
     id: String,
 ): Int =

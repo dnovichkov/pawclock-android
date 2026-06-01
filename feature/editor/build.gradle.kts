@@ -21,6 +21,14 @@ android {
         compose = true
     }
 
+    // SpeciesLocalizationTest (Task 22) — Robolectric резолвит строковые ресурсы видов /
+    // подкатегорий на JVM через AAPT2. Нужен includeAndroidResources = true.
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -76,6 +84,15 @@ dependencies {
     testImplementation(libs.turbine)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
+    // Robolectric — SpeciesLocalizationTest (Task 22) загружает Android-ресурсы (строки
+    // видов/подкатегорий) на JVM и резолвит их в ru/en. Vintage engine запускает JUnit 4
+    // Robolectric-тесты рядом с JUnit 5 (Jupiter). Зеркалит настройку :core:designsystem.
+    testImplementation(libs.robolectric)
+    testImplementation(libs.junit4)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.androidx.test.rules)
+    testRuntimeOnly(libs.junit.vintage.engine)
+
     // Android instrumented tests — Compose UI тесты PetEditorScreen
     // через createComposeRule. Запуск — на эмуляторе в nightly.yml.
     androidTestImplementation(composeBom)
@@ -89,7 +106,10 @@ dependencies {
 }
 
 tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        // Vintage engine разрешает JUnit 4 (Robolectric) тесты, Jupiter — JUnit 5.
+        includeEngines("junit-jupiter", "junit-vintage")
+    }
     testLogging {
         events("passed", "failed", "skipped")
     }

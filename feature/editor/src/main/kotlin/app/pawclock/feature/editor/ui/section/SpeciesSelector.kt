@@ -64,15 +64,27 @@ internal fun SpeciesSelector(
     }
 }
 
+/**
+ * Маппит вид на string-resource с его локализованным именем. Исчерпывающий `when` по
+ * sealed [Species] — добавление нового вида в Plan 3 не скомпилируется без новой ветки
+ * (Plan 2, Task 22 заменил прежний `else -> dog` fallback, из-за которого 10 видов
+ * показывались как «Собака»). `internal` — для [SpeciesLocalizationTest].
+ */
 @androidx.annotation.StringRes
-private fun speciesLabelRes(species: Species): Int =
+internal fun speciesLabelRes(species: Species): Int =
     when (species) {
         Species.Dog -> R.string.pet_editor_species_dog
         Species.Cat -> R.string.pet_editor_species_cat
-        // Not-yet-implemented виды используют свой id как fallback-resource-name.
-        // Plan 2 добавит реальные строки и расширит список implemented(). До тех пор —
-        // делаем читаемый fallback на species_dog (нейтральный плейсхолдер, не падает).
-        else -> R.string.pet_editor_species_dog
+        Species.Rabbit -> R.string.pet_editor_species_rabbit
+        Species.Hamster -> R.string.pet_editor_species_hamster
+        Species.GuineaPig -> R.string.pet_editor_species_guinea_pig
+        Species.Rat -> R.string.pet_editor_species_rat
+        Species.Mouse -> R.string.pet_editor_species_mouse
+        Species.Ferret -> R.string.pet_editor_species_ferret
+        Species.Bird -> R.string.pet_editor_species_bird
+        Species.Reptile -> R.string.pet_editor_species_reptile
+        Species.Horse -> R.string.pet_editor_species_horse
+        Species.Fish -> R.string.pet_editor_species_fish
     }
 
 internal fun speciesChipTag(species: Species): String = "species_chip_${species.id}"

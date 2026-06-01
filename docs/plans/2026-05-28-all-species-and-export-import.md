@@ -560,19 +560,21 @@
 - [x] ➕ detekt (обнаружено): `LongParameterList.ignoreAnnotated: [Composable]` — `SettingsContent` принимает state + 7 callback'ов/модификаторов (8 параметров), что легитимная Compose-идиома, а не code smell; обычные функции/конструкторы держим под порогом 7
 
 ### Task 22: Локализация — strings для всех новых видов + подкатегорий + стадий
-- [ ] add стрингов в `:feature:editor/src/main/res/values/strings.xml` (ru, default) для:
-  - имена всех 10 новых видов (`species_rabbit = "Кролик"`, `species_hamster = "Хомяк"`, etc.)
-  - имена всех подкатегорий (`rabbit_size_dwarf = "Карликовый"`, `hamster_type_syrian = "Сирийский"`, etc.)
-- [ ] add те же ключи в `values-en/strings.xml`
-- [ ] add стрингов в `:feature:quickcalc/.../strings.xml` (или extract в shared :core:designsystem strings) — те же ключи для subcategory labels
-- [ ] add стрингов для `LifeStage` всех новых видов (`life_stage_rabbit_infancy = "Младенчество"`, etc.) в `:feature:pets/src/main/res/values/strings.xml`
-- [ ] update `lifeStageLabelRes(lifeStage)` helper в `:feature:pets/common/` чтобы покрывал все новые подтипы LifeStage exhaustive
-- [ ] add стрингов для settings export/import labels (`settings_export_title`, `settings_export_format_json`, `settings_export_format_csv`, `settings_import_strategy_merge`, `settings_import_strategy_replace`, `settings_export_success_message`, etc.)
-- [ ] write FAILING test `LifeStageLabelLocalizationTest` (новый): для каждого `Species.implemented()` × каждой LifeStage variant → `lifeStageLabelRes(stage)` возвращает non-zero resId
-- [ ] update `AgePluralFormatter` если нужно (1 месяц / 2 месяца / 5 месяцев для возрастов младенцев — уже есть, но проверить что используется в новых видах с месячными возрастами)
-- [ ] write `SpeciesLocalizationTest` (новый): через `Context.getString(resId)` для каждого species/subcategory ключа в ru и en — non-empty strings
-- [ ] verify — **Green**
-- [ ] run `./gradlew :feature:pets:test :feature:editor:test :feature:quickcalc:test :feature:settings:test --no-daemon`
+- [x] add стрингов в `:feature:editor/src/main/res/values/strings.xml` (ru, default) для:
+  - имена всех 10 новых видов — добавлены `pet_editor_species_{rabbit,hamster,guinea_pig,rat,mouse,ferret,bird,reptile,horse,fish}` (Кролик/Хомяк/Морская свинка/Крыса/Мышь/Хорёк/Птица/Рептилия/Лошадь/Рыба)
+  - имена всех подкатегорий — ⚠️ **уже были** добавлены инкрементально в Tasks 15/16 (`rabbit_size_*`, `hamster_type_*`, `bird_type_*`, `reptile_type_*`, `horse_type_*`, `fish_type_*`); Task 22 — финальная вычитка, изменений не потребовалось
+- [x] add те же ключи в `values-en/strings.xml` — добавлены 10 `pet_editor_species_*` (Rabbit/Hamster/Guinea pig/…); subcategory-ключи уже были
+- [x] add стрингов в `:feature:quickcalc/.../strings.xml` — ⚠️ **уже были** (Task 16 добавил все 12 `quick_calc_species_*` + subcategory `rabbit_size_*`/… + life stages + explanations в ru+en); изменений не потребовалось
+- [x] add стрингов для `LifeStage` всех новых видов — ⚠️ **уже были** в `:feature:pets/.../values/strings.xml` (`life_stage_*` добавлялись по виду в Tasks 2–10); ru+en полны
+- [x] update `lifeStageLabelRes(lifeStage)` helper чтобы покрывал все новые подтипы LifeStage exhaustive — ⚠️ **уже исчерпывающий** (вынесен в `detail/ui/LifeStageLabels.kt` в Task 9; 12 видов × все стадии, sealed `when` без `else`)
+- [x] add стрингов для settings export/import labels — ⚠️ **уже были** (Task 21 добавил `settings_section_backup`, `settings_export_*`, `settings_import_*` в ru+en)
+- [x] write FAILING test `LifeStageLabelLocalizationTest` — создан в `:feature:pets/src/test/.../detail/ui/` (Robolectric): `Species.implemented()` × `stagesFor(species)` (исчерпывающий `when`→`LifeStage.*.all()`) — каждая из 58 стадий имеет non-zero resId, resId'ы уникальны (нет copy-paste коллизий), строки непусты в ru+en. ⚠️ против пост-Task-9 кода уже Green (helper исчерпывающий) — характеристический regression-guard
+- [x] update `AgePluralFormatter` если нужно — изменений не потребовалось: pure-Kotlin, форматирует только годы, видо-агностичен; месячные возрасты в UI идут через `pluralStringResource`, не через форматтер
+- [x] write `SpeciesLocalizationTest` — создан в `:feature:editor/src/test/.../ui/section/` (Robolectric): каждый `Species.implemented()` → собственный non-zero resId имени (уникальность ловит прежний `else -> dog` fallback) + непустые ru/en строки; каждая подкатегория из `subcategoriesFor(species)` → non-zero resId + непустые ru/en. ⚠️ **Red против pre-Task-22 кода**: `speciesLabelRes` возвращал `pet_editor_species_dog` для 10 видов (коллизия) → исправлено на исчерпывающий `when` + `internal`; `subcategoryLabelRes` сделан `internal` для теста
+- [x] verify — **Green** (`SpeciesLocalizationTest` 3/3, `LifeStageLabelLocalizationTest` 3/3)
+- [x] run `./gradlew :feature:pets:test :feature:editor:test :feature:quickcalc:test :feature:settings:test --no-daemon` — BUILD SUCCESSFUL (также `:feature:editor:detekt` + `:feature:pets:detekt` зелёные)
+- [x] ➕ build (обнаружено): Robolectric добавлен в `:feature:editor` и `:feature:pets` build.gradle (`isIncludeAndroidResources=true` + `robolectric`/`junit4`/vintage engine + `includeEngines("junit-jupiter","junit-vintage")`) — зеркалит настройку `:core:designsystem`; локализационные тесты идут в стандартном `:feature:X:test` гейте, а не только в nightly androidTest
+- [x] ➕ production-bugfix (обнаружено): прежний `else -> R.string.pet_editor_species_dog` в `SpeciesSelector.speciesLabelRes` молча показывал все 10 новых видов как «Собака» в редакторе; заменён исчерпывающим `when` — теперь компилятор требует ветку на каждый sealed `Species`
 
 ### Task 23: Maestro E2E flows для new species + export/import
 - [ ] create `maestro/quick_calc_rabbit.yaml` — quick calc для кролика 2 года Medium, проверка результата ~27 ЧГ

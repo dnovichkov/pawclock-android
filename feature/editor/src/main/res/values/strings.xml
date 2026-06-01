@@ -21,10 +21,20 @@
     <string name="pet_editor_date_ok">ОК</string>
     <string name="pet_editor_date_cancel">Отмена</string>
 
-    <!-- Species selector -->
+    <!-- Species selector (все 12 видов — Plan 2, Task 22) -->
     <string name="pet_editor_species_label">Вид *</string>
     <string name="pet_editor_species_dog">Собака</string>
     <string name="pet_editor_species_cat">Кошка</string>
+    <string name="pet_editor_species_rabbit">Кролик</string>
+    <string name="pet_editor_species_hamster">Хомяк</string>
+    <string name="pet_editor_species_guinea_pig">Морская свинка</string>
+    <string name="pet_editor_species_rat">Крыса</string>
+    <string name="pet_editor_species_mouse">Мышь</string>
+    <string name="pet_editor_species_ferret">Хорёк</string>
+    <string name="pet_editor_species_bird">Птица</string>
+    <string name="pet_editor_species_reptile">Рептилия</string>
+    <string name="pet_editor_species_horse">Лошадь</string>
+    <string name="pet_editor_species_fish">Рыба</string>
 
     <!-- Subcategory -->
     <string name="pet_editor_subcategory_label">Подкатегория</string>
