@@ -577,22 +577,22 @@
 - [x] ➕ production-bugfix (обнаружено): прежний `else -> R.string.pet_editor_species_dog` в `SpeciesSelector.speciesLabelRes` молча показывал все 10 новых видов как «Собака» в редакторе; заменён исчерпывающим `when` — теперь компилятор требует ветку на каждый sealed `Species`
 
 ### Task 23: Maestro E2E flows для new species + export/import
-- [ ] create `maestro/quick_calc_rabbit.yaml` — quick calc для кролика 2 года Medium, проверка результата ~27 ЧГ
-- [ ] create `maestro/quick_calc_bird.yaml` — quick calc для попугая Cockatiel 5 лет
-- [ ] create `maestro/quick_calc_horse.yaml` — quick calc для лошади 10 лет
-- [ ] create `maestro/export_import_roundtrip.yaml`:
+- [x] create `maestro/quick_calc_rabbit.yaml` — quick calc для кролика, выбор RabbitSize «Средний» + расчёт. ⚠️ эталонное «2 года = 27 ЧГ» НЕ ассертится: QuickCalcBirthDateField по умолчанию ставит «1 год назад» (кролик 1 г = 21 ЧГ), вождение Material DatePicker к точной дате из Maestro хрупко (та же причина, что у `quick_calc_dog.yaml` из Plan 1). Flow проверяет факт расчёта (дескриптор «В человеческих годах») + работу subcategory dropdown; точные значения формулы — в `RabbitAgeCalculatorTest`. Добавлен `scrollUntilVisible` (FlowRow из 12 видов уносит поздние chip'ы/поля под фолд)
+- [x] create `maestro/quick_calc_bird.yaml` — quick calc для птицы, выбор BirdType «Корелла» (Cockatiel) + расчёт (аналогичная DatePicker-оговорка)
+- [x] create `maestro/quick_calc_horse.yaml` — quick calc для лошади, выбор HorseType «Верховая» (LightHorse) + расчёт (аналогичная DatePicker-оговорка)
+- [x] create `maestro/export_import_roundtrip.yaml`:
   - clearState
   - launch app
-  - add Dog "Рекс" + Cat "Мурка" + Rabbit "Снежок" through PetEditor
+  - add Dog "Рекс" + Cat "Мурка" + Rabbit "Снежок" through PetEditor (Rabbit добавляется через `scrollUntilVisible "Кролик"`)
   - assertVisible 3 pets in list
-  - navigate to Settings
-  - tap "Экспорт" → выбор JSON → SAF dialog (используем testTag для FAB, реальный SAF dialog — out-of-scope, Maestro Android storage UI variability проверяется отдельно или через FakeStorage в test build)
-  - **NOTE:** реальное взаимодействие с SAF из Maestro сложно — задокументировать в YAML, что E2E test проверяет UI-flow до и после SAF dialog (mock через test-only deep link)
-  - tap "Импорт" с merge strategy
-  - assertVisible 3 pets unchanged (round-trip preserves data)
-- [ ] update existing `create_first_pet.yaml` и `quick_calc_dog.yaml` если sequence изменился из-за UI расширения (новый species selector layout)
-- [ ] update `.github/workflows/nightly.yml` чтобы запускал все Maestro flows (detect_flows автоматически найдёт новые)
-- [ ] run `./gradlew :app:assembleDebugAndroidTest --no-daemon` (sanity check, реальный запуск — в nightly.yml)
+  - navigate to Settings («Настройки» IconButton → assertVisible settings title)
+  - tap export row (testTag `settings_export_row`) → assertVisible `settings_export_dialog` + опции JSON/CSV → выбор JSON
+  - **NOTE (реализовано):** реальное взаимодействие с SAF (системные CreateDocument/OpenDocument) из Maestro недетерминированно (out-of-scope, см. блок «ГРАНИЦА SAF» в YAML). Поэтому кнопка «Продолжить» НЕ нажимается (иначе flow завис бы на системном пикере) — диалог закрывается «Отмена». Фактический файловый round-trip детерминированно покрыт `SettingsViewModelTest` (FakeBackup* порты) + `RoundTripTest` (Task 24)
+  - tap import row (testTag `settings_import_row`) → assertVisible `settings_import_dialog` + опции Merge/Replace → выбор Merge → «Отмена»
+  - back → assertVisible 3 pets unchanged (диалоги отменены, мутаций нет → данные сохранены)
+- [x] update existing `create_first_pet.yaml` и `quick_calc_dog.yaml` — ⚠️ sequence изменился из-за UI расширения: species selector вырос с 2 (Plan 1 Dog/Cat) до 12 видов в `FlowRow` (3–4 ряда chip'ов) → subcategory section + birth date field уехали под фолд. Добавлен `scrollUntilVisible` перед `assertVisible`/`tapOn` для subcategory chip и date-field id в обоих flow (раньше они были на экране при 2 видах); tap'ы по видовым chip'ам (Собака 1-й / Кошка 2-й — первый ряд) не тронуты
+- [x] update `.github/workflows/nightly.yml` — функционально изменений не требуется: run-шаг уже глобит весь каталог (`maestro test maestro/`), detect_flows + glob подхватывают новые flow автоматически. Обновлён только header-комментарий (ссылался лишь на Plan 1) — теперь перечисляет Plan 2 flow и поясняет авто-подхват
+- [x] run `./gradlew :app:assembleDebugAndroidTest --no-daemon` — BUILD SUCCESSFUL (единственное предупреждение — pre-existing deprecation `createAndroidComposeRule` в `MainNavigationTest.kt`, не связано с Task 23; все 6 flow прошли YAML-валидацию multi-doc)
 
 ### Task 24: Final acceptance verification
 - [ ] verify all 12 species are implemented:
