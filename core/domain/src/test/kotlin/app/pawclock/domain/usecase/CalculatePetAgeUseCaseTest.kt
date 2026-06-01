@@ -92,6 +92,25 @@ class CalculatePetAgeUseCaseTest {
         }
 
     @Test
+    fun `dog with unrecognized subcategory falls back to Medium default`() =
+        runTest {
+            // Импорт/ручная правка могут сохранить произвольную строку подкатегории; resolveDogSize
+            // тихо деградирует к DogSize.Medium. Проверяем на SIZE_BASED, где размер наблюдаем в ЧГ.
+            val unknown = dog(birthDate = fixedToday.minusYears(5), subcategoryId = "banana")
+            val medium = dog(birthDate = fixedToday.minusYears(5), subcategoryId = "medium")
+
+            val unknownResult = useCase(defaultMethod = CalculationMethod.SIZE_BASED).invoke(unknown)
+            val mediumResult = useCase(defaultMethod = CalculationMethod.SIZE_BASED).invoke(medium)
+
+            assertEquals(
+                mediumResult.humanYears,
+                unknownResult.humanYears,
+                absoluteTolerance = 0.001,
+            )
+            assertEquals(36.0, unknownResult.humanYears, absoluteTolerance = 0.5)
+        }
+
+    @Test
     fun `methodOverride wins over settings`() =
         runTest {
             val pet = dog(birthDate = fixedToday.minusYears(5))

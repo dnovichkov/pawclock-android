@@ -249,4 +249,76 @@ class ImportPetsUseCaseTest {
             }
             assertTrue(repo.getAll().isEmpty(), "при ошибке ничего не вставлено")
         }
+
+    @Test
+    fun `rejects pet with birth date in the future and inserts nothing`() =
+        runTest {
+            val repo = FakePetRepository()
+            val useCase = ImportPetsUseCase(repo)
+
+            assertFailsWith<ImportException.MalformedData> {
+                useCase(jsonWith(petBlock("Рекс", birthDate = "2999-01-01")), ImportStrategy.MERGE)
+            }
+            assertTrue(repo.getAll().isEmpty(), "питомец с датой в будущем не должен сохраняться")
+        }
+
+    @Test
+    fun `rejects pet with unrealistically old birth year`() =
+        runTest {
+            val repo = FakePetRepository()
+            val useCase = ImportPetsUseCase(repo)
+
+            assertFailsWith<ImportException.MalformedData> {
+                useCase(jsonWith(petBlock("Мафусаил", birthDate = "1980-01-01")), ImportStrategy.MERGE)
+            }
+            assertTrue(repo.getAll().isEmpty(), "питомец с нереалистичным годом рождения не сохраняется")
+        }
+
+    @Test
+    fun `rejects non-finite weight (NaN) from CSV`() =
+        runTest {
+            val repo = FakePetRepository()
+            val useCase = ImportPetsUseCase(repo)
+
+            assertFailsWith<ImportException.MalformedData> {
+                useCase(csvWith("Рекс,dog,,2020-01-01,,NaN,"), ImportStrategy.MERGE)
+            }
+            assertTrue(repo.getAll().isEmpty(), "NaN-вес — некорректные данные")
+        }
+
+    @Test
+    fun `rejects negative weight from JSON`() =
+        runTest {
+            val repo = FakePetRepository()
+            val useCase = ImportPetsUseCase(repo)
+            val json =
+                """
+                {"schema_version":1,"exported_at":"x","pets":[
+                  {"name":"Рекс","species_id":"dog","birth_date":"2020-01-01","weight_kg":-5.0}]}
+                """.trimIndent()
+
+            assertFailsWith<ImportException.MalformedData> { useCase(json, ImportStrategy.MERGE) }
+            assertTrue(repo.getAll().isEmpty(), "отрицательный вес — некорректные данные")
+        }
+
+    @Test
+    fun `REPLACE keeps existing pets intact when import contains an invalid entry`() =
+        runTest {
+            val repo = FakePetRepository()
+            repo.seed(listOf(existing("Мурка", id = 1L)))
+            val useCase = ImportPetsUseCase(repo)
+
+            // Вторая запись невалидна (дата в будущем) → импорт прерывается ДО мутации.
+            assertFailsWith<ImportException.MalformedData> {
+                useCase(
+                    jsonWith(petBlock("Рекс"), petBlock("Призрак", birthDate = "2999-01-01")),
+                    ImportStrategy.REPLACE,
+                )
+            }
+            assertEquals(
+                listOf("Мурка"),
+                repo.getAll().map { it.name },
+                "невалидный импорт REPLACE не должен стирать существующих питомцев",
+            )
+        }
 }

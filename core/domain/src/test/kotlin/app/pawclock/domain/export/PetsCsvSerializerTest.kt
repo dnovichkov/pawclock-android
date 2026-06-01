@@ -103,4 +103,33 @@ class PetsCsvSerializerTest {
         val birthDateCell = lines(csv)[1].split(",")[3]
         assertEquals(LocalDate.of(2020, 3, 15), LocalDate.parse(birthDateCell))
     }
+
+    @Test
+    fun `neutralizes CSV formula injection in name and notes by prefixing apostrophe`() {
+        // Имя/заметки, начинающиеся с =/+/-/@, Excel выполнил бы как формулу — должны быть нейтрализованы.
+        val malicious =
+            rex.copy(
+                name = "=HYPERLINK(\"http://evil\")",
+                notes = "@SUM(A1)",
+            )
+        val csv = PetsCsvSerializer.encode(listOf(malicious), exportedAt)
+
+        val dataRow = lines(csv)[1]
+        // Имя содержит кавычки → закавычено целиком; ведущий апостроф нейтрализует формулу.
+        assertTrue(
+            dataRow.startsWith("\"'=HYPERLINK"),
+            "формульное имя должно начинаться с апострофа-нейтрализатора: $dataRow",
+        )
+        assertTrue(dataRow.endsWith("'@SUM(A1)"), "формульные заметки должны быть префиксованы апострофом: $dataRow")
+    }
+
+    @Test
+    fun `does not prefix values that do not start with a formula trigger`() {
+        // Обычные значения не трогаем — апостроф добавляется только при ведущем формульном символе.
+        val csv = PetsCsvSerializer.encode(listOf(rex.copy(name = "Рекс", notes = "2+2")), exportedAt)
+
+        val dataRow = lines(csv)[1]
+        assertFalse(dataRow.contains("'Рекс"), "имя без формульного префикса не должно получать апостроф")
+        assertTrue(dataRow.endsWith(",2+2"), "значение с '+' в середине не является формулой и не префиксуется")
+    }
 }

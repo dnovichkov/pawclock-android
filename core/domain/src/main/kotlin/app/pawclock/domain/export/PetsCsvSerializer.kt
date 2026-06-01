@@ -18,6 +18,12 @@ import java.time.Instant
  *
  * `null`-поля сериализуются как пустые ячейки (а не литерал `"null"`), что позволяет импорту
  * (Task 20) восстанавливать их обратно в `null`.
+ *
+ * Защита от CSV formula injection (OWASP): свободные пользовательские поля (`name`, `notes`)
+ * могут начинаться с `=`/`+`/`-`/`@`/TAB/CR — Excel/Sheets/LibreOffice трактуют такую ячейку как
+ * формулу и выполняют её при открытии файла. Перед записью такие значения префиксуются апострофом
+ * (`'`) — стандартная нейтрализация; импорт ([PetsCsvDeserializer]) снимает префикс симметрично,
+ * сохраняя round-trip. Числовые/enum/дата-поля не экранируются: они не являются свободным вводом.
  */
 object PetsCsvSerializer {
     /** Строка-заголовок: стабильные snake_case-имена колонок, совпадающие с `@SerialName` JSON-схемы. */
@@ -25,6 +31,22 @@ object PetsCsvSerializer {
 
     /** Разделитель записей по RFC 4180. */
     private const val RECORD_SEPARATOR = "\r\n"
+
+    /**
+     * Ведущие символы, делающие ячейку формулой в Excel/Google Sheets/LibreOffice.
+     * `internal`, т.к. [PetsCsvDeserializer] переиспользует тот же набор для симметричного снятия.
+     */
+    internal val FORMULA_TRIGGERS: Set<Char> = setOf('=', '+', '-', '@', '\t', '\r')
+
+    /** Префикс-нейтрализатор формулы (OWASP CSV injection). */
+    internal const val FORMULA_GUARD: Char = '\''
+
+    /**
+     * Нейтрализует CSV formula injection: если значение начинается с [FORMULA_TRIGGERS], префиксует
+     * его [FORMULA_GUARD]. Применяется только к свободным текстовым полям перед RFC-экранированием.
+     */
+    internal fun guardAgainstFormulaInjection(value: String): String =
+        if (value.isNotEmpty() && value.first() in FORMULA_TRIGGERS) "$FORMULA_GUARD$value" else value
 
     /**
      * @param pets питомцы для экспорта (в порядке, заданном вызывающим — обычно сортировка репозитория)
@@ -48,13 +70,13 @@ object PetsCsvSerializer {
 
     private fun row(pet: Pet): String =
         listOf(
-            pet.name,
+            guardAgainstFormulaInjection(pet.name),
             pet.species.id,
             pet.subcategory,
             pet.birthDate.toString(),
             pet.gender?.id,
             pet.weightKg?.toString(),
-            pet.notes,
+            pet.notes?.let(::guardAgainstFormulaInjection),
         ).joinToString(separator = ",") { escape(it) }
 
     /**

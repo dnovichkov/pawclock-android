@@ -93,6 +93,8 @@ object DomainModule {
     ): ExportPetsUseCase = ExportPetsUseCase(petRepository = petRepository, clock = clock)
 
     @Provides
-    fun provideImportPetsUseCase(petRepository: PetRepository): ImportPetsUseCase =
-        ImportPetsUseCase(petRepository = petRepository)
+    fun provideImportPetsUseCase(
+        petRepository: PetRepository,
+        clock: Clock,
+    ): ImportPetsUseCase = ImportPetsUseCase(petRepository = petRepository, clock = clock)
 }

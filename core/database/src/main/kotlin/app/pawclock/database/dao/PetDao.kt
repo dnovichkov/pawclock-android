@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import app.pawclock.database.entity.PetEntity
 import kotlinx.coroutines.flow.Flow
@@ -41,6 +42,9 @@ interface PetDao {
     @Insert
     suspend fun insert(entity: PetEntity): Long
 
+    @Insert
+    suspend fun insertAll(entities: List<PetEntity>)
+
     @Update
     suspend fun update(entity: PetEntity)
 
@@ -52,4 +56,15 @@ interface PetDao {
 
     @Query("DELETE FROM pets")
     suspend fun clearAll()
+
+    /**
+     * Атомарно заменяет всё содержимое таблицы: удаляет всех питомцев и вставляет [entities]
+     * в одной транзакции. Если вставка упадёт, `@Transaction` откатит и предшествующий `clearAll` —
+     * существующие данные не будут потеряны (используется импортом со стратегией REPLACE, §3.5).
+     */
+    @Transaction
+    suspend fun replaceAll(entities: List<PetEntity>) {
+        clearAll()
+        insertAll(entities)
+    }
 }

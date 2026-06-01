@@ -6,6 +6,7 @@ import app.pawclock.domain.pet.PetRepository
 import app.pawclock.model.Gender
 import app.pawclock.model.Pet
 import app.pawclock.model.Species
+import java.time.Clock
 import java.time.LocalDate
 
 /**
@@ -23,14 +24,19 @@ import java.time.LocalDate
  * `dryRun = true` возвращает предпросмотр (количество и предупреждения) без мутации репозитория —
  * для confirm-диалога перед фактическим импортом.
  *
+ * Доменная валидация ([validateImportable]) выполняется ДО любой мутации репозитория: это
+ * (а) не даёт сохранить «битого» питомца (дата в будущем / нереалистичный год / некорректный вес),
+ * которого [app.pawclock.domain.usecase.CalculatePetAgeUseCase] потом не сможет рассчитать, и
+ * (б) гарантирует, что [ImportStrategy.REPLACE] не очистит существующие данные перед тем, как
+ * наткнуться на невалидную запись (иначе — необратимая потеря данных).
+ *
  * @param petRepository целевой репозиторий
- * @param jsonDeserializer декодер JSON (по умолчанию [PetsJsonDeserializer]; параметризован для тестов)
- * @param csvDeserializer декодер CSV (по умолчанию [PetsCsvDeserializer]; параметризован для тестов)
+ * @param clock источник «сегодня» для проверки даты рождения; в production — системные часы,
+ *   в тестах — `Clock.fixed`
  */
 class ImportPetsUseCase(
     private val petRepository: PetRepository,
-    private val jsonDeserializer: PetsDeserializer = PetsJsonDeserializer,
-    private val csvDeserializer: PetsDeserializer = PetsCsvDeserializer,
+    private val clock: Clock = Clock.systemDefaultZone(),
 ) {
     /**
      * @param content содержимое импортируемого файла
@@ -48,8 +54,8 @@ class ImportPetsUseCase(
     ): ImportSummary {
         val deserializer =
             when (format ?: detectFormat(content)) {
-                ExportFormat.JSON -> jsonDeserializer
-                ExportFormat.CSV -> csvDeserializer
+                ExportFormat.JSON -> PetsJsonDeserializer
+                ExportFormat.CSV -> PetsCsvDeserializer
             }
         val success =
             when (val result = deserializer.decode(content)) {
@@ -57,17 +63,44 @@ class ImportPetsUseCase(
                 is PetsImportResult.Success -> result
             }
         val pets = success.entries.map(::toPet)
+        validateImportable(pets)
         if (!dryRun) {
-            if (strategy == ImportStrategy.REPLACE) {
-                petRepository.clearAll()
+            when (strategy) {
+                // Атомарная замена: clearAll + insert в одной транзакции (см. PetDao.replaceAll).
+                // Иначе сбой вставки в середине цикла оставил бы пользователя без старых и новых данных.
+                ImportStrategy.REPLACE -> petRepository.replaceAll(pets)
+                ImportStrategy.MERGE -> pets.forEach { petRepository.insert(it) }
             }
-            pets.forEach { petRepository.insert(it) }
         }
         return ImportSummary(
             importedCount = pets.size,
             warnings = success.warnings,
             dryRun = dryRun,
         )
+    }
+
+    /**
+     * Доменная валидация уже разобранных питомцев — зеркалит правила
+     * [app.pawclock.domain.usecase.SavePetUseCase] для обычного сохранения, т.к. импорт пишет в
+     * репозиторий напрямую, минуя его. Fail-fast (как и остальной импорт): первая нарушенная запись
+     * прерывает импорт с [ImportException.MalformedData], репозиторий при этом не тронут.
+     */
+    private fun validateImportable(pets: List<Pet>) {
+        val today = LocalDate.now(clock)
+        for (pet in pets) {
+            val problem =
+                when {
+                    !pet.birthDate.isBefore(today) -> "birth_date must be in the past: ${pet.birthDate}"
+                    pet.birthDate.year < EARLIEST_REALISTIC_BIRTH_YEAR ->
+                        "birth_date year is unrealistic: ${pet.birthDate}"
+                    pet.weightKg?.let { !it.isFinite() || it < 0.0 } == true ->
+                        "weight_kg must be a non-negative finite number: ${pet.weightKg}"
+                    else -> null
+                }
+            if (problem != null) {
+                throw ImportException.MalformedData("$problem (\"${pet.name}\")")
+            }
+        }
     }
 
     /**
@@ -95,6 +128,14 @@ class ImportPetsUseCase(
     private fun detectFormat(content: String): ExportFormat {
         val head = content.removePrefix("﻿").trimStart()
         return if (head.startsWith("{") || head.startsWith("[")) ExportFormat.JSON else ExportFormat.CSV
+    }
+
+    private companion object {
+        /**
+         * Граница «нереалистичной» даты рождения — синхронизирована с
+         * `SavePetUseCase.EARLIEST_REALISTIC_BIRTH_YEAR`: дата раньше 1990 почти наверняка ошибка.
+         */
+        const val EARLIEST_REALISTIC_BIRTH_YEAR: Int = 1990
     }
 }
 

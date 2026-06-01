@@ -82,7 +82,7 @@ class SettingsViewModelTest {
             repository = repository,
             localeApplier = localeApplier,
             exportPets = ExportPetsUseCase(petRepository, fixedClock),
-            importPets = ImportPetsUseCase(petRepository),
+            importPets = ImportPetsUseCase(petRepository, fixedClock),
             backupFileWriter = backupFileWriter,
             backupFileReader = backupFileReader,
         )
@@ -441,6 +441,50 @@ class SettingsViewModelTest {
                 val error = awaitItem()
                 assertIs<SettingsEffect.ImportError>(error)
                 assertEquals(SettingsMessages.IMPORT_ERROR_MALFORMED, error.messageKey)
+            }
+        }
+
+    @Test
+    fun `ImportLocationSelected with missing required field emits ImportError missing field`() =
+        runTest {
+            // Отсутствует обязательное `species_id` → MissingRequiredField → ключ IMPORT_ERROR_MISSING_FIELD.
+            val json =
+                """
+                {"schema_version":1,"exported_at":"2026-05-29T00:00:00Z","pets":[
+                  {"name":"Рекс","birth_date":"2020-06-15"}
+                ]}
+                """.trimIndent()
+            val reader = FakeBackupFileReader(content = json)
+            val viewModel = buildViewModel(backupFileReader = reader)
+
+            viewModel.effects.test {
+                viewModel.handleEvent(
+                    SettingsEvent.ImportLocationSelected("content://in.json", ImportStrategy.MERGE),
+                )
+                val error = awaitItem()
+                assertIs<SettingsEffect.ImportError>(error)
+                assertEquals(SettingsMessages.IMPORT_ERROR_MISSING_FIELD, error.messageKey)
+            }
+        }
+
+    @Test
+    fun `ImportLocationSelected with forward-incompatible schema version emits ImportError unsupported version`() =
+        runTest {
+            // schema_version больше текущей поддерживаемой → UnsupportedSchemaVersion.
+            val json =
+                """
+                {"schema_version":2,"exported_at":"2026-05-29T00:00:00Z","pets":[]}
+                """.trimIndent()
+            val reader = FakeBackupFileReader(content = json)
+            val viewModel = buildViewModel(backupFileReader = reader)
+
+            viewModel.effects.test {
+                viewModel.handleEvent(
+                    SettingsEvent.ImportLocationSelected("content://in.json", ImportStrategy.MERGE),
+                )
+                val error = awaitItem()
+                assertIs<SettingsEffect.ImportError>(error)
+                assertEquals(SettingsMessages.IMPORT_ERROR_UNSUPPORTED_VERSION, error.messageKey)
             }
         }
 

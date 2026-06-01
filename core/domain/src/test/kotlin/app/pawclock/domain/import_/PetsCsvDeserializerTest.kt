@@ -151,4 +151,32 @@ class PetsCsvDeserializerTest {
         val success = assertIs<PetsImportResult.Success>(PetsCsvDeserializer.decode(input))
         assertEquals(1, success.entries.size, "финальный перенос строки не создаёт пустую запись")
     }
+
+    @Test
+    fun `strips formula-injection guard apostrophe from name and notes (round-trip)`() {
+        // Экспорт префиксует формульные значения апострофом; импорт должен снять его обратно.
+        val malicious =
+            Pet(
+                id = 1L,
+                name = "=cmd|'/c calc'!A1",
+                species = Species.Dog,
+                birthDate = LocalDate.of(2020, 1, 1),
+                notes = "+1+1",
+            )
+        val input = PetsCsvSerializer.encode(listOf(malicious), Instant.parse("2026-05-29T12:00:00Z"))
+
+        val success = assertIs<PetsImportResult.Success>(PetsCsvDeserializer.decode(input))
+        val entry = success.entries.single()
+        assertEquals("=cmd|'/c calc'!A1", entry.name, "ведущий апостроф-нейтрализатор снят при импорте")
+        assertEquals("+1+1", entry.notes, "формульные заметки восстановлены без апострофа")
+    }
+
+    @Test
+    fun `fails on unterminated quoted field`() {
+        // Открывающая кавычка без закрывающей — обрезанный/битый CSV.
+        val input = header + "\r\n" + "\"Рекс,dog,,2020-01-01,,,"
+
+        val failure = assertIs<PetsImportResult.Failure>(PetsCsvDeserializer.decode(input))
+        assertIs<ImportException.MalformedData>(failure.error)
+    }
 }

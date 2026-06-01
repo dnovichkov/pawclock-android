@@ -75,6 +75,13 @@ _Пока пусто. Следующие изменения после v1.0.0 п
 
 - Запрет INTERNET permission через `<uses-permission tools:node="remove">`
   (см. ADR-0005). Data Safety на Google Play — "No data collected".
+- **Защита CSV-экспорта от formula injection** (OWASP): свободные поля (`name`/`notes`),
+  начинающиеся с `=`/`+`/`-`/`@`/TAB/CR, префиксуются апострофом, чтобы не выполнялись как
+  формулы при открытии в Excel/Sheets; импорт снимает префикс симметрично (round-trip сохранён).
+- **Доменная валидация импортируемых данных**: дата рождения в будущем / нереалистичный год /
+  не-конечный или отрицательный вес отклоняются до записи в БД (зеркалит `SavePetUseCase`).
+- **Атомарный импорт REPLACE**: очистка + вставка выполняются в одной Room-транзакции, а валидация —
+  до любой мутации; сбой больше не оставляет пользователя без старых и новых данных.
 
 [Unreleased]: https://github.com/dnovichkov/pawclock-android/compare/v1.0.0...HEAD
 [1.0.0]: https://github.com/dnovichkov/pawclock-android/releases/tag/v1.0.0

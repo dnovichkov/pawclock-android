@@ -118,7 +118,7 @@ class RoundTripTest {
     private suspend fun assertRoundTripPreservesAllPets(format: ExportFormat) {
         val repo = FakePetRepository()
         val exportUseCase = ExportPetsUseCase(repo, fixedClock)
-        val importUseCase = ImportPetsUseCase(repo)
+        val importUseCase = ImportPetsUseCase(repo, fixedClock)
 
         val original = twelvePets()
         original.forEach { repo.insert(it) }

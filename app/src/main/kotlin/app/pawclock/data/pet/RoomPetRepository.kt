@@ -45,4 +45,6 @@ class RoomPetRepository
         override suspend fun deleteById(id: Long): Int = petDao.deleteById(id)
 
         override suspend fun clearAll() = petDao.clearAll()
+
+        override suspend fun replaceAll(pets: List<Pet>) = petDao.replaceAll(pets.map(PetMapper::toEntity))
     }

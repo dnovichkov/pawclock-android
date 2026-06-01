@@ -18,6 +18,10 @@ import kotlinx.coroutines.withContext
  *
  * `openOutputStream` может вернуть `null` (provider не отдал stream) — трактуем как [IOException],
  * чтобы ViewModel показал единое сообщение об ошибке записи. I/O выполняется на [Dispatchers.IO].
+ *
+ * Режим `"wt"` (write + truncate): по умолчанию `"w"` у многих DocumentsProvider НЕ усекает файл,
+ * поэтому при перезаписи существующего файла большего размера в конце оставались бы «хвостовые»
+ * байты старого содержимого — получился бы битый JSON/CSV. `"wt"` гарантирует усечение.
  */
 class SafFileWriter
     @Inject
@@ -30,7 +34,7 @@ class SafFileWriter
         ) = withContext(Dispatchers.IO) {
             val uri = Uri.parse(uriString)
             val stream =
-                context.contentResolver.openOutputStream(uri)
+                context.contentResolver.openOutputStream(uri, "wt")
                     ?: throw IOException("Cannot open output stream for $uriString")
             stream.use { it.write(content.toByteArray(Charsets.UTF_8)) }
         }

@@ -1,6 +1,7 @@
 package app.pawclock.domain.import_
 
 import app.pawclock.domain.export.PetExportEntry
+import app.pawclock.domain.export.PetsCsvSerializer
 
 /**
  * Разбирает экспортный CSV обратно в записи питомцев (§3.5, Plan 2 Task 20).
@@ -38,10 +39,17 @@ object PetsCsvDeserializer : PetsDeserializer {
      * @return [PetsImportResult.Success] с записями и предупреждениями, либо [PetsImportResult.Failure]
      */
     override fun decode(input: String): PetsImportResult {
-        val rows = parseRows(input.removePrefix(BOM.toString())).filterNot(::isBlankLine)
+        // parseRows возвращает null при незакрытой кавычке; .orEmpty() сводит оба «нет заголовка»
+        // случая (битый ввод / пустой файл) к одной ветке elvis ниже — без лишнего return (detekt).
+        val parsed = parseRows(input.removePrefix(BOM.toString()))
+        val rows = parsed?.filterNot(::isBlankLine).orEmpty()
         val header =
             rows.firstOrNull()
-                ?: return PetsImportResult.Failure(ImportException.MalformedData("Empty CSV input"))
+                ?: return PetsImportResult.Failure(
+                    ImportException.MalformedData(
+                        if (parsed == null) "Unterminated quoted field in CSV" else "Empty CSV input",
+                    ),
+                )
         val columns = header.withIndex().associate { (index, name) -> name to index }
         val missing = REQUIRED_COLUMNS.filterNot(columns::containsKey)
         return when {
@@ -63,13 +71,13 @@ object PetsCsvDeserializer : PetsDeserializer {
             }
             entries +=
                 PetExportEntry(
-                    name = required(row, columns, COLUMN_NAME),
+                    name = stripFormulaGuard(required(row, columns, COLUMN_NAME)),
                     speciesId = required(row, columns, COLUMN_SPECIES),
                     birthDate = required(row, columns, COLUMN_BIRTH_DATE),
                     subcategoryId = optional(row, columns, COLUMN_SUBCATEGORY),
                     genderId = optional(row, columns, COLUMN_GENDER),
                     weightKg = weight,
-                    notes = optional(row, columns, COLUMN_NOTES),
+                    notes = optional(row, columns, COLUMN_NOTES)?.let(::stripFormulaGuard),
                 )
         }
         return ImportEntryValidator.validate(entries)
@@ -96,6 +104,22 @@ object PetsCsvDeserializer : PetsDeserializer {
         name: String,
     ): String? = columns[name]?.let(row::getOrNull)
 
+    /**
+     * Снимает анти-injection префикс ([PetsCsvSerializer.FORMULA_GUARD]), добавленный экспортом к
+     * свободным полям, начинавшимся с формульного символа — обеспечивает round-trip `=Rex` ↔ `'=Rex`.
+     * Применяется только когда за апострофом действительно следует формульный символ, чтобы не
+     * затронуть имена, которые легитимно начинаются с апострофа без формулы.
+     */
+    private fun stripFormulaGuard(value: String): String =
+        if (value.length >= 2 &&
+            value.first() == PetsCsvSerializer.FORMULA_GUARD &&
+            value[1] in PetsCsvSerializer.FORMULA_TRIGGERS
+        ) {
+            value.substring(1)
+        } else {
+            value
+        }
+
     /** Пустая строка файла (одна пустая ячейка) — артефакт финального переноса строки, пропускается. */
     private fun isBlankLine(row: List<String>): Boolean = row.size == 1 && row.first().isEmpty()
 
@@ -104,9 +128,12 @@ object PetsCsvDeserializer : PetsDeserializer {
      *
      * Состояние [inQuotes] определяет, является ли `,` / `\r` / `\n` разделителем или обычным
      * символом внутри закавыченного поля. Удвоенная кавычка (`""`) внутри кавычек экранирует одну.
+     *
+     * @return разобранные строки, либо `null` если ввод закончился с незакрытой кавычкой
+     *   (битый/обрезанный CSV) — вызывающий трактует это как [ImportException.MalformedData].
      */
     @Suppress("CyclomaticComplexMethod", "NestedBlockDepth")
-    private fun parseRows(input: String): List<List<String>> {
+    private fun parseRows(input: String): List<List<String>>? {
         val rows = mutableListOf<List<String>>()
         var row = mutableListOf<String>()
         val field = StringBuilder()
@@ -142,6 +169,7 @@ object PetsCsvDeserializer : PetsDeserializer {
             }
             index++
         }
+        if (inQuotes) return null
         row.add(field.toString())
         rows.add(row)
         return rows
