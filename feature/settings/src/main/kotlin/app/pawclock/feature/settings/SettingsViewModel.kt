@@ -17,6 +17,7 @@ import app.pawclock.feature.settings.backup.BackupFileWriter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.io.IOException
 import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
@@ -136,6 +137,12 @@ class SettingsViewModel
                         val content = exportPets(pendingExportFormat)
                         backupFileWriter.write(event.uriString, content)
                         SettingsEffect.ExportComplete(petCount = countPets(content, pendingExportFormat))
+                    } catch (e: CancellationException) {
+                        // CancellationException — это RuntimeException, поэтому без явного re-throw
+                        // нижний catch превратил бы отмену viewModelScope (например, при recreate из-за
+                        // смены языка или закрытии экрана) в ложный ExportError. Пробрасываем, чтобы
+                        // не нарушать structured concurrency.
+                        throw e
                     } catch (_: IOException) {
                         SettingsEffect.ExportError(SettingsMessages.EXPORT_ERROR_WRITE_FAILED)
                     } catch (_: RuntimeException) {
@@ -157,6 +164,10 @@ class SettingsViewModel
                             petCount = summary.importedCount,
                             warnings = summary.warnings,
                         )
+                    } catch (e: CancellationException) {
+                        // См. onExportLocationSelected: не глушим отмену корутины — пробрасываем,
+                        // иначе нижний RuntimeException-catch выдаст ложный ImportError.
+                        throw e
                     } catch (e: ImportException) {
                         SettingsEffect.ImportError(e.toMessageKey())
                     } catch (_: IOException) {
