@@ -62,6 +62,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.compose.navigation)
     implementation(libs.androidx.compose.hilt.navigation)
+    // Activity Result API — SAF launchers (CreateDocument/OpenDocument) для Export/Import (Plan 2 Task 21).
+    implementation(libs.androidx.activity.compose)
 
     // Hilt — DI для @HiltViewModel.
     implementation(libs.hilt.android)

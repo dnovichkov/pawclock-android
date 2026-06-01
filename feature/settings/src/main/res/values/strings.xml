@@ -12,6 +12,7 @@
     <string name="settings_section_appearance">Внешний вид</string>
     <string name="settings_section_language">Язык</string>
     <string name="settings_section_calculation">Расчёт возраста собак</string>
+    <string name="settings_section_backup">Резервная копия</string>
 
     <string name="settings_open_about_title">О приложении</string>
     <string name="settings_open_about_supporting">Версия, лицензия, источники</string>
@@ -36,6 +37,34 @@
     <string name="settings_method_epigenetic_supporting">Формула на основе ДНК-метилирования. Едина для всех размеров собак.</string>
     <string name="settings_method_size_based_title">По размеру (AKC/AAHA 2019)</string>
     <string name="settings_method_size_based_supporting">Табличный метод с учётом размера: гиганты стареют быстрее малых пород.</string>
+
+    <!-- Backup: export / import (§3.5) -->
+    <string name="settings_export_title">Экспорт…</string>
+    <string name="settings_export_supporting">Сохранить данные о питомцах в файл</string>
+    <string name="settings_import_title">Импорт…</string>
+    <string name="settings_import_supporting">Восстановить питомцев из файла</string>
+
+    <string name="settings_export_format_dialog_title">Формат экспорта</string>
+    <string name="settings_export_format_json">JSON</string>
+    <string name="settings_export_format_csv">CSV</string>
+
+    <string name="settings_import_strategy_dialog_title">Стратегия импорта</string>
+    <string name="settings_import_strategy_merge">Объединить</string>
+    <string name="settings_import_strategy_replace">Заменить</string>
+
+    <string name="settings_backup_confirm">Продолжить</string>
+    <string name="settings_backup_cancel">Отмена</string>
+
+    <string name="settings_export_success">Экспортировано питомцев: %1$d</string>
+    <string name="settings_import_success">Импортировано питомцев: %1$d</string>
+    <string name="settings_import_success_with_warnings">Импортировано: %1$d (предупреждений: %2$d)</string>
+
+    <string name="settings_export_error_write_failed">Не удалось сохранить файл</string>
+    <string name="settings_import_error_malformed">Файл повреждён или имеет неверный формат</string>
+    <string name="settings_import_error_missing_field">В файле отсутствуют обязательные поля</string>
+    <string name="settings_import_error_unknown_species">В файле есть неизвестный вид питомца</string>
+    <string name="settings_import_error_unsupported_version">Версия файла не поддерживается этой версией приложения</string>
+    <string name="settings_import_error_read_failed">Не удалось прочитать файл</string>
 
     <!-- About screen -->
     <string name="about_title">О приложении</string>

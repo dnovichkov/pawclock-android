@@ -3,6 +3,8 @@ package app.pawclock.data.domain.di
 import app.pawclock.data.settings.DataStoreSettingsReader
 import app.pawclock.datastore.SettingsRepository
 import app.pawclock.domain.care.CareRepository
+import app.pawclock.domain.export.ExportPetsUseCase
+import app.pawclock.domain.import_.ImportPetsUseCase
 import app.pawclock.domain.pet.PetRepository
 import app.pawclock.domain.settings.SettingsReader
 import app.pawclock.domain.usecase.CalculatePetAgeUseCase
@@ -83,4 +85,14 @@ object DomainModule {
     @Provides
     fun provideGetCareRecommendationsUseCase(careRepository: CareRepository): GetCareRecommendationsUseCase =
         GetCareRecommendationsUseCase(careRepository)
+
+    @Provides
+    fun provideExportPetsUseCase(
+        petRepository: PetRepository,
+        clock: Clock,
+    ): ExportPetsUseCase = ExportPetsUseCase(petRepository = petRepository, clock = clock)
+
+    @Provides
+    fun provideImportPetsUseCase(petRepository: PetRepository): ImportPetsUseCase =
+        ImportPetsUseCase(petRepository = petRepository)
 }

@@ -535,34 +535,29 @@
 - [x] ➕ detekt (обнаружено): `decode` переписан с 3 → 2 return (`firstOrNull ?: return` + единый `when`) под `ReturnCount` лимит 2; `parseRows` помечен `@Suppress("CyclomaticComplexMethod", "NestedBlockDepth")` — конечный автомат CSV неизбежно ветвист, декомпозиция его только запутала бы
 
 ### Task 21: Settings UI — Export/Import buttons + SAF integration
-- [ ] write FAILING test `SettingsViewModelTest`:
-  - `ExportRequested(format=JSON) emits Effect.RequestSaveLocation(suggestedFilename, mime)` — Effect/Event для UI чтобы запустить `ACTION_CREATE_DOCUMENT`
-  - `ExportLocationSelected(uri) → exports pets and emits Effect.ExportComplete(petCount)`
-  - `ImportRequested → emits Effect.RequestOpenLocation(mimes=["application/json","text/csv"])`
-  - `ImportLocationSelected(uri, strategy=MERGE) → imports and emits Effect.ImportComplete(petCount, warnings)`
-  - `ImportFailed → emits Effect.ImportError(errorMessageKey)`
-- [ ] verify tests fail — **Red**
-- [ ] update `SettingsViewModel` чтобы:
-  - инжектировать `ExportPetsUseCase` и `ImportPetsUseCase`
-  - добавить новые `SettingsEvent` варианты: `ExportRequested`, `ExportLocationSelected`, `ImportRequested`, `ImportLocationSelected`
-  - использовать `Channel<SettingsEffect>` (или `SharedFlow`) для one-time effects (request SAF, show snackbar) — отдельно от reactive state
-- [ ] create `SettingsEffect` sealed interface для one-time UI effects
-- [ ] verify — **Green**
-- [ ] update `SettingsScreen` Composable:
-  - добавить раздел "Резервная копия" / "Backup" с двумя ListItem: "Экспорт..." + "Импорт..."
-  - sub-выбор формата через radio dialog: JSON / CSV
-  - sub-выбор стратегии import: Merge / Replace
-  - integrate `rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument)` для export → передать uri в SettingsViewModel
-  - integrate `rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument)` для import
-  - после успешного export/import — Snackbar с локализованным сообщением
-- [ ] create `SafFileWriter` / `SafFileReader` обёртки в `:app/data/saf/` для записи/чтения через `Context.contentResolver.openOutputStream(uri)` — изолирует ViewModel от Android `Uri`
-- [ ] write Compose UI test `SettingsScreenTest`:
-  - `Export button visible`
-  - `clicking Export shows format selector dialog`
-  - `Import button visible`
-  - `clicking Import shows strategy selector dialog`
-- [ ] verify — **Green**
-- [ ] run `./gradlew :feature:settings:test :feature:settings:assembleDebug --no-daemon`
+- [x] write FAILING test `SettingsViewModelTest`: покрыты `ExportRequested JSON/CSV emits RequestSaveLocation` (filename+mime), `ExportLocationSelected writes file and emits ExportComplete with pet count`, `ExportLocationSelected emits ExportError when writer fails`, `ImportRequested emits RequestOpenLocation with json+csv mimes`, `ImportLocationSelected imports pets and emits ImportComplete`, `… with REPLACE clears existing then inserts`, `… with unknown species emits ImportError`, `… with malformed content emits ImportError malformed`, `… with unknown gender emits ImportComplete with warning`, `… emits ImportError when reader fails` (13 новых тестов через `Turbine` + `FakeBackupFile*`/`FakePetRepository`)
+  - ⚠️ «ImportFailed → ImportError(errorMessageKey)» переформулировано: ошибка приходит не отдельным событием, а из самого `ImportLocationSelected` — `ImportException` (типизированный) маппится приватным `toMessageKey()` на стабильный ключ `SettingsMessages.*`; ViewModel остаётся свободным от Android `R`
+- [x] verify tests fail — **Red** (тесты ссылались на несуществующие `SettingsEffect`/`SettingsEvent.Export*`/`Import*`/`BackupFileWriter`/`BackupFileReader` — заведомая compile-failure)
+- [x] update `SettingsViewModel` чтобы:
+  - инжектировать `ExportPetsUseCase` и `ImportPetsUseCase` (+ `BackupFileWriter`/`BackupFileReader` SAF-порты)
+  - добавить новые `SettingsEvent` варианты: `ExportRequested`, `ExportLocationSelected`, `ImportRequested` (data object), `ImportLocationSelected(uri, strategy)`
+  - использовать `Channel<SettingsEffect>(BUFFERED)` → `receiveAsFlow()` для one-time effects (SAF-запрос, результат) — отдельно от reactive `state`; `pendingExportFormat` запоминается между двумя фазами SAF
+- [x] create `SettingsEffect` sealed interface для one-time UI effects (`RequestSaveLocation`/`RequestOpenLocation`/`ExportComplete`/`ExportError`/`ImportComplete`/`ImportError`) + `object SettingsMessages` со стабильными ключами ошибок
+- [x] verify — **Green** (`SettingsViewModelTest` 23/0/0 — 10 Plan-1 + 13 Plan-2)
+- [x] update `SettingsScreen` Composable:
+  - добавлен раздел «Резервная копия» / «Backup» (`BackupSection` в `ui/section/`) с двумя `ListItem`: «Экспорт…» + «Импорт…»
+  - sub-выбор формата через radio `AlertDialog`: JSON / CSV (`ExportFormatDialog`)
+  - sub-выбор стратегии import через radio `AlertDialog`: Merge / Replace (`ImportStrategyDialog`)
+  - `rememberLauncherForActivityResult(CreateDocument(mime))` для export (отдельные JSON/CSV launcher'ы — `CreateDocument` фиксирует mime на construction) → `ExportLocationSelected`
+  - `rememberLauncherForActivityResult(OpenDocument())` для import → `ImportLocationSelected(uri, pendingStrategy)`
+  - после export/import — `Snackbar` с локализованным сообщением (`importCompleteMessage` учитывает warnings); ошибки маппятся `backupErrorResId`
+- [x] create `SafFileWriter` / `SafFileReader` обёртки в `:app/data/saf/` (через `contentResolver.openOutputStream/openInputStream` на `Dispatchers.IO`) — изолируют ViewModel от Android `Uri`; порты `BackupFileWriter`/`BackupFileReader` (`fun interface`) живут в `:feature:settings/backup/`, связываются `@Binds` в `SafModule` (ports&adapters)
+- [x] write Compose UI test `SettingsScreenTest`: `backup_exportRowVisible`, `backup_importRowVisible`, `backup_clickingExportShowsFormatDialog` (+ JSON/CSV опции), `backup_clickingImportShowsStrategyDialog` (+ Merge/Replace опции), `backup_confirmingExportFormatInvokesCallback`, `backup_confirmingImportStrategyInvokesCallback` (через `SettingsContent` stateless + testTag'и)
+- [x] verify — **Green** (`compileDebugAndroidTestKotlin` чистый; запуск на эмуляторе — nightly.yml)
+- [x] run `./gradlew :feature:settings:test :feature:settings:assembleDebug --no-daemon` — зелёное (также прогнаны `:feature:settings:detekt`, `:feature:settings:koverVerify` ≥80%, `:app:detekt`, `:app:assembleDebug` для проверки Hilt-графа+SAF-проводки, `:feature:settings:compileDebugAndroidTestKotlin`)
+- [x] ➕ DI (обнаружено): `DomainModule` дополнен `provideExportPetsUseCase`/`provideImportPetsUseCase`; новый `SafModule` (`:app/data/saf/di/`) с `@Binds` для SAF-портов; `:feature:settings` build.gradle получил `androidx.activity.compose` (Activity Result API)
+- [x] ➕ i18n (обнаружено): добавлены строки `settings_section_backup`, `settings_export_*`, `settings_import_*` (заголовки, диалоги, форматы, стратегии, success/error-сообщения) в ru + en (финальная вычитка локализации — Task 22)
+- [x] ➕ detekt (обнаружено): `LongParameterList.ignoreAnnotated: [Composable]` — `SettingsContent` принимает state + 7 callback'ов/модификаторов (8 параметров), что легитимная Compose-идиома, а не code smell; обычные функции/конструкторы держим под порогом 7
 
 ### Task 22: Локализация — strings для всех новых видов + подкатегорий + стадий
 - [ ] add стрингов в `:feature:editor/src/main/res/values/strings.xml` (ru, default) для:
