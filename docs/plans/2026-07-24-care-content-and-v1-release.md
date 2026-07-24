@@ -306,13 +306,13 @@ Pitest / Baseline Profiles / ACRA сознательно отложены в Pla
 - [x] run `./gradlew :core:domain:test --no-daemon` + `bash scripts/verify-care-content.sh` — все 116 файлов
   Green; `grep -rl "TODO" app/src/main/assets/care` возвращает пусто — must pass before next task
 
-### Task 14: Version bump 1.0.0 + CHANGELOG finalization
-- [ ] write FAILING test/verify `scripts/verify-release-metadata.sh` (или JVM-тест в `:app`): проверяет
+### Task 14: Version bump 1.0.0 + CHANGELOG finalization ✅
+- [x] write FAILING test/verify `scripts/verify-release-metadata.sh` (или JVM-тест в `:app`): проверяет
   `versionName == "1.0.0"` и `versionCode == 10000` в `app/build.gradle.kts` (формула §8.10: 1*10000+0*100+0)
-- [ ] update `app/build.gradle.kts`: `versionCode = 1` → `10000`, `versionName = "0.1.0"` → `"1.0.0"`
-- [ ] update `CHANGELOG.md`: внести Care Content Pass в раздел `[1.0.0]` (Changed: placeholder → реальный
+- [x] update `app/build.gradle.kts`: `versionCode = 1` → `10000`, `versionName = "0.1.0"` → `"1.0.0"`
+- [x] update `CHANGELOG.md`: внести Care Content Pass в раздел `[1.0.0]` (Changed: placeholder → реальный
   контент по §14); проставить корректную дату релиза-подготовки; `[Unreleased]` оставить пустым
-- [ ] run verify-скрипт — Green; must pass before next task
+- [x] run verify-скрипт — Green; must pass before next task
 
 ### Task 15: Privacy policy (§9)
 - [ ] write FAILING test: `scripts/verify-release-metadata.sh` проверяет наличие `docs/PRIVACY.md` +

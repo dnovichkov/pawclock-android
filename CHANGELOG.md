@@ -9,12 +9,27 @@
 
 _Пока пусто. Следующие изменения после v1.0.0 попадут сюда._
 
-## [1.0.0] - 2026-06-01
+## [1.0.0] - 2026-07-24
 
-Полный MVP v1.0 (§12.1): все 12 групп животных + миграция данных между устройствами (§3.5).
-Дата релиза проставляется при тегировании `v1.0.0`.
+Полный MVP v1.0 (§12.1): все 12 групп животных + миграция данных между устройствами (§3.5) +
+реальный научно-обоснованный care-контент для всех видов. Дата релиза проставляется при
+тегировании `v1.0.0`.
 
 ### Added
+
+#### Plan 3 — реальный care-контент + релизная готовность
+
+- **Care-контент для всех 12 видов**: 116 JSON-файлов (58 стадий × ru/en) наполнены реальным
+  husbandry-контентом по опубликованным guidelines §14 (AAHA 2019, AAHA/AAFP 2021, House Rabbit
+  Society, Oxbow, RVC VetCompass, Sengupta 2013/2016, PMC Senior Ferret, AAV/Lafeber, PetPlace,
+  AAEP, PetMD) — заменили placeholder-заглушки Plan 2. Уровень контента — общая husbandry-гид по
+  стадиям жизни с обязательным дисклеймером §3.3 (см. ADR-0010).
+- **Content quality gate**: `CareContentQualityTest` (`:core:domain`) + `scripts/verify-care-content.sh`
+  — no-TODO, дословный дисклеймер §3.3, min-length, dental-правило (null только у fish), валидный
+  source_url; инвариант `contentComplete == Species.implemented()` (no silent caps).
+- **Релизная готовность v1.0.0**: bump `versionName 1.0.0` / `versionCode 10000` (§8.10), privacy
+  policy `docs/PRIVACY.md` («No data collected, No data shared», §9), fastlane-метаданные Google Play
+  (`fastlane/metadata/android/{ru,en-US}/`), финализация README, ADR-0010 (провенанс care-контента).
 
 #### Plan 2 — все виды + export/import
 
