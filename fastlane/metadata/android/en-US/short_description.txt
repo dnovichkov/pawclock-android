@@ -1,0 +1,1 @@
+Offline pet age & life-stage calculator for 12 species. No ads, no tracking.

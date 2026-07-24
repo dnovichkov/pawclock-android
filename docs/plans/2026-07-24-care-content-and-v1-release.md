@@ -322,15 +322,15 @@ Pitest / Baseline Profiles / ACRA сознательно отложены в Pla
 - [x] link из README (раздел Privacy) на `docs/PRIVACY.md`
 - [x] run verify-скрипт — Green; must pass before next task
 
-### Task 16: fastlane metadata для Google Play
-- [ ] write FAILING test: `scripts/verify-release-metadata.sh` проверяет структуру
+### Task 16: fastlane metadata для Google Play ✅
+- [x] write FAILING test: `scripts/verify-release-metadata.sh` проверяет структуру
   `fastlane/metadata/android/{ru,en-US}/` и char-лимиты (title ≤ 30, short_description ≤ 80,
   full_description ≤ 4000, `changelogs/10000.txt` ≤ 500)
-- [ ] create `fastlane/metadata/android/en-US/`: `title.txt`, `short_description.txt`, `full_description.txt`
+- [x] create `fastlane/metadata/android/en-US/`: `title.txt`, `short_description.txt`, `full_description.txt`
   (USP из §1.3: все виды, научные формулы, no ads/tracking, Material You, open source), `changelogs/10000.txt`
-- [ ] create `fastlane/metadata/android/ru/` с ru-переводами тех же файлов
-- [ ] add `fastlane/README.md` объясняющий что `images/` (скриншоты) — external graphic pass (Post-Completion)
-- [ ] run verify-скрипт — все лимиты Green; must pass before next task
+- [x] create `fastlane/metadata/android/ru/` с ru-переводами тех же файлов
+- [x] add `fastlane/README.md` объясняющий что `images/` (скриншоты) — external graphic pass (Post-Completion)
+- [x] run verify-скрипт — все лимиты Green; must pass before next task
 
 ### Task 17: README finalization + ADR-0010 (content provenance)
 - [ ] write FAILING test: `scripts/verify-release-metadata.sh` проверяет что README не содержит placeholder'ов

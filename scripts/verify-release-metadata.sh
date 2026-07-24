@@ -61,6 +61,51 @@ else
     fi
 fi
 
+# ---------------------------------------------------------------------------
+# Task 16 — fastlane metadata (Google Play) + character limits
+# ---------------------------------------------------------------------------
+FASTLANE="fastlane/metadata/android"
+
+# charlen FILE -> prints the Unicode character count with a trailing newline stripped.
+# Uses node for accurate code-point length; falls back to `wc -m` (byte-ish) otherwise.
+charlen() {
+    local f="$1"
+    if [ "${HAS_NODE:-0}" -eq 1 ] || command -v node >/dev/null 2>&1; then
+        FILE="$f" node -e 'process.stdout.write(String(require("fs").readFileSync(process.env.FILE,"utf8").replace(/\s+$/,"").length))'
+    else
+        printf '%s' "$(cat "$f")" | wc -m | tr -d ' '
+    fi
+}
+
+# check_limit FILE MAX LABEL
+check_limit() {
+    local f="$1" max="$2" label="$3"
+    if [ ! -s "$f" ]; then
+        fail "$label missing or empty: $f"
+        return
+    fi
+    local len
+    len=$(charlen "$f")
+    if [ "$len" -le "$max" ]; then
+        ok "$label ok ($len ≤ $max): $f"
+    else
+        fail "$label too long ($len > $max): $f"
+    fi
+}
+
+echo "==> [fastlane] checking $FASTLANE ..."
+for locale in en-US ru; do
+    dir="$FASTLANE/$locale"
+    if [ ! -d "$dir" ]; then
+        fail "missing fastlane locale directory: $dir"
+        continue
+    fi
+    check_limit "$dir/title.txt" 30 "title[$locale]"
+    check_limit "$dir/short_description.txt" 80 "short_description[$locale]"
+    check_limit "$dir/full_description.txt" 4000 "full_description[$locale]"
+    check_limit "$dir/changelogs/10000.txt" 500 "changelog[$locale]"
+done
+
 echo ""
 if [ $EXIT_CODE -eq 0 ]; then
     echo "✅ Release metadata checks passed."

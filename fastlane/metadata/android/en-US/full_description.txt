@@ -1,0 +1,27 @@
+PawClock turns your pet's real age into "human years" using modern, science-based formulas — and it does it completely offline, with no ads and no tracking.
+
+WIDEST SPECIES LIST
+Dogs, cats, rabbits, hamsters, guinea pigs, rats, mice, ferrets, birds, reptiles, horses, and fish — 12 groups with their own formulas and life stages, far beyond the usual "multiply by 7".
+
+SCIENCE-BASED, NOT GUESSWORK
+• Dogs: the epigenetic formula from Wang et al. (Cell Systems, 2020) and the size-based AKC/AAHA 2019 table.
+• Cats: AAHA/AAFP 2021 Feline Life Stage Guidelines.
+• Rats and mice: Sengupta 2013 and Dutta & Sengupta 2016.
+Every formula cites its source, so you can see exactly how the result was calculated.
+
+LIFE STAGES & CARE
+For each pet PawClock shows the current life stage and practical, general care guidance for that stage — nutrition, activity, vet-check frequency, dental care, and warning signs — grounded in published veterinary guidelines. This information is educational and does not replace a veterinarian.
+
+PRIVATE BY DESIGN
+• No data collected, no data shared.
+• No Internet permission at all — the app cannot phone home.
+• No ads, no analytics, no accounts.
+• Everything stays on your device. Export and import your data yourself, only when you choose to.
+
+MADE WELL
+• Material You design with dynamic colors, light and dark themes.
+• Russian and English.
+• Small download, no bloated ad SDKs.
+• Open source under the Apache License 2.0.
+
+PawClock is an honest alternative to ad-filled pet-age apps — built for people who care about both their pets and their privacy.
