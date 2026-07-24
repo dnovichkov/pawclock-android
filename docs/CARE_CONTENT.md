@@ -3,46 +3,49 @@
 Этот документ отслеживает статус научного наполнения care-рекомендаций
 (`app/src/main/assets/care/{species}/{stage}/{ru,en}.json`).
 
-После Plan 2 (Task 13) для всех 12 реализованных видов созданы **placeholder**-файлы
-со структурой по модели `CareRecommendation` (см. `:core:model`) и обязательным
-дисклеймером §3.3. Реальный научно-обоснованный текст — отдельный content-pass
-**после Plan 2** (см. Overview плана `2026-05-28-all-species-and-export-import.md`,
-раздел «Что НЕ входит в этот план»).
+Plan 2 (Task 13) создал **placeholder**-файлы со структурой по модели `CareRecommendation`
+(см. `:core:model`) и обязательным дисклеймером §3.3. **Plan 3 (Tasks 2–13) заменил все
+placeholder'ы реальным husbandry-контентом** по опубликованным ветеринарным guidelines §14 —
+для всех 12 видов × стадий × {ru, en}. Уровень контента — общая гид по стадиям жизни, не
+индивидуальная медицина (см. [ADR-0010](adr/0010-care-content-from-published-guidelines.md)).
 
-Все placeholder-поля помечены `TODO(content-pass-after-plan-2)` и выявляются поиском:
-
-```bash
-grep -rl "TODO(content-pass-after-plan-2)" app/src/main/assets/care
-```
-
-Наличие и структурная валидность всех файлов проверяется:
+Отсутствие placeholder'ов проверяется поиском (должен вернуть пусто):
 
 ```bash
-bash scripts/verify-care-assets.sh
+grep -rl "TODO" app/src/main/assets/care
 ```
 
-а также JVM-тестом `CareAssetsIntegrityTest` в `:core:domain`
-(структура + наличие + дисклеймер для каждого вида × стадии × {ru, en}).
+Проверки:
+
+```bash
+bash scripts/verify-care-assets.sh    # структура + наличие + дисклеймер (все виды)
+bash scripts/verify-care-content.sh   # готовность контента: no-TODO + дисклеймер §3.3 + min-length
+```
+
+а также JVM-тесты в `:core:domain`: `CareAssetsIntegrityTest` (структура) и `CareContentQualityTest`
+(готовность контента + инвариант `contentComplete == Species.implemented()`).
 
 ## Статус (Status)
 
-Легенда: `TODO` — placeholder; `DONE` — научный контент вычитан ветеринарным
-источником и заменён в обоих локалях (ru + en).
+Легенда: `TODO` — placeholder; `DONE (Plan 3)` — реальный husbandry-контент наполнен по
+опубликованным guidelines §14 в обеих локалях (ru + en) и проходит quality-гейт
+(`CareContentQualityTest` / `verify-care-content.sh`). **Профессиональная ветеринарная вычитка —
+отдельный рекомендованный шаг** (external Post-Completion), см. [ADR-0010](adr/0010-care-content-from-published-guidelines.md).
 
 | Вид | Стадии (LifeStage) | Локали | Источник (§14) | Статус |
 |---|---|---|---|---|
-| Dog (`dog`) | puppy, young_adult, mature_adult, senior, end_of_life | ru, en | AAHA 2019 Canine Life Stage Guidelines | TODO (Plan 1 placeholder) |
-| Cat (`cat`) | kitten, young_adult, mature_adult, senior, end_of_life | ru, en | AAHA/AAFP 2021 Feline Life Stage Guidelines | TODO (Plan 1 placeholder) |
-| Rabbit (`rabbit`) | infancy, adolescence, young_adult, adult, senior | ru, en | House Rabbit Society & Oxbow Rabbit Life Stages | TODO |
-| Hamster (`hamster`) | pup, juvenile, adult, senior, very_senior | ru, en | RVC VetCompass Hamster Study & PetMD | TODO |
-| Guinea Pig (`guinea_pig`) | pup, juvenile, adult, senior, geriatric | ru, en | Oxbow Guinea Pig Lifespan and Life Stages | TODO |
-| Rat (`rat`) | pup, juvenile, adult, senior, end_of_life | ru, en | Sengupta 2013, Int J Prev Med 4(6):624-630 | TODO |
-| Mouse (`mouse`) | pup, juvenile, adult, senior, end_of_life | ru, en | Dutta & Sengupta 2016, Life Sciences 152:244-248 | TODO |
-| Ferret (`ferret`) | kit, juvenile, adult, senior, geriatric | ru, en | The Senior Ferret (PMC7129291) & Oxbow Ferret Life Stages | TODO |
-| Bird (`bird`) | hatchling, juvenile, adult, senior, geriatric | ru, en | AAV Care for Senior Parrots & Lafeber Vet | TODO |
-| Reptile (`reptile`) | hatchling, juvenile, adult, senior | ru, en | PetPlace, Reptile Centre & A-Z Animals lifespan sheets | TODO |
-| Horse (`horse`) | foal, yearling, young_adult, adult, senior | ru, en | AAEP Senior Horse Care & PetMD (Kaela Schraer DVM) | TODO |
-| Fish (`fish`) | fry, juvenile, adult, senior | ru, en | PetMD How Long Do Fish Live & Kodama Koi Farm | TODO |
+| Dog (`dog`) | puppy, young_adult, mature_adult, senior, end_of_life | ru, en | AAHA 2019 Canine Life Stage Guidelines | DONE (Plan 3) |
+| Cat (`cat`) | kitten, young_adult, mature_adult, senior, end_of_life | ru, en | AAHA/AAFP 2021 Feline Life Stage Guidelines | DONE (Plan 3) |
+| Rabbit (`rabbit`) | infancy, adolescence, young_adult, adult, senior | ru, en | House Rabbit Society & Oxbow Rabbit Life Stages | DONE (Plan 3) |
+| Hamster (`hamster`) | pup, juvenile, adult, senior, very_senior | ru, en | RVC VetCompass Hamster Study & PetMD | DONE (Plan 3) |
+| Guinea Pig (`guinea_pig`) | pup, juvenile, adult, senior, geriatric | ru, en | Oxbow Guinea Pig Lifespan and Life Stages | DONE (Plan 3) |
+| Rat (`rat`) | pup, juvenile, adult, senior, end_of_life | ru, en | Sengupta 2013, Int J Prev Med 4(6):624-630 | DONE (Plan 3) |
+| Mouse (`mouse`) | pup, juvenile, adult, senior, end_of_life | ru, en | Dutta & Sengupta 2016, Life Sciences 152:244-248 | DONE (Plan 3) |
+| Ferret (`ferret`) | kit, juvenile, adult, senior, geriatric | ru, en | The Senior Ferret (PMC7129291) & Oxbow Ferret Life Stages | DONE (Plan 3) |
+| Bird (`bird`) | hatchling, juvenile, adult, senior, geriatric | ru, en | AAV Care for Senior Parrots & Lafeber Vet | DONE (Plan 3) |
+| Reptile (`reptile`) | hatchling, juvenile, adult, senior | ru, en | PetPlace, Reptile Centre & A-Z Animals lifespan sheets | DONE (Plan 3) |
+| Horse (`horse`) | foal, yearling, young_adult, adult, senior | ru, en | AAEP Senior Horse Care & PetMD (Kaela Schraer DVM) | DONE (Plan 3) |
+| Fish (`fish`) | fry, juvenile, adult, senior | ru, en | PetMD How Long Do Fish Live & Kodama Koi Farm | DONE (Plan 3) |
 
 Всего: **58 стадий × 2 локали = 116 файлов** (48 новых из Plan 2 видов × 2 + 20 из Plan 1).
 

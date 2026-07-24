@@ -106,6 +106,21 @@ for locale in en-US ru; do
     check_limit "$dir/changelogs/10000.txt" 500 "changelog[$locale]"
 done
 
+# ---------------------------------------------------------------------------
+# Task 17 — README has no stale "after Plan 2" release placeholders
+# ---------------------------------------------------------------------------
+README="README.md"
+echo "==> [readme] checking $README ..."
+STALE_PATTERNS=("после Plan 2" "запланировано на Plan 3")
+readme_clean=1
+for pat in "${STALE_PATTERNS[@]}"; do
+    if grep -qF "$pat" "$README"; then
+        fail "$README still contains stale release placeholder: \"$pat\""
+        readme_clean=0
+    fi
+done
+[ "$readme_clean" -eq 1 ] && ok "README has no stale Plan 2/3 release placeholders"
+
 echo ""
 if [ $EXIT_CODE -eq 0 ]; then
     echo "✅ Release metadata checks passed."

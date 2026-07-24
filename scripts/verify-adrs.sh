@@ -28,6 +28,7 @@ REQUIRED_ADRS=(
     "0007-conventional-commits.md"
     "0008-age-calculator-sealed-interface-for-species-dispatch.md"
     "0009-export-import-json-schema-versioning.md"
+    "0010-care-content-from-published-guidelines.md"
 )
 
 # Sections required by MADR 3.0 (template-madr.md). We check core ones.

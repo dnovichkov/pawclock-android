@@ -332,17 +332,17 @@ Pitest / Baseline Profiles / ACRA сознательно отложены в Pla
 - [x] add `fastlane/README.md` объясняющий что `images/` (скриншоты) — external graphic pass (Post-Completion)
 - [x] run verify-скрипт — все лимиты Green; must pass before next task
 
-### Task 17: README finalization + ADR-0010 (content provenance)
-- [ ] write FAILING test: `scripts/verify-release-metadata.sh` проверяет что README не содержит placeholder'ов
+### Task 17: README finalization + ADR-0010 (content provenance) ✅
+- [x] write FAILING test: `scripts/verify-release-metadata.sh` проверяет что README не содержит placeholder'ов
   `_появится после Plan 2_` / `planned (Plan 3)` в F-Droid-контексте (обновлены на актуальный статус)
-- [ ] update `README.md`: убрать «после Plan 2» placeholder'ы, обновить статус (v1.0 ready), installation
+- [x] update `README.md`: убрать «после Plan 2» placeholder'ы, обновить статус (v1.0 ready), installation
   (APK from Releases + Google Play pending), ссылка на PRIVACY.md, актуализировать F-Droid статус (v1.1)
-- [ ] write `docs/adr/0010-care-content-from-published-guidelines.md` (MADR): решение — care-контент авторится
+- [x] write `docs/adr/0010-care-content-from-published-guidelines.md` (MADR): решение — care-контент авторится
   по опубликованным guidelines ветеринарных организаций (§14) с source-attribution + дисклеймером §3.3,
   на уровне общей husbandry-гид; Consequences: не заменяет экспертную рецензию (external Post-Completion),
   граница «не диагностика/не лечение», quality-гейт как enforcement
-- [ ] update `docs/CARE_CONTENT.md`: все 12 видов статус `TODO` → `DONE`; отметить дату content-pass
-- [ ] run verify-скрипт + `scripts/verify-adrs.sh` (если проверяет наличие) — Green; must pass before next task
+- [x] update `docs/CARE_CONTENT.md`: все 12 видов статус `TODO` → `DONE`; отметить дату content-pass
+- [x] run verify-скрипт + `scripts/verify-adrs.sh` (если проверяет наличие) — Green; must pass before next task
 
 ### Task 18: Verify acceptance criteria (§12.1 MVP v1.0)
 - [ ] verify все 116 care-файлов реальны: `grep -rl "TODO" app/src/main/assets/care` пусто;
