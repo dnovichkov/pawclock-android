@@ -33,7 +33,8 @@ CARE_ROOT="app/src/main/assets/care"
 CONTENT_COMPLETE=(
     "dog"
     "cat"
-    # Task 4+: rabbit hamster guinea_pig rat mouse ferret bird reptile horse fish
+    "rabbit"
+    # Task 5+: hamster guinea_pig rat mouse ferret bird reptile horse fish
 )
 
 # species_id|stage1,stage2,...  (source of truth: LifeStage.*.all() in :core:model)

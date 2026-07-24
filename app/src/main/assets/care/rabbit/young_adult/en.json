@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"young adult\" stage for rabbit.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The young-adult stage spans roughly six to twelve months, as the rabbit finishes growing and settles into its adult personality. Hormonal turbulence eases, especially after spaying or neutering, and litter-box habits and temperament usually become more reliable. Physically the skeleton reaches full size toward the end of this period, which is the natural moment to move from a growth diet to a maintenance one.",
+  "nutrition": "This is the stage to shift onto an adult diet. Gradually replace alfalfa with unlimited grass hay such as timothy, which is lower in calcium and calories, and cut pellets back to a small measured daily portion. At the same time build up a varied mix of fresh leafy greens as a daily staple. Make each change over a week or two, keep water freely available, and reserve fruit for tiny occasional treats.",
+  "activity": "Young adults stay lively and need daily exercise: several hours of run-around time in a safe space cleared of cables and hazards keeps muscles strong and weight in check. Keep enrichment varied with digging boxes, tunnels, foraging puzzles, and things to toss and chew. If your rabbit lives alone, consider bonding it with a neutered companion, as most rabbits are far happier in a compatible pair.",
+  "veterinary_check_frequency": "A yearly wellness exam with a rabbit-savvy vet is the norm for a healthy young adult; if spaying or neutering has not yet been done, arrange it now. At each visit ask the vet to check the teeth, weight, ears, and coat, and confirm your feeding plan matches the switch to an adult, hay-based diet.",
+  "dental_care": "Now that grass hay replaces alfalfa, unlimited timothy or similar hay does the daily work of grinding the continuously growing teeth and preventing malocclusion. Provide chew wood to supplement this, and report any drooling, a wet chin, reduced appetite, or a change in how your rabbit picks up food, as these can be early signs of dental trouble.",
+  "warning_signs": "Loss of appetite, or no droppings for more than about twelve hours, points to gut stasis and needs emergency care from a rabbit-savvy vet. Watch too for soft or absent stools, a bloated belly, a head tilt or loss of balance, laboured breathing, overgrown or misaligned teeth, and any lump. Early attention gives the best outcome.",
   "source_url": "https://rabbit.org/",
   "source_name": "House Rabbit Society & Oxbow Rabbit Life Stages",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

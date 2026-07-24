@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"infancy\" stage for rabbit.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "Infancy covers roughly the first three months of life. Kits are born blind, deaf, and furless, and for the first weeks depend entirely on the mother's milk; a doe nurses only once or twice a day, so a calm, undisturbed nest is normal. Eyes open at around ten days, and by three to four weeks the young begin nibbling solid food and exploring. This is a delicate period: the digestive system is still maturing, weaning is gradual (usually complete by six to eight weeks), and abrupt changes in food or surroundings are poorly tolerated.",
+  "nutrition": "Mother's milk is the only food for the first weeks. From three to four weeks kits start nibbling alfalfa hay and a young-rabbit pellet alongside nursing, and weaning is usually complete by six to eight weeks. After weaning, offer unlimited alfalfa hay and unlimited pellets to fuel rapid growth, always with fresh water. Do not introduce fresh vegetables before about twelve weeks, and never change the diet abruptly, as the immature gut is prone to diarrhea.",
+  "activity": "Once kits leave the nest they are curious and playful. Give a safe, draft-free, enclosed space with secure non-slip flooring where they can hop, explore, and begin short supervised play. Provide soft hiding spots and simple chew toys, and keep handling gentle and brief so they learn that people are safe. Remove cables and hazards from any area they can reach, since young rabbits chew everything and squeeze into small gaps.",
+  "veterinary_check_frequency": "Book a first visit with a rabbit-savvy (exotics) vet soon after weaning to confirm healthy weight gain and check the eyes, teeth, and hind end, and discuss vaccination where relevant. Ask about the right age for spaying or neutering so you can plan ahead. Weigh the kits regularly at home, since steady weight gain is the clearest sign a young rabbit is thriving.",
+  "dental_care": "A rabbit's teeth grow continuously for life, so constant chewing on hay is what keeps them worn down and correctly aligned. Building an unlimited-hay habit now protects against painful overgrowth and malocclusion later; watch for drooling or dropped food, which can signal a dental problem.",
+  "warning_signs": "Seek a rabbit-savvy vet urgently if a kit stops eating or passing droppings for more than about twelve hours, as gut stasis is a life-threatening emergency in rabbits. Diarrhea or a soiled bottom, a bloated belly, sudden lethargy, refusal to nurse, laboured breathing, or a body that feels cold also demand immediate attention in animals this small and fragile.",
   "source_url": "https://rabbit.org/",
   "source_name": "House Rabbit Society & Oxbow Rabbit Life Stages",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

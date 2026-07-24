@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"senior\" stage for rabbit.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "Rabbits are generally considered senior from around five to six years of age, though many live well beyond ten with good care. Ageing brings gradual changes: less activity, stiffer joints and possible arthritis, thinning muscle, shifts in weight, cataracts, and sometimes trouble grooming the hind end. The aim of care now is comfort and early detection, adapting the home and diet while watching closely for the illnesses that become more common with age.",
+  "nutrition": "Keep unlimited grass hay and fresh greens at the centre of the diet. As long as the rabbit holds a healthy weight, the adult feeding plan continues; a frail or underweight senior may need more pellets, and alfalfa can be reintroduced for extra calories only if blood tests show calcium is normal. Make sure water and hay are easy to reach for a stiff rabbit, and adjust portions to keep body condition steady.",
+  "activity": "Gentle daily movement keeps ageing joints and muscles working, so continue supervised time out of the enclosure but make the space easy on stiff limbs: low ramps instead of jumps, soft non-slip flooring, and litter trays with a low entrance. Keep the mind active with simple foraging and familiar companions, and provide soft, well-padded resting spots for a rabbit that now sleeps more.",
+  "veterinary_check_frequency": "Senior rabbits benefit from a check-up every six months, with annual blood work to screen for kidney, liver, and other age-related disease before signs show. Each visit should assess the teeth, weight, joints, and the ability to groom, and review pain relief and any chronic conditions. Weigh your rabbit at home regularly, as steady weight loss is often the first clue that something is wrong.",
+  "dental_care": "Lifelong tooth growth does not slow with age, so unlimited hay remains essential for wearing the teeth down. Older rabbits are more prone to dental disease and to the spurs that come with uneven wear, so have the mouth checked at every visit and watch closely for drooling, a wet chin, weight loss, or dropped food, which are signs that eating has become painful.",
+  "warning_signs": "As at every age, a rabbit that stops eating or passing droppings for more than about twelve hours needs emergency care for possible gut stasis. In seniors also watch for increased thirst or urination, incontinence or a soiled bottom, sudden weight loss, difficulty moving or reluctance to hop, a head tilt, laboured breathing, lumps, or any marked change in behaviour, and have them checked promptly.",
   "source_url": "https://rabbit.org/",
   "source_name": "House Rabbit Society & Oxbow Rabbit Life Stages",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."
