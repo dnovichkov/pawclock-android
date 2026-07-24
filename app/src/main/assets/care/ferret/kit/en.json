@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"kit\" stage for ferret.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The kit stage covers birth to roughly 3–4 months. Kits are born tiny, blind and deaf, and grow extremely quickly, weaning off their mother's milk onto solid food by about 6–8 weeks. They alternate long, deep naps with sudden bursts of clumsy, energetic play, and are busy teething, learning to soften their bite, and being litter-trained and socialized to handling.",
+  "nutrition": "Feed a high-protein, high-fat, low-carbohydrate diet suited to a growing obligate carnivore — a quality kitten or ferret kibble, moistened if needed, or a whole-prey-based diet. Because ferrets have a very fast metabolism and short digestive tract, keep food available at all times and always provide fresh water.",
+  "activity": "Expect short, intense play sessions between long naps. Offer safe tunnels and toys with no small parts that could be swallowed, supervise all play in a thoroughly ferret-proofed space, and use gentle daily handling to build socialization, litter-training, and trust.",
+  "veterinary_check_frequency": "Schedule a first veterinary visit soon after you bring the kit home to begin the canine-distemper and rabies vaccination series, check for parasites, and confirm healthy growth. Use an exotics or ferret-experienced veterinarian.",
+  "dental_care": "Kits have deciduous (baby) teeth that are replaced by permanent carnivore teeth over the first few months. Give appropriate chew items during teething and gently accustom the kit to having its mouth handled for future tooth-brushing.",
+  "warning_signs": "Refusing to eat, diarrhea, vomiting or straining, lethargy, dehydration, or failure to gain weight are urgent in such a small, fast-metabolism animal — as is any sign a kit has swallowed a foreign object. Contact an exotics vet promptly.",
   "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7129291/",
   "source_name": "The Senior Ferret (PMC7129291) & Oxbow Ferret Life Stages",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

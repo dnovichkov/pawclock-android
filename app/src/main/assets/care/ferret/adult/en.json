@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"adult\" stage for ferret.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The adult stage spans roughly 1 to 3 years — the prime of a ferret's life. Fully grown and more settled in temperament, adults remain highly playful and curious. Marked seasonal changes in coat and body weight, heavier in winter and lighter in summer, are normal at this age.",
+  "nutrition": "Feed a consistent maintenance diet high in animal protein and fat and low in carbohydrate — quality ferret kibble or a whole-prey-based diet. Monitor body condition through the normal seasonal weight swings, keep fresh water available, and limit treats to appropriate meat-based options.",
+  "activity": "Keep offering several hours of supervised play and enrichment daily. Ferrets sleep a great deal but are vigorous when awake, so rotate tunnels, toys, and foraging games and maintain a securely ferret-proofed play area.",
+  "veterinary_check_frequency": "Have an annual wellness exam with a weight check, and keep canine-distemper and rabies vaccinations current. As adults age, ask your exotics vet about baseline bloodwork and monitoring for the adrenal disease and insulinoma that ferrets are prone to.",
+  "dental_care": "Brush the teeth regularly and include an annual dental check for tartar and for cracked or worn canines — ferrets can fracture teeth chewing cage bars or hard objects. Professional cleaning is done if your vet finds it necessary.",
+  "warning_signs": "Early signs of common ferret diseases can appear now: hair loss, gradual weight loss, hind-limb weakness, lethargy, or difficulty urinating, as well as sudden signs of a gut blockage. Have any of these checked by an exotics vet.",
   "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7129291/",
   "source_name": "The Senior Ferret (PMC7129291) & Oxbow Ferret Life Stages",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

@@ -50,7 +50,8 @@ class CareContentQualityTest {
             Species.GuineaPig,
             Species.Rat,
             Species.Mouse,
-            // Task 9+: Species.Ferret, … добавляются здесь по мере авторинга контента.
+            Species.Ferret,
+            // Task 10+: Species.Bird, … добавляются здесь по мере авторинга контента.
         )
 
     /** Канонический дисклеймер §3.3 — дословно, сверен с существующими care-файлами (per-locale). */

@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"juvenile\" stage for ferret.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The juvenile stage runs from about 4 months to 1 year. Ferrets reach close to adult size by around 4 months and become sexually mature, though most pet ferrets are already neutered. This is often the peak of boisterous, curious energy: juveniles are confident, mischievous, and endlessly playful as growth finishes and their temperament settles.",
+  "nutrition": "Continue a high-protein, high-fat, low-carbohydrate diet, transitioning from kitten formula toward a quality adult ferret food as growth completes. Free-feed to suit their fast metabolism, keep fresh water available, and avoid sugary or high-fiber treats that a carnivore's gut is not built for.",
+  "activity": "Provide several hours of supervised out-of-cage play every day in a ferret-proofed space, with tunnels, dig boxes, and foraging games. Keep up regular handling and a routine, and secure hazards such as small swallowable objects and gaps behind appliances.",
+  "veterinary_check_frequency": "Complete the vaccination series and give the first annual boosters for canine distemper and rabies, along with a yearly wellness exam. Discuss parasite prevention and confirm neuter status with an exotics or ferret vet.",
+  "dental_care": "By now the permanent carnivore teeth, including the prominent canines, are all in. Start a regular tooth-brushing routine with a pet-safe paste; crunchy kibble or whole-prey items help slow the build-up of tartar.",
+  "warning_signs": "Watch for signs of intestinal blockage — vomiting, no stool, straining, or sudden lethargy — as well as refusing food, persistent diarrhea, or laboured breathing. Any of these warrants a prompt visit to an exotics vet.",
   "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7129291/",
   "source_name": "The Senior Ferret (PMC7129291) & Oxbow Ferret Life Stages",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

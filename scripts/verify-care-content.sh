@@ -38,7 +38,8 @@ CONTENT_COMPLETE=(
     "guinea_pig"
     "rat"
     "mouse"
-    # Task 9+: ferret bird reptile horse fish
+    "ferret"
+    # Task 10+: bird reptile horse fish
 )
 
 # species_id|stage1,stage2,...  (source of truth: LifeStage.*.all() in :core:model)

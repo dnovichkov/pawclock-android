@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"geriatric\" stage for ferret.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The geriatric stage arrives around 5–6 years and older, the final phase of life. Ferrets slow down and sleep more, may lose muscle, and can develop cataracts and coat changes. Several conditions at once — adrenal disease, insulinoma, heart disease, or tumours — are common now, so care centers on comfort and quality of life.",
+  "nutrition": "Offer a highly digestible, palatable diet high in animal protein and fat, softened or moistened if chewing is harder, in smaller frequent meals to support appetite and counter weight loss. Follow your vet's adjustments for any chronic disease and always keep fresh water available.",
+  "activity": "Keep play short, gentle, and supervised, and make the environment easy to navigate with ramps, low-sided litter boxes, and warm, soft bedding. Provide light mental stimulation without overexertion and keep an eye on mobility.",
+  "veterinary_check_frequency": "Have exams every 6 months or more often, with bloodwork, blood-glucose checks, and heart and blood-pressure monitoring. Weigh your ferret at home, track any known conditions closely, and discuss quality of life with an exotics vet.",
+  "dental_care": "Advanced dental disease is common: heavy tartar and loose or fractured teeth cause pain and reduce eating. Provide gentle home care as tolerated, and have the vet evaluate the teeth, weighing anesthetic risk against the benefit at this age.",
+  "warning_signs": "Seek urgent care for marked weight loss, profound weakness or collapse, a glassy stare or drooling, laboured breathing, refusal to eat, hair loss, difficulty urinating, or new lumps. These warrant an immediate visit to an exotics or ferret vet.",
   "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7129291/",
   "source_name": "The Senior Ferret (PMC7129291) & Oxbow Ferret Life Stages",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."
