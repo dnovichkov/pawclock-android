@@ -44,7 +44,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v6
       - name: ktlintCheck
         run: ./gradlew ktlintCheck --no-daemon --stacktrace
       - name: Upload ktlint reports
@@ -64,7 +64,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v6
       - name: detekt
         run: ./gradlew detekt --no-daemon --stacktrace
       - name: Upload detekt reports
@@ -84,7 +84,7 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - uses: gradle/actions/setup-gradle@v3
+      - uses: gradle/actions/setup-gradle@v6
       - name: lintDebug
         run: ./gradlew lintDebug --no-daemon --stacktrace
       - name: Upload lint reports

@@ -30,7 +30,7 @@ jobs:
           java-version: '17'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
         with:
           gradle-home-cache-cleanup: true
 
@@ -70,7 +70,7 @@ jobs:
           java-version: '17'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Run ktlint + detekt + Android Lint
         run: ./gradlew ktlintCheck detekt lintDebug --no-daemon --stacktrace
@@ -100,7 +100,7 @@ jobs:
           java-version: '17'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Assemble debug APK + bundle
         run: ./gradlew assembleDebug bundleDebug --no-daemon --stacktrace
