@@ -230,80 +230,80 @@ Pitest / Baseline Profiles / ACRA сознательно отложены в Pla
 - [x] run `./gradlew :core:domain:test :core:domain:koverVerify --no-daemon` — 10 cat quality-тестов Green;
   `verify-care-content.sh` OK (20 файлов) — must pass before next task
 
-### Task 4: Rabbit care content (5 stages × ru/en)
-- [ ] author контент `care/rabbit/{infancy,adolescence,young_adult,adult,senior}/{ru,en}.json` по House
+### Task 4: Rabbit care content (5 stages × ru/en) ✅
+- [x] author контент `care/rabbit/{infancy,adolescence,young_adult,adult,senior}/{ru,en}.json` по House
   Rabbit Society + Oxbow Rabbit Life Stages; сено-ориентированное питание, важность стоматологии (постоянно
   растущие зубы), senior с 5 лет
-- [ ] заполнить поля + source (rabbit.org / oxbowanimalhealth.com) + дисклеймер §3.3
-- [ ] add `Species.Rabbit` в `contentComplete`
-- [ ] run `./gradlew :core:domain:test --no-daemon` — Green для rabbit; detekt + koverVerify — must pass before next task
+- [x] заполнить поля + source (rabbit.org / oxbowanimalhealth.com) + дисклеймер §3.3
+- [x] add `Species.Rabbit` в `contentComplete`
+- [x] run `./gradlew :core:domain:test --no-daemon` — Green для rabbit; detekt + koverVerify — must pass before next task
 
-### Task 5: Hamster care content (5 stages × ru/en)
-- [ ] author контент `care/hamster/{pup,juvenile,adult,senior,very_senior}/{ru,en}.json` по RVC VetCompass
+### Task 5: Hamster care content (5 stages × ru/en) ✅
+- [x] author контент `care/hamster/{pup,juvenile,adult,senior,very_senior}/{ru,en}.json` по RVC VetCompass
   Hamster Study + PetMD; короткая ЧЖ, старость с 1.5 лет, признаки старения
-- [ ] заполнить поля + source + дисклеймер §3.3
-- [ ] add `Species.Hamster` в `contentComplete`
-- [ ] run `./gradlew :core:domain:test --no-daemon` — Green для hamster; detekt + koverVerify — must pass before next task
+- [x] заполнить поля + source + дисклеймер §3.3
+- [x] add `Species.Hamster` в `contentComplete`
+- [x] run `./gradlew :core:domain:test --no-daemon` — Green для hamster; detekt + koverVerify — must pass before next task
 
-### Task 6: Guinea Pig care content (5 stages × ru/en)
-- [ ] author контент `care/guinea_pig/{pup,juvenile,adult,senior,geriatric}/{ru,en}.json` по Oxbow Guinea
+### Task 6: Guinea Pig care content (5 stages × ru/en) ✅
+- [x] author контент `care/guinea_pig/{pup,juvenile,adult,senior,geriatric}/{ru,en}.json` по Oxbow Guinea
   Pig Life Stages; критичность витамина C, сено, senior с 4 лет, geriatric с 6
-- [ ] заполнить поля + source + дисклеймер §3.3
-- [ ] add `Species.GuineaPig` в `contentComplete`
-- [ ] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
+- [x] заполнить поля + source + дисклеймер §3.3
+- [x] add `Species.GuineaPig` в `contentComplete`
+- [x] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
 
-### Task 7: Rat care content (5 stages × ru/en)
-- [ ] author контент `care/rat/{pup,juvenile,adult,senior,end_of_life}/{ru,en}.json` по Sengupta 2013 +
+### Task 7: Rat care content (5 stages × ru/en) ✅
+- [x] author контент `care/rat/{pup,juvenile,adult,senior,end_of_life}/{ru,en}.json` по Sengupta 2013 +
   RSPCA/AFRMA husbandry; социальность, склонность к респираторным/опухолевым проблемам в senior, EndOfLife 2.5г
-- [ ] заполнить поля + source + дисклеймер §3.3
-- [ ] add `Species.Rat` в `contentComplete`
-- [ ] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
+- [x] заполнить поля + source + дисклеймер §3.3
+- [x] add `Species.Rat` в `contentComplete`
+- [x] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
 
-### Task 8: Mouse care content (5 stages × ru/en)
-- [ ] author контент `care/mouse/{pup,juvenile,adult,senior,end_of_life}/{ru,en}.json` по Dutta & Sengupta
+### Task 8: Mouse care content (5 stages × ru/en) ✅
+- [x] author контент `care/mouse/{pup,juvenile,adult,senior,end_of_life}/{ru,en}.json` по Dutta & Sengupta
   2016 + husbandry; очень короткая ЧЖ, senior с 12 мес, EndOfLife 2.0г
-- [ ] заполнить поля + source + дисклеймер §3.3
-- [ ] add `Species.Mouse` в `contentComplete`
-- [ ] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
+- [x] заполнить поля + source + дисклеймер §3.3
+- [x] add `Species.Mouse` в `contentComplete`
+- [x] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
 
-### Task 9: Ferret care content (5 stages × ru/en)
-- [ ] author контент `care/ferret/{kit,juvenile,adult,senior,geriatric}/{ru,en}.json` по The Senior Ferret
+### Task 9: Ferret care content (5 stages × ru/en) ✅
+- [x] author контент `care/ferret/{kit,juvenile,adult,senior,geriatric}/{ru,en}.json` по The Senior Ferret
   (PMC7129291) + Oxbow Ferret Life Stages; облигатный хищник (высокобелковый корм), senior с 3–4 лет
-- [ ] заполнить поля + source + дисклеймер §3.3
-- [ ] add `Species.Ferret` в `contentComplete`
-- [ ] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
+- [x] заполнить поля + source + дисклеймер §3.3
+- [x] add `Species.Ferret` в `contentComplete`
+- [x] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
 
-### Task 10: Bird care content (5 stages × ru/en)
-- [ ] author контент `care/bird/{hatchling,juvenile,adult,senior,geriatric}/{ru,en}.json` по AAV Care for
+### Task 10: Bird care content (5 stages × ru/en) ✅
+- [x] author контент `care/bird/{hatchling,juvenile,adult,senior,geriatric}/{ru,en}.json` по AAV Care for
   Senior Parrots + Lafeber Vet; широкий разброс ЧЖ по видам, обогащение среды, `dental_care` → заметка про
   клюв (не зубы)
-- [ ] заполнить поля + source + дисклеймер §3.3
-- [ ] add `Species.Bird` в `contentComplete`
-- [ ] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
+- [x] заполнить поля + source + дисклеймер §3.3
+- [x] add `Species.Bird` в `contentComplete`
+- [x] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
 
-### Task 11: Reptile care content (4 stages × ru/en)
-- [ ] author контент `care/reptile/{hatchling,juvenile,adult,senior}/{ru,en}.json` по PetPlace + Reptile
+### Task 11: Reptile care content (4 stages × ru/en) ✅
+- [x] author контент `care/reptile/{hatchling,juvenile,adult,senior}/{ru,en}.json` по PetPlace + Reptile
   Centre + A-Z Animals; критичность температуры/UVB/влажности, видовые различия, `dental_care` → релевантная
   заметка по виду
-- [ ] заполнить поля + source + дисклеймер §3.3
-- [ ] add `Species.Reptile` в `contentComplete`
-- [ ] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
+- [x] заполнить поля + source + дисклеймер §3.3
+- [x] add `Species.Reptile` в `contentComplete`
+- [x] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
 
-### Task 12: Horse care content (5 stages × ru/en)
-- [ ] author контент `care/horse/{foal,yearling,young_adult,adult,senior}/{ru,en}.json` по AAEP Senior Horse
+### Task 12: Horse care content (5 stages × ru/en) ✅
+- [x] author контент `care/horse/{foal,yearling,young_adult,adult,senior}/{ru,en}.json` по AAEP Senior Horse
   Care + PetMD; фуражное питание, копыта/зубы (плановая стоматология лошадей), senior с ~15 лет, вакцинация
-- [ ] заполнить поля + source + дисклеймер §3.3
-- [ ] add `Species.Horse` в `contentComplete`
-- [ ] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
+- [x] заполнить поля + source + дисклеймер §3.3
+- [x] add `Species.Horse` в `contentComplete`
+- [x] run `./gradlew :core:domain:test --no-daemon` — Green; detekt + koverVerify — must pass before next task
 
-### Task 13: Fish care content (4 stages × ru/en) + registry completeness assert
-- [ ] author контент `care/fish/{fry,juvenile,adult,senior}/{ru,en}.json` по PetMD + Kodama Koi Farm;
+### Task 13: Fish care content (4 stages × ru/en) + registry completeness assert ✅
+- [x] author контент `care/fish/{fry,juvenile,adult,senior}/{ru,en}.json` по PetMD + Kodama Koi Farm;
   качество воды/параметры, видовой разброс ЧЖ (guppy 2г … koi 30г), `dental_care` остаётся `null`
-- [ ] заполнить поля + source + дисклеймер §3.3 (без `dental_care`)
-- [ ] add `Species.Fish` в `contentComplete`
-- [ ] add assertion в `CareContentQualityTest`: `contentComplete == Species.implemented().toSet()`
+- [x] заполнить поля + source + дисклеймер §3.3 (без `dental_care`)
+- [x] add `Species.Fish` в `contentComplete`
+- [x] add assertion в `CareContentQualityTest`: `contentComplete == Species.implemented().toSet()`
   (все 12 видов — гарантия что ни один вид не пропущен; **no silent caps**)
-- [ ] run `./gradlew :core:domain:test --no-daemon` + `bash scripts/verify-care-content.sh` — все 116 файлов
+- [x] run `./gradlew :core:domain:test --no-daemon` + `bash scripts/verify-care-content.sh` — все 116 файлов
   Green; `grep -rl "TODO" app/src/main/assets/care` возвращает пусто — must pass before next task
 
 ### Task 14: Version bump 1.0.0 + CHANGELOG finalization
