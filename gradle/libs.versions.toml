@@ -2,10 +2,11 @@
 # Kotlin & build
 kotlin = "2.0.21"
 ksp = "2.0.21-1.0.28"
-# Task 17: bumped AGP 8.5.2 → 8.7.3 — AndroidX libraries 1.16.0+/1.11.1+/2.9.4+
-# (которые приходят с compose-bom 2026.05.00) требуют AGP ≥ 8.6.0. Версия 8.7.3
-# доступна в offline cache, совместима с Gradle 8.14.3 (>= 8.9 требование AGP 8.7).
-agp = "8.7.3"
+# Plan 4 (lint fix): bumped AGP 8.7.3 → 8.13.2. Причина — lint из AGP 8.7.3 (lint 31.7.3)
+# падал с NegativeArraySizeException в LintJarApiMigration при попытке «мигрировать» lint-джары
+# из compose-bom 2026.05.00 / lifecycle 2.9.0, собранные против нового Kotlin Analysis API.
+# AGP 8.13.2 embed'ит совпадающий lint (31.13.2). Совместим с Gradle 8.14.3 (AGP 8.13 требует ≥ 8.13).
+agp = "8.13.2"
 javaToolchain = "17"
 
 # AndroidX core
