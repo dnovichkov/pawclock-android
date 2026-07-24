@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"pup\" stage for mouse.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The pup stage covers birth to about three weeks. Newborn mice are born hairless, blind, and deaf, and depend completely on their mother for warmth and milk. Over these weeks the fur grows in, the ears and eyes open, and the pups begin to crawl and explore the nest. They grow astonishingly fast, reflecting the very short lifespan and rapid metabolism of the species.",
+  "nutrition": "Pups feed exclusively on their mother's milk. Do not offer food to the pups directly; instead keep the nursing mother supplied with a complete formulated mouse diet and constant fresh water. From around two weeks the pups start nibbling solid food alongside the mother.",
+  "activity": "The priority is an undisturbed, warm nest with deep bedding. Keep handling to a minimum during the first two weeks so the stressed mother does not abandon the litter. As the eyes open near week three, brief, gentle handling can begin to accustom the pups to people.",
+  "veterinary_check_frequency": "Newborn litters are not usually taken in for routine visits; instead observe them daily from a distance for warm, round, milk-filled bellies. Identify an exotics or rodent-savvy veterinarian now, and consult that vet if the whole litter fails to thrive or the mother becomes ill.",
+  "dental_care": "The continuously growing incisors emerge during these first weeks. No intervention is needed, but make sure the mother's enclosure has safe gnawing materials so the pups can begin to gnaw as weaning approaches.",
+  "warning_signs": "Contact an exotics vet if pups are scattered cold outside the nest, look pale or thin with no milk band in the belly, are ignored by the mother, or fail to gain weight. A limp, cold, or constantly squeaking pup needs urgent attention.",
   "source_url": "https://doi.org/10.1016/j.lfs.2015.10.025",
   "source_name": "Dutta & Sengupta 2016, Life Sciences 152:244-248",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

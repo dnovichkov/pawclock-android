@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"senior\" stage for mouse.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "Mice age very quickly, so from about twelve months a mouse is already a senior. With a typical lifespan of only one and a half to two years, this stage corresponds to the middle and later years of a human life. Expect a gradual slowing down, changes in weight, a thinner or greyer coat, stiffer movement, and a rising risk of tumours and chronic respiratory disease.",
+  "nutrition": "Continue a complete formulated diet but adapt it to the ageing mouse: soften pellets if the teeth or weight are a problem, and choose foods that are easy to eat while maintaining good body condition. Watch closely for weight loss, keep tiny fresh vegetable portions, and place food and water low and within easy reach.",
+  "activity": "Keep offering enrichment but make it safer: lower ramps, easy access, softer and deeper bedding, and reduced climbing heights to prevent falls, keeping a wheel only if it is still used safely. Handle gently, maintain harmonious female group housing, and provide extra warmth as the mouse regulates its temperature less well.",
+  "veterinary_check_frequency": "Because mice age so fast, arrange wellness checks with an exotics or rodent-savvy veterinarian every six months, and sooner if anything changes. At home, weigh the mouse and run a gentle lump check every week, and report any new lump or change in breathing without delay.",
+  "dental_care": "Ageing mice may wear their teeth unevenly, so the risk of malocclusion rises. Keep providing gnaw items and inspect the incisors often, as overgrown teeth cause weight loss and drooling and may need a veterinary trim. Softened food can help if chewing becomes difficult.",
+  "warning_signs": "Book an exotics vet for any new or growing lump, weight loss, laboured breathing, a scruffy or poorly groomed coat, difficulty moving, abandoning the wheel, reduced appetite, or withdrawal from cage-mates. In a fast-ageing animal, these changes deserve prompt attention.",
   "source_url": "https://doi.org/10.1016/j.lfs.2015.10.025",
   "source_name": "Dutta & Sengupta 2016, Life Sciences 152:244-248",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

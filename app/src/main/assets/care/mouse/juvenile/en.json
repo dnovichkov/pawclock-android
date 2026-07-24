@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"juvenile\" stage for mouse.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The juvenile stage runs from roughly three to five weeks, when mice are weaned and become independent. They are now fully furred, agile, intensely curious, and growing rapidly. Because mice can breed from as early as five to six weeks, this is the time to separate the litter by sex to prevent unwanted pregnancies.",
+  "nutrition": "Move the young mice fully onto a complete formulated mouse or rodent diet, ideally uniform pellets or blocks that prevent selective feeding. Their fast metabolism means food should be available at all times, with fresh water from a bottle. Introduce tiny amounts of fresh vegetables gradually.",
+  "activity": "Juveniles are extremely active and explore everything, so the enclosure must be truly escape-proof, as they squeeze through the smallest gaps. Provide deep bedding for burrowing, a solid-surface wheel, tunnels, and climbing and foraging enrichment. Handle them gently and often to tame them, and keep females in same-sex groups.",
+  "veterinary_check_frequency": "A first wellness visit with an exotics or rodent-savvy veterinarian is worthwhile to confirm the sex, rule out health problems, and review your housing and diet. Weigh the mice at home to confirm steady growth, then rely on daily observation between visits.",
+  "dental_care": "The incisors grow continuously, and malocclusion can begin at this age. Offer safe gnawing items such as untreated wood, cardboard, and mineral chew blocks to keep the teeth worn down, and watch for overgrown incisors, drooling, or trouble eating.",
+  "warning_signs": "Seek an exotics vet promptly for sneezing, clicking, or laboured breathing, as respiratory infections are common and dangerous in mice. Other red flags are failure to grow, diarrhoea or a wet rear, a hunched posture with a ruffled coat, lethargy, and fight wounds, especially among males.",
   "source_url": "https://doi.org/10.1016/j.lfs.2015.10.025",
   "source_name": "Dutta & Sengupta 2016, Life Sciences 152:244-248",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."
