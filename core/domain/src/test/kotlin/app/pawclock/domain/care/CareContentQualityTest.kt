@@ -53,7 +53,8 @@ class CareContentQualityTest {
             Species.Ferret,
             Species.Bird,
             Species.Reptile,
-            // Task 12+: Species.Horse, … добавляются здесь по мере авторинга контента.
+            Species.Horse,
+            // Task 13: Species.Fish добавляется здесь (последний вид).
         )
 
     /** Канонический дисклеймер §3.3 — дословно, сверен с существующими care-файлами (per-locale). */

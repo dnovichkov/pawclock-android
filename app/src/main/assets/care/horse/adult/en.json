@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"adult\" stage for horse.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The adult stage covers roughly four to fifteen years — the horse's prime, when it is fully grown, physically mature, and at its most capable for work, sport, or breeding. In a well-handled horse, behavior is settled and predictable. Care centers on maintaining condition and soundness and on routine preventive health, so that small problems are caught before they grow.",
+  "nutrition": "Forage should make up the bulk of the diet — free access to good pasture or hay — with constant fresh water and free-choice salt. Feed concentrates only as workload or condition requires, dividing any grain into smaller meals. Check body condition regularly and adjust the ration with your veterinarian to avoid both obesity and weight loss.",
+  "activity": "Daily turnout and consistent exercise keep an adult horse fit, supple, and mentally content. Tailor work to the individual and its discipline, with proper warm-up, cool-down, and rest days, and keep conditioning steady rather than piling on sudden heavy demands that risk tendon or joint injury.",
+  "veterinary_check_frequency": "At least one wellness examination a year is recommended, with core vaccinations, a deworming plan based on fecal testing, and a dental check. Keep the farrier on a six-to-eight-week cycle for balanced, healthy hooves. Broodmares, performance horses, and any horse with a chronic condition may need more frequent veterinary attention.",
+  "dental_care": "Adult teeth keep erupting throughout life and wear unevenly, forming sharp enamel points that can cut the cheeks and tongue. A yearly veterinary dental exam with floating (rasping) keeps the mouth comfortable, supports proper chewing, and helps the horse accept the bit; some horses need checks more than once a year.",
+  "warning_signs": "Call a veterinarian for lameness or reluctance to work, heat, swelling, or a wound on a limb, coughing or nasal discharge, quidding or dropping feed, or a noticeable change in weight or appetite. Colic signs — pawing, rolling, not eating, or repeatedly looking at the flank — are always an emergency.",
   "source_url": "https://aaep.org/horsehealth/senior-horse-care",
   "source_name": "AAEP Senior Horse Care & PetMD (Kaela Schraer DVM)",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

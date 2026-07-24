@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"young adult\" stage for horse.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The young adult stage spans roughly two to four years, when the horse nears full height and the skeleton finishes maturing. This is the usual window for starting saddle or harness training, introduced gradually to protect still-developing joints and to build strength and confidence. Horses at this age are energetic and learn quickly, and consistent, patient handling shapes a well-mannered adult.",
+  "nutrition": "Forage — pasture or good hay — remains the foundation of the diet, with fresh water and free-choice salt always available. Match feed to workload: light work often needs only forage plus a ration balancer, while harder work may call for added concentrates. Adjust amounts with your veterinarian to maintain a moderate body condition.",
+  "activity": "Daily turnout and movement stay essential for physical and mental health. Training workload can increase steadily as the horse matures, building fitness through regular, varied exercise with rest days in between. Warm up and cool down properly, and raise demands gradually to protect joints, tendons, and the developing back.",
+  "veterinary_check_frequency": "An annual wellness examination with core vaccinations and a veterinarian-guided deworming plan suits healthy young adults. Continue farrier care every six to eight weeks and schedule at least a yearly dental check. Horses in competition may need extra visits or health paperwork.",
+  "dental_care": "By about five years of age a horse has a full set of permanent teeth, and the last caps are shed during this stage. Because the teeth keep erupting and wear unevenly, a yearly veterinary dental exam with floating (rasping) of sharp points keeps chewing comfortable — important once a bit is introduced.",
+  "warning_signs": "Call a veterinarian for lasting lameness or resistance under saddle, heat or swelling in a leg, a cough or laboured breathing, feed dropping or head-tossing that may signal dental pain, or sudden weight loss. Colic signs — pawing, rolling, not eating, or looking at the flank — are always an emergency.",
   "source_url": "https://aaep.org/horsehealth/senior-horse-care",
   "source_name": "AAEP Senior Horse Care & PetMD (Kaela Schraer DVM)",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

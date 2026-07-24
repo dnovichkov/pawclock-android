@@ -41,7 +41,8 @@ CONTENT_COMPLETE=(
     "ferret"
     "bird"
     "reptile"
-    # Task 12+: horse fish
+    "horse"
+    # Task 13: fish (последний вид)
 )
 
 # species_id|stage1,stage2,...  (source of truth: LifeStage.*.all() in :core:model)

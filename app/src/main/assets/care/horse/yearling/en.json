@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"yearling\" stage for horse.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The yearling stage runs from about one to two years of age. Growth continues but slows compared with the foal months; the young horse fills out, gains height, and becomes more independent and energetic. Yearlings are naturally social and do best living with other horses, which teaches boundaries and normal herd behavior. Ground training and handling can progress, but the skeleton is still immature and not ready to carry a rider.",
+  "nutrition": "Good-quality forage — pasture or hay — remains the foundation, with constant access to fresh water and free-choice salt. A growing yearling may need a ration balancer or a feed made for young horses to supply protein and minerals; feed it by weight and adjust with your veterinarian to keep growth steady and body condition moderate rather than fat.",
+  "activity": "Daily turnout with other horses is ideal, since free movement and play develop bone, joints, and balance while burning off youthful energy. Continue in-hand work such as leading, standing for the farrier, and loading, but avoid hard riding or repetitive strain on joints and growth plates that are not yet mature.",
+  "veterinary_check_frequency": "An annual wellness examination with core vaccinations and a deworming program guided by your veterinarian suits this age. Keep farrier visits every six to eight weeks for balanced hooves, and ask the vet to check growth, body condition, and the mouth as the horse matures.",
+  "dental_care": "Yearlings are actively shedding milk teeth and erupting permanent ones, so sharp points and retained caps are common. A veterinary dental check — usually once a year — allows floating (rasping) of sharp edges and removal of caps so the horse can chew comfortably.",
+  "warning_signs": "Contact a veterinarian promptly for a persistent cough or nasal discharge, sudden lameness, feed dropping from the mouth, unexplained weight loss, or a dull, listless attitude. Colic signs — pawing, rolling, not eating, or repeatedly looking at the flank — are always an emergency.",
   "source_url": "https://aaep.org/horsehealth/senior-horse-care",
   "source_name": "AAEP Senior Horse Care & PetMD (Kaela Schraer DVM)",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."
