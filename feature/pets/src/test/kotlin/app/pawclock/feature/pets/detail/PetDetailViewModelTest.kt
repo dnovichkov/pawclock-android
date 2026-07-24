@@ -2,10 +2,6 @@ package app.pawclock.feature.pets.detail
 
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
-import app.pawclock.calculator.CatAgeCalculator
-import app.pawclock.calculator.CatLifeStageCalculator
-import app.pawclock.calculator.DogAgeCalculator
-import app.pawclock.calculator.DogLifeStageCalculator
 import app.pawclock.domain.usecase.CalculatePetAgeUseCase
 import app.pawclock.domain.usecase.GetCareRecommendationsUseCase
 import app.pawclock.feature.pets.common.LocaleProvider
@@ -91,10 +87,6 @@ class PetDetailViewModelTest {
     ): PetDetailViewModel {
         val calculatePetAgeUseCase =
             CalculatePetAgeUseCase(
-                dogAgeCalculator = DogAgeCalculator(),
-                dogLifeStageCalculator = DogLifeStageCalculator(),
-                catAgeCalculator = CatAgeCalculator(),
-                catLifeStageCalculator = CatLifeStageCalculator(),
                 settingsReader = settingsReader,
                 clock = testClock,
             )
@@ -207,10 +199,6 @@ class PetDetailViewModelTest {
 
             val calculatePetAge =
                 CalculatePetAgeUseCase(
-                    dogAgeCalculator = DogAgeCalculator(),
-                    dogLifeStageCalculator = DogLifeStageCalculator(),
-                    catAgeCalculator = CatAgeCalculator(),
-                    catLifeStageCalculator = CatLifeStageCalculator(),
                     settingsReader = settingsReader,
                     clock = testClock,
                 )

@@ -1,0 +1,12 @@
+<!--
+  Иконка вида «Мышь» (§5.6): небольшая голова + два больших круглых уха.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M6.5,15 a5.5,5.5 0 1,0 11,0 a5.5,5.5 0 1,0 -11,0 Z M2,7 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z M14,7 a4,4 0 1,0 8,0 a4,4 0 1,0 -8,0 Z" />
+</vector>

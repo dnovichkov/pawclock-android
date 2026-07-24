@@ -18,6 +18,12 @@ ktlint_standard_no-wildcard-imports = disabled
 ktlint_standard_filename = disabled
 ktlint_function_naming_ignore_when_annotated_with = Composable, Test, ParameterizedTest, RepeatedTest
 
+# The `import_` package uses a trailing underscore because `import` is a reserved
+# Kotlin keyword (Plan 2 Task 19). detekt's PackageNaming is relaxed for the same
+# reason (see detekt.yml); disable ktlint's package-name rule here for symmetry.
+[**/import_/**.{kt,kts}]
+ktlint_standard_package-name = disabled
+
 [*.{xml,html}]
 indent_size = 4
 

@@ -1,6 +1,7 @@
 package app.pawclock.calculator
 
 import app.pawclock.model.CatType
+import app.pawclock.model.Species
 
 /**
  * Калькулятор возраста кошки в человеческих годах по руководящим
@@ -30,7 +31,25 @@ import app.pawclock.model.CatType
  *
  * См. также спецификацию PawClock §4.2 и ADR-0006.
  */
-class CatAgeCalculator {
+data object CatAgeCalculator : AgeCalculator {
+    override val species: Species = Species.Cat
+
+    /**
+     * Унифицированная точка диспатча из [AgeCalculator]: делегирует в перегрузку
+     * [toHumanYears] с явным `catType`.
+     *
+     * @throws IllegalArgumentException если [params] не является [SpeciesParams.Cat].
+     */
+    override fun toHumanYears(
+        ageInYears: Double,
+        params: SpeciesParams,
+    ): Double {
+        require(params is SpeciesParams.Cat) {
+            "CatAgeCalculator requires SpeciesParams.Cat, got ${params::class.simpleName}"
+        }
+        return toHumanYears(ageInYears, params.type)
+    }
+
     /**
      * Возвращает возраст кошки в человеческих годах.
      *
@@ -75,29 +94,30 @@ class CatAgeCalculator {
         return result
     }
 
-    internal companion object {
-        /** Граница "котёнок до года": age ≤ 1 — линейная интерполяция к [FIRST_YEAR_HUMAN_AGE]. */
-        internal const val FIRST_YEAR_THRESHOLD: Double = 1.0
+    // Константы кусочной формулы AAFP 2021. Хранятся в теле `object` (companion у object
+    // недоступен); путь доступа `CatAgeCalculator.<CONST>` сохранён.
 
-        /** Граница «второго года»: 1 < age ≤ 2 — линейная интерполяция от 15 ЧГ к [SECOND_YEAR_HUMAN_AGE]. */
-        internal const val SECOND_YEAR_THRESHOLD: Double = 2.0
+    /** Граница "котёнок до года": age ≤ 1 — линейная интерполяция к [FIRST_YEAR_HUMAN_AGE]. */
+    internal const val FIRST_YEAR_THRESHOLD: Double = 1.0
 
-        /** Человеческий возраст в 1 год по AAFP 2021. */
-        internal const val FIRST_YEAR_HUMAN_AGE: Double = 15.0
+    /** Граница «второго года»: 1 < age ≤ 2 — линейная интерполяция от 15 ЧГ к [SECOND_YEAR_HUMAN_AGE]. */
+    internal const val SECOND_YEAR_THRESHOLD: Double = 2.0
 
-        /** Человеческий возраст в 2 года по AAFP 2021. */
-        internal const val SECOND_YEAR_HUMAN_AGE: Double = 24.0
+    /** Человеческий возраст в 1 год по AAFP 2021. */
+    internal const val FIRST_YEAR_HUMAN_AGE: Double = 15.0
 
-        /** Прирост ЧГ за 2-й год жизни: 24 − 15 = 9. */
-        internal const val SECOND_YEAR_INCREMENT: Double = 9.0
+    /** Человеческий возраст в 2 года по AAFP 2021. */
+    internal const val SECOND_YEAR_HUMAN_AGE: Double = 24.0
 
-        /** Прирост ЧГ за каждый год после 2-го по AAFP 2021. */
-        internal const val SUBSEQUENT_YEAR_INCREMENT: Double = 4.0
+    /** Прирост ЧГ за 2-й год жизни: 24 − 15 = 9. */
+    internal const val SECOND_YEAR_INCREMENT: Double = 9.0
 
-        /**
-         * Множитель ускоренного старения для уличных кошек.
-         * AAFP 2021 рекомендует приближённую поправку × 1.15 после 2 лет.
-         */
-        internal const val OUTDOOR_AGING_FACTOR: Double = 1.15
-    }
+    /** Прирост ЧГ за каждый год после 2-го по AAFP 2021. */
+    internal const val SUBSEQUENT_YEAR_INCREMENT: Double = 4.0
+
+    /**
+     * Множитель ускоренного старения для уличных кошек.
+     * AAFP 2021 рекомендует приближённую поправку × 1.15 после 2 лет.
+     */
+    internal const val OUTDOOR_AGING_FACTOR: Double = 1.15
 }

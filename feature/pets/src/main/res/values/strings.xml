@@ -60,5 +60,57 @@
     <string name="life_stage_cat_mature_adult">Зрелый взрослый</string>
     <string name="life_stage_cat_senior">Старший</string>
     <string name="life_stage_cat_end_of_life">Поздний возраст</string>
+    <string name="life_stage_rabbit_infancy">Детёныш</string>
+    <string name="life_stage_rabbit_adolescence">Подросток</string>
+    <string name="life_stage_rabbit_young_adult">Молодой взрослый</string>
+    <string name="life_stage_rabbit_adult">Взрослый</string>
+    <string name="life_stage_rabbit_senior">Старший</string>
+    <string name="life_stage_hamster_pup">Детёныш</string>
+    <string name="life_stage_hamster_juvenile">Подросток</string>
+    <string name="life_stage_hamster_adult">Взрослый</string>
+    <string name="life_stage_hamster_senior">Пожилой</string>
+    <string name="life_stage_hamster_very_senior">Очень пожилой</string>
+    <string name="life_stage_guinea_pig_pup">Детёныш</string>
+    <string name="life_stage_guinea_pig_juvenile">Подросток</string>
+    <string name="life_stage_guinea_pig_adult">Взрослый</string>
+    <string name="life_stage_guinea_pig_senior">Пожилой</string>
+    <string name="life_stage_guinea_pig_geriatric">Старческий</string>
+    <string name="life_stage_rat_pup">Детёныш</string>
+    <string name="life_stage_rat_juvenile">Подросток</string>
+    <string name="life_stage_rat_adult">Взрослый</string>
+    <string name="life_stage_rat_senior">Пожилой</string>
+    <string name="life_stage_rat_end_of_life">Поздний возраст</string>
+    <string name="life_stage_mouse_pup">Детёныш</string>
+    <string name="life_stage_mouse_juvenile">Подросток</string>
+    <string name="life_stage_mouse_adult">Взрослый</string>
+    <string name="life_stage_mouse_senior">Пожилой</string>
+    <string name="life_stage_mouse_end_of_life">Поздний возраст</string>
+    <string name="life_stage_ferret_kit">Детёныш</string>
+    <string name="life_stage_ferret_juvenile">Подросток</string>
+    <string name="life_stage_ferret_adult">Взрослый</string>
+    <string name="life_stage_ferret_senior">Пожилой</string>
+    <string name="life_stage_ferret_geriatric">Старческий</string>
+    <string name="life_stage_bird_hatchling">Птенец</string>
+    <string name="life_stage_bird_juvenile">Молодая особь</string>
+    <string name="life_stage_bird_adult">Взрослая</string>
+    <string name="life_stage_bird_senior">Пожилая</string>
+    <string name="life_stage_bird_geriatric">Старческая</string>
+    <string name="pet_detail_calc_bird">Метод: AAV + Lafeber Vet. Скалярная формула: человеческие годы = возраст · 80 / средняя продолжительность жизни вида. Для птенцов младше 6 месяцев — поправка ×1.3.</string>
+    <string name="life_stage_reptile_hatchling">Детёныш</string>
+    <string name="life_stage_reptile_juvenile">Молодая особь</string>
+    <string name="life_stage_reptile_adult">Взрослая</string>
+    <string name="life_stage_reptile_senior">Пожилая</string>
+    <string name="pet_detail_calc_reptile">Метод: PetPlace + Reptile Centre. Скалярная формула: человеческие годы = возраст · 80 / средняя продолжительность жизни вида. Долгоживущие черепахи стареют медленнее в человеческих годах.</string>
+    <string name="life_stage_horse_foal">Жеребёнок</string>
+    <string name="life_stage_horse_yearling">Годовик</string>
+    <string name="life_stage_horse_young_adult">Молодая лошадь</string>
+    <string name="life_stage_horse_adult">Взрослая</string>
+    <string name="life_stage_horse_senior">Пожилая</string>
+    <string name="pet_detail_calc_horse">Метод: AAEP + PetMD. 3-фазная формула: 1 год = 6.5 ЧГ, 2 год = 13, 3 год = 18, 4 год = 20.5, далее +2.5 ЧГ/год.</string>
+    <string name="life_stage_fish_fry">Малёк</string>
+    <string name="life_stage_fish_juvenile">Молодая особь</string>
+    <string name="life_stage_fish_adult">Взрослая</string>
+    <string name="life_stage_fish_senior">Пожилая</string>
+    <string name="pet_detail_calc_fish">Метод: PetMD + AquariumStoreDepot. Скалярная формула: человеческие годы = возраст · 80 / средняя продолжительность жизни вида. Долгоживущие кои стареют медленнее в человеческих годах.</string>
 
 </resources>

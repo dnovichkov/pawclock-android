@@ -34,18 +34,30 @@ appId: app.pawclock.debug
 # Скрыть клавиатуру, чтобы FAB Save был доступен на маленьких экранах.
 - hideKeyboard
 
-# Выбрать вид «Кошка» через FilterChip.
+# Выбрать вид «Кошка» через FilterChip (2-й chip, всегда в первом ряду FlowRow).
 - tapOn: "Кошка"
 
-# Подкатегория «Домашняя короткошёрстная» (default для кошек по
-# QuickCalcViewModel/PetEditorViewModel — выбирается автоматически после
-# SelectSpecies(Cat); явный tap нужен только если пользователь хочет другую).
+# Подкатегория «Домашняя короткошёрстная» — chip кошачьего subcategory selector.
+# Plan 2 расширил species selector с 2 до 12 видов (FlowRow в 3–4 ряда), поэтому
+# subcategory section уезжает под фолд → нужен scrollUntilVisible перед assert
+# (раньше chip был на экране при 2 видах). scroll — no-op, если уже видно.
+- scrollUntilVisible:
+    element:
+      text: "Домашняя короткошёрстная"
+    direction: DOWN
+    timeout: 20000
 - assertVisible: "Домашняя короткошёрстная"
 
 # Открыть DatePicker и подтвердить. BirthDateField устанавливает
 # initialSelectedDateMillis = "1 год назад" когда value=null (см. fallback
 # в BirthDateField.kt) — этого достаточно для smoke E2E: дата валидна для
 # SavePetUseCase (past, не unrealistic), age ≈ 1 год → Kitten для кошки.
+# scrollUntilVisible — date field тоже ниже выросшего species selector.
+- scrollUntilVisible:
+    element:
+      id: "pet_editor_birth_date_field"
+    direction: DOWN
+    timeout: 20000
 - tapOn:
     id: "pet_editor_birth_date_field"
 - tapOn: "ОК"

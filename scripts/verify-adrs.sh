@@ -4,8 +4,11 @@
 #
 # Checks per spec §8.11:
 #   1. template-madr.md exists
-#   2. All 7 ADRs (0001..0007) exist with exact filenames from spec
+#   2. All ADRs (0001..0009) exist with exact filenames from spec
 #   3. Each ADR contains "Status", "Context", "Decision Outcome", "Consequences"
+#
+# ADR-0008 (AgeCalculator sealed interface) and ADR-0009 (export/import schema
+# versioning) were added in Plan 2 Task 24.
 #
 # Exit codes: 0 = ok; 1 = missing file or missing section.
 
@@ -23,6 +26,8 @@ REQUIRED_ADRS=(
     "0005-no-network-permission.md"
     "0006-wang-et-al-formula-as-default-for-dogs.md"
     "0007-conventional-commits.md"
+    "0008-age-calculator-sealed-interface-for-species-dispatch.md"
+    "0009-export-import-json-schema-versioning.md"
 )
 
 # Sections required by MADR 3.0 (template-madr.md). We check core ones.

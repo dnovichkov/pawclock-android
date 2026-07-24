@@ -43,7 +43,6 @@ import app.pawclock.feature.pets.detail.PetDetailState
 import app.pawclock.feature.pets.detail.PetDetailViewModel
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.CareRecommendation
-import app.pawclock.model.LifeStage
 import app.pawclock.model.Pet
 import app.pawclock.model.Species
 import java.util.Locale
@@ -330,6 +329,10 @@ private fun CalculationDetailsBlock(
                     calculated.humanYears.format1(),
                 )
             Species.Cat -> stringResource(R.string.pet_detail_calc_cat)
+            Species.Bird -> stringResource(R.string.pet_detail_calc_bird)
+            Species.Reptile -> stringResource(R.string.pet_detail_calc_reptile)
+            Species.Horse -> stringResource(R.string.pet_detail_calc_horse)
+            Species.Fish -> stringResource(R.string.pet_detail_calc_fish)
             else -> stringResource(R.string.pet_detail_calc_unsupported)
         }
     Text(
@@ -344,21 +347,6 @@ internal fun methodLabelRes(method: CalculationMethod): Int =
     when (method) {
         CalculationMethod.EPIGENETIC -> R.string.pet_detail_method_epigenetic
         CalculationMethod.SIZE_BASED -> R.string.pet_detail_method_size_based
-    }
-
-@androidx.annotation.StringRes
-internal fun lifeStageLabelRes(stage: LifeStage): Int =
-    when (stage) {
-        LifeStage.Dog.Puppy -> R.string.life_stage_dog_puppy
-        LifeStage.Dog.YoungAdult -> R.string.life_stage_dog_young_adult
-        LifeStage.Dog.MatureAdult -> R.string.life_stage_dog_mature_adult
-        LifeStage.Dog.Senior -> R.string.life_stage_dog_senior
-        LifeStage.Dog.EndOfLife -> R.string.life_stage_dog_end_of_life
-        LifeStage.Cat.Kitten -> R.string.life_stage_cat_kitten
-        LifeStage.Cat.YoungAdult -> R.string.life_stage_cat_young_adult
-        LifeStage.Cat.MatureAdult -> R.string.life_stage_cat_mature_adult
-        LifeStage.Cat.Senior -> R.string.life_stage_cat_senior
-        LifeStage.Cat.EndOfLife -> R.string.life_stage_cat_end_of_life
     }
 
 // Локаль-зависимое форматирование. Используем Locale.getDefault() явно вместо

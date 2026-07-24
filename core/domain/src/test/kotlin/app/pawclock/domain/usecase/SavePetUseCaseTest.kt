@@ -3,7 +3,6 @@ package app.pawclock.domain.usecase
 import app.pawclock.domain.fakes.FakePetRepository
 import app.pawclock.domain.pet.PetValidationError
 import app.pawclock.domain.pet.PetValidationException
-import app.pawclock.domain.pet.UnsupportedSpeciesException
 import app.pawclock.model.Pet
 import app.pawclock.model.Species
 import java.time.Clock
@@ -80,18 +79,22 @@ class SavePetUseCaseTest {
         }
 
     @Test
-    fun `unsupported species throws UnsupportedSpeciesException`() =
+    fun `fish is now a supported species and saves successfully`() =
         runTest {
-            val rabbit =
+            // После Plan 2 Task 10 реализованы все 12 видов — Fish больше не бросает
+            // UnsupportedSpeciesException (раньше это был последний нереализованный вид).
+            val repo = FakePetRepository()
+            val fish =
                 Pet(
                     id = 0L,
-                    name = "Bunny",
-                    species = Species.Rabbit,
+                    name = "Nemo",
+                    species = Species.Fish,
                     birthDate = today.minusYears(2),
+                    subcategory = "goldfish",
                 )
-            val ex =
-                assertFailsWith<UnsupportedSpeciesException> { useCase().invoke(rabbit) }
-            assertEquals(Species.Rabbit, ex.species)
+            val savedId = useCase(repo).invoke(fish)
+            assertEquals(1L, savedId)
+            assertNotNull(repo.getById(savedId))
         }
 
     @Test

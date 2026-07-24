@@ -12,10 +12,13 @@ import app.pawclock.feature.quickcalc.QuickCalcResult
 import app.pawclock.feature.quickcalc.QuickCalcState
 import app.pawclock.feature.quickcalc.QuickCalcSubcategoryOption
 import app.pawclock.feature.quickcalc.QuickCalcValidationError
+import app.pawclock.feature.quickcalc.ui.section.quickCalcMethodTag
 import app.pawclock.feature.quickcalc.ui.section.quickCalcSpeciesChipTag
+import app.pawclock.model.BirdType
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.DogSize
 import app.pawclock.model.LifeStage
+import app.pawclock.model.RabbitSize
 import app.pawclock.model.Species
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -222,5 +225,87 @@ class QuickCalcScreenTest {
         composeRule.onNodeWithText("Молодой взрослый").assertIsDisplayed()
         // Method toggle "Wang (эпигенетика)" — НЕ должен быть виден для кошки.
         // (sheet содержит method toggle только когда species == Dog)
+    }
+
+    // --- Plan 2, Task 16: все 12 видов в Quick Calculator ---
+
+    @Test
+    fun subcategorySelector_showsRabbitSizeChipsForRabbit() {
+        val state =
+            QuickCalcState.Empty.copy(
+                species = Species.Rabbit,
+                availableSubcategories =
+                    RabbitSize.entries.map { QuickCalcSubcategoryOption(it.id, it.name) },
+            )
+        composeRule.setContent {
+            QuickCalcContent(
+                state = state,
+                onEvent = { },
+                onBack = { },
+            )
+        }
+
+        // Метки RabbitSize, а не DogSize: «Карликовый»/«Гигантский» вместо «Той»/«Гигантская».
+        composeRule.onNodeWithText("Карликовый").assertIsDisplayed()
+        composeRule.onNodeWithText("Средний").assertIsDisplayed()
+        composeRule.onNodeWithText("Гигантский").assertIsDisplayed()
+    }
+
+    @Test
+    fun resultSheet_showsRabbitHumanYearsAndAdultStage() {
+        val calculated =
+            CalculatedAge(
+                ageInYears = 5.0,
+                humanYears = 45.0,
+                lifeStage = LifeStage.Rabbit.Adult,
+                method = CalculationMethod.EPIGENETIC,
+            )
+        val state =
+            QuickCalcState.Empty.copy(
+                species = Species.Rabbit,
+                subcategory = RabbitSize.Medium.id,
+                result = QuickCalcResult.Success(calculated),
+            )
+        composeRule.setContent {
+            QuickCalcContent(
+                state = state,
+                onEvent = { },
+                onBack = { },
+            )
+        }
+
+        // Rabbit Medium 5y ≈ 45 ЧГ, стадия Adult («Взрослый»).
+        composeRule.onNodeWithText("45 ЧГ").assertIsDisplayed()
+        composeRule.onNodeWithText("Взрослый").assertIsDisplayed()
+        // Method toggle отсутствует для не-собаки.
+        composeRule.onNodeWithTag(quickCalcMethodTag(CalculationMethod.SIZE_BASED)).assertDoesNotExist()
+    }
+
+    @Test
+    fun resultSheet_showsBirdHumanYears() {
+        val calculated =
+            CalculatedAge(
+                ageInYears = 3.0,
+                // budgerigar lifespan 7: 3·80/7 ≈ 34.29 → roundToInt = 34.
+                humanYears = 34.29,
+                lifeStage = LifeStage.Bird.Adult,
+                method = CalculationMethod.EPIGENETIC,
+            )
+        val state =
+            QuickCalcState.Empty.copy(
+                species = Species.Bird,
+                subcategory = BirdType.Budgerigar.id,
+                result = QuickCalcResult.Success(calculated),
+            )
+        composeRule.setContent {
+            QuickCalcContent(
+                state = state,
+                onEvent = { },
+                onBack = { },
+            )
+        }
+
+        composeRule.onNodeWithText("34 ЧГ").assertIsDisplayed()
+        composeRule.onNodeWithText("Взрослая").assertIsDisplayed()
     }
 }

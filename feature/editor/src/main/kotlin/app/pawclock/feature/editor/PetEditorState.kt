@@ -1,9 +1,15 @@
 package app.pawclock.feature.editor
 
 import app.pawclock.domain.pet.PetValidationError
+import app.pawclock.model.BirdType
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
+import app.pawclock.model.FishType
 import app.pawclock.model.Gender
+import app.pawclock.model.HamsterType
+import app.pawclock.model.HorseType
+import app.pawclock.model.RabbitSize
+import app.pawclock.model.ReptileType
 import app.pawclock.model.Species
 import java.time.LocalDate
 
@@ -58,14 +64,33 @@ data class PetEditorState(
         fun loadingFor(petId: Long): PetEditorState = PetEditorState(isLoading = true, editingPetId = petId)
 
         /**
-         * Возвращает подкатегории для заданного species. Для не-Dog/Cat видов
-         * возвращает emptyList (Plan 1 не реализует остальные виды).
+         * Возвращает подкатегории для заданного species (Plan 2, Task 15 — все 12 видов).
+         *
+         * Виды без подкатегорий (GuineaPig, Rat, Mouse, Ferret — формула возраста едина,
+         * у вида нет вариантов размера/типа) возвращают emptyList → UI скрывает секцию
+         * подкатегории (см. [app.pawclock.feature.editor.ui.PetEditorScreen]).
+         *
+         * `label` хранит английское enum-имя как fallback; локализованные метки
+         * резолвятся в UI через `(species, id)` mapping (см. `SubcategorySelector`),
+         * потому что `id` пересекаются между видами (например, `small`/`medium`/`large`
+         * есть и у [DogSize], и у [RabbitSize]).
          */
         fun subcategoriesFor(species: Species?): List<SubcategoryOption> =
             when (species) {
                 Species.Dog -> DogSize.entries.map { SubcategoryOption(it.id, it.name) }
                 Species.Cat -> CatType.entries.map { SubcategoryOption(it.id, it.name) }
-                else -> emptyList()
+                Species.Rabbit -> RabbitSize.entries.map { SubcategoryOption(it.id, it.name) }
+                Species.Hamster -> HamsterType.entries.map { SubcategoryOption(it.id, it.name) }
+                Species.Bird -> BirdType.entries.map { SubcategoryOption(it.id, it.name) }
+                Species.Reptile -> ReptileType.entries.map { SubcategoryOption(it.id, it.name) }
+                Species.Horse -> HorseType.entries.map { SubcategoryOption(it.id, it.name) }
+                Species.Fish -> FishType.entries.map { SubcategoryOption(it.id, it.name) }
+                Species.GuineaPig,
+                Species.Rat,
+                Species.Mouse,
+                Species.Ferret,
+                null,
+                -> emptyList()
             }
     }
 }

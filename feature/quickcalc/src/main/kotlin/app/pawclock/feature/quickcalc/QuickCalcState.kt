@@ -1,9 +1,15 @@
 package app.pawclock.feature.quickcalc
 
 import app.pawclock.domain.pet.CalculatedAge
+import app.pawclock.model.BirdType
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
+import app.pawclock.model.FishType
+import app.pawclock.model.HamsterType
+import app.pawclock.model.HorseType
+import app.pawclock.model.RabbitSize
+import app.pawclock.model.ReptileType
 import app.pawclock.model.Species
 import java.time.LocalDate
 
@@ -39,14 +45,32 @@ data class QuickCalcState(
         val Empty: QuickCalcState = QuickCalcState()
 
         /**
-         * Возвращает список подкатегорий для заданного species.
+         * Возвращает список подкатегорий для заданного species (Plan 2, Task 16 — все 12 видов).
+         *
          * Pure-функция — exposing as companion delegate чтобы переиспользовать в onSelectSpecies.
+         *
+         * Виды без подкатегорий (GuineaPig, Rat, Mouse, Ferret — формула возраста едина) возвращают
+         * emptyList → UI скрывает секцию подкатегории. `label` хранит английское enum-имя как
+         * fallback; локализованная метка резолвится в UI через `(species, id)` (см.
+         * [app.pawclock.feature.quickcalc.ui.section.QuickCalcSubcategorySelector]), потому что
+         * `id` пересекаются между видами (например, `small`/`medium` у [DogSize] и [RabbitSize]).
          */
         fun subcategoriesFor(species: Species?): List<QuickCalcSubcategoryOption> =
             when (species) {
                 Species.Dog -> DogSize.entries.map { QuickCalcSubcategoryOption(it.id, it.name) }
                 Species.Cat -> CatType.entries.map { QuickCalcSubcategoryOption(it.id, it.name) }
-                else -> emptyList()
+                Species.Rabbit -> RabbitSize.entries.map { QuickCalcSubcategoryOption(it.id, it.name) }
+                Species.Hamster -> HamsterType.entries.map { QuickCalcSubcategoryOption(it.id, it.name) }
+                Species.Bird -> BirdType.entries.map { QuickCalcSubcategoryOption(it.id, it.name) }
+                Species.Reptile -> ReptileType.entries.map { QuickCalcSubcategoryOption(it.id, it.name) }
+                Species.Horse -> HorseType.entries.map { QuickCalcSubcategoryOption(it.id, it.name) }
+                Species.Fish -> FishType.entries.map { QuickCalcSubcategoryOption(it.id, it.name) }
+                Species.GuineaPig,
+                Species.Rat,
+                Species.Mouse,
+                Species.Ferret,
+                null,
+                -> emptyList()
             }
     }
 }

@@ -29,6 +29,8 @@ class FakePetRepository : PetRepository {
 
     override fun observeAll(): Flow<List<Pet>> = state.asStateFlow()
 
+    override suspend fun getAll(): List<Pet> = state.value
+
     override suspend fun getById(id: Long): Pet? = state.value.firstOrNull { it.id == id }
 
     override suspend fun insert(pet: Pet): Long {
@@ -55,6 +57,10 @@ class FakePetRepository : PetRepository {
         return before - state.value.size
     }
 
+    override suspend fun clearAll() {
+        state.value = emptyList()
+    }
+
     fun seed(pets: List<Pet>) {
         state.value = pets.sortedBy { it.name.lowercase() }
     }
@@ -74,6 +80,8 @@ class FakePetRepository : PetRepository {
 class PausedFakePetRepository : PetRepository {
     override fun observeAll(): Flow<List<Pet>> = kotlinx.coroutines.flow.emptyFlow()
 
+    override suspend fun getAll(): List<Pet> = emptyList()
+
     override suspend fun getById(id: Long): Pet? = null
 
     override suspend fun insert(pet: Pet): Long = error("not implemented for paused fake")
@@ -81,6 +89,8 @@ class PausedFakePetRepository : PetRepository {
     override suspend fun update(pet: Pet) = error("not implemented for paused fake")
 
     override suspend fun deleteById(id: Long): Int = 0
+
+    override suspend fun clearAll() = error("not implemented for paused fake")
 
     fun getPetsUseCase(): GetPetsUseCase = GetPetsUseCase(this)
 

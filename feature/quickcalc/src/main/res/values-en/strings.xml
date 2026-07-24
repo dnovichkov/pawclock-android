@@ -13,9 +13,19 @@
     <string name="quick_calc_birth_date_label">Birth date *</string>
     <string name="quick_calc_method_label">Calculation method</string>
 
-    <!-- Species labels -->
+    <!-- Species labels (Plan 2, Task 16 — all 12 species) -->
     <string name="quick_calc_species_dog">Dog</string>
     <string name="quick_calc_species_cat">Cat</string>
+    <string name="quick_calc_species_rabbit">Rabbit</string>
+    <string name="quick_calc_species_hamster">Hamster</string>
+    <string name="quick_calc_species_guinea_pig">Guinea pig</string>
+    <string name="quick_calc_species_rat">Rat</string>
+    <string name="quick_calc_species_mouse">Mouse</string>
+    <string name="quick_calc_species_ferret">Ferret</string>
+    <string name="quick_calc_species_bird">Bird</string>
+    <string name="quick_calc_species_reptile">Reptile</string>
+    <string name="quick_calc_species_horse">Horse</string>
+    <string name="quick_calc_species_fish">Fish</string>
 
     <!-- Subcategory labels -->
     <string name="quick_calc_subcategory_toy">Toy</string>
@@ -27,6 +37,48 @@
     <string name="quick_calc_subcategory_indoor_long_hair">Indoor long-hair</string>
     <string name="quick_calc_subcategory_outdoor">Outdoor</string>
     <string name="quick_calc_subcategory_large_breed">Large breed</string>
+
+    <!-- Subcategory labels for new species (Plan 2, Task 16) -->
+    <string name="rabbit_size_dwarf">Dwarf</string>
+    <string name="rabbit_size_small">Small</string>
+    <string name="rabbit_size_medium">Medium</string>
+    <string name="rabbit_size_large">Large</string>
+    <string name="rabbit_size_giant">Giant</string>
+    <string name="hamster_type_syrian">Syrian</string>
+    <string name="hamster_type_dwarf">Dwarf</string>
+    <string name="hamster_type_roborovski">Roborovski</string>
+    <string name="hamster_type_chinese">Chinese</string>
+    <string name="hamster_type_winter_white">Winter white</string>
+    <string name="bird_type_budgerigar">Budgerigar</string>
+    <string name="bird_type_cockatiel">Cockatiel</string>
+    <string name="bird_type_canary">Canary</string>
+    <string name="bird_type_lovebird">Lovebird</string>
+    <string name="bird_type_conure">Conure</string>
+    <string name="bird_type_amazon">Amazon</string>
+    <string name="bird_type_african_grey">African grey</string>
+    <string name="bird_type_cockatoo">Cockatoo</string>
+    <string name="bird_type_macaw">Macaw</string>
+    <string name="bird_type_pigeon">Pigeon</string>
+    <string name="reptile_type_box_turtle">Box turtle</string>
+    <string name="reptile_type_red_eared_slider">Red-eared slider</string>
+    <string name="reptile_type_bearded_dragon">Bearded dragon</string>
+    <string name="reptile_type_ball_python">Ball python</string>
+    <string name="reptile_type_corn_snake">Corn snake</string>
+    <string name="reptile_type_green_iguana">Green iguana</string>
+    <string name="reptile_type_leopard_gecko">Leopard gecko</string>
+    <string name="reptile_type_crested_gecko">Crested gecko</string>
+    <string name="horse_type_pony">Pony</string>
+    <string name="horse_type_light_horse">Light horse</string>
+    <string name="horse_type_draft_horse">Draft horse</string>
+    <string name="horse_type_thoroughbred">Thoroughbred</string>
+    <string name="fish_type_goldfish">Goldfish</string>
+    <string name="fish_type_koi">Koi</string>
+    <string name="fish_type_betta">Betta</string>
+    <string name="fish_type_guppy">Guppy</string>
+    <string name="fish_type_angelfish">Angelfish</string>
+    <string name="fish_type_neon_tetra">Neon tetra</string>
+    <string name="fish_type_tropical">Tropical</string>
+    <string name="fish_type_discus">Discus</string>
 
     <!-- Date picker -->
     <string name="quick_calc_date_ok">OK</string>
@@ -51,6 +103,12 @@
     <string name="quick_calc_result_explanation_epigenetic">Wang et al. formula (Cell Systems 2020, DOI 10.1016/j.cels.2020.06.006): HY = 16 · ln(age) + 31. Based on DNA methylation — more accurate than the traditional "1 year = 7 years" rule.</string>
     <string name="quick_calc_result_explanation_size_based">AKC/AAHA 2019 table-based method: human-year value is taken from a published table by weight class (Toy / Small / Medium / Large / Giant).</string>
     <string name="quick_calc_result_explanation_aafp">AAHA/AAFP 2021 feline life-stage guidelines: piecewise formula — kitten (15 HY for the first year) + young adult (+9 HY for the second) + 4 HY per additional year. Independent of the Wang method.</string>
+    <string name="quick_calc_result_explanation_rabbit">House Rabbit Society + AVMA method: piecewise formula — 30 HY/year up to 4 months, then slowing; from year 1 = 21 HY + 6 HY per additional year. Size only affects expected lifespan.</string>
+    <string name="quick_calc_result_explanation_hamster">RVC VetCompass + Animallama method: piecewise formula in months — fast start (1 HY per 4 days), 6 months ≈ 30 HY, then +3–4 HY per month of life.</string>
+    <string name="quick_calc_result_explanation_guinea_pig">Oxbow + Animallama method: piecewise formula — weaning ≈ 6 HY, 5 months ≈ 20 HY, then +8 HY/year up to 4 years and +10 HY/year after.</string>
+    <string name="quick_calc_result_explanation_rat">Sengupta 2013 method (Int J Prev Med 4(6):624–630): linear formula HY = 13.8 · age + 1.4.</string>
+    <string name="quick_calc_result_explanation_mouse">Dutta &amp; Sengupta 2016 method (Life Sciences 152:244–248): piecewise formula — accumulation of human-days across mouse life phases with a decreasing ageing rate.</string>
+    <string name="quick_calc_result_explanation_ferret">PMC "Senior Ferret" method (PMC7129291): piecewise formula — +5 HY/month up to six months, 1 year ≈ 40 HY, then +4 HY per additional year.</string>
 
     <!-- Life stages -->
     <string name="quick_calc_life_stage_dog_puppy">Puppy</string>
@@ -63,5 +121,57 @@
     <string name="quick_calc_life_stage_cat_mature_adult">Mature adult</string>
     <string name="quick_calc_life_stage_cat_senior">Senior</string>
     <string name="quick_calc_life_stage_cat_end_of_life">End of life</string>
+    <string name="quick_calc_life_stage_rabbit_infancy">Infancy</string>
+    <string name="quick_calc_life_stage_rabbit_adolescence">Adolescence</string>
+    <string name="quick_calc_life_stage_rabbit_young_adult">Young adult</string>
+    <string name="quick_calc_life_stage_rabbit_adult">Adult</string>
+    <string name="quick_calc_life_stage_rabbit_senior">Senior</string>
+    <string name="quick_calc_life_stage_hamster_pup">Pup</string>
+    <string name="quick_calc_life_stage_hamster_juvenile">Juvenile</string>
+    <string name="quick_calc_life_stage_hamster_adult">Adult</string>
+    <string name="quick_calc_life_stage_hamster_senior">Senior</string>
+    <string name="quick_calc_life_stage_hamster_very_senior">Very senior</string>
+    <string name="quick_calc_life_stage_guinea_pig_pup">Pup</string>
+    <string name="quick_calc_life_stage_guinea_pig_juvenile">Juvenile</string>
+    <string name="quick_calc_life_stage_guinea_pig_adult">Adult</string>
+    <string name="quick_calc_life_stage_guinea_pig_senior">Senior</string>
+    <string name="quick_calc_life_stage_guinea_pig_geriatric">Geriatric</string>
+    <string name="quick_calc_life_stage_rat_pup">Pup</string>
+    <string name="quick_calc_life_stage_rat_juvenile">Juvenile</string>
+    <string name="quick_calc_life_stage_rat_adult">Adult</string>
+    <string name="quick_calc_life_stage_rat_senior">Senior</string>
+    <string name="quick_calc_life_stage_rat_end_of_life">End of life</string>
+    <string name="quick_calc_life_stage_mouse_pup">Pup</string>
+    <string name="quick_calc_life_stage_mouse_juvenile">Juvenile</string>
+    <string name="quick_calc_life_stage_mouse_adult">Adult</string>
+    <string name="quick_calc_life_stage_mouse_senior">Senior</string>
+    <string name="quick_calc_life_stage_mouse_end_of_life">End of life</string>
+    <string name="quick_calc_life_stage_ferret_kit">Kit</string>
+    <string name="quick_calc_life_stage_ferret_juvenile">Juvenile</string>
+    <string name="quick_calc_life_stage_ferret_adult">Adult</string>
+    <string name="quick_calc_life_stage_ferret_senior">Senior</string>
+    <string name="quick_calc_life_stage_ferret_geriatric">Geriatric</string>
+    <string name="quick_calc_life_stage_bird_hatchling">Hatchling</string>
+    <string name="quick_calc_life_stage_bird_juvenile">Juvenile</string>
+    <string name="quick_calc_life_stage_bird_adult">Adult</string>
+    <string name="quick_calc_life_stage_bird_senior">Senior</string>
+    <string name="quick_calc_life_stage_bird_geriatric">Geriatric</string>
+    <string name="quick_calc_result_explanation_bird">AAV + Lafeber Vet method: human years = age · 80 / species average lifespan. Long-lived parrots age more slowly in human years.</string>
+    <string name="quick_calc_life_stage_reptile_hatchling">Hatchling</string>
+    <string name="quick_calc_life_stage_reptile_juvenile">Juvenile</string>
+    <string name="quick_calc_life_stage_reptile_adult">Adult</string>
+    <string name="quick_calc_life_stage_reptile_senior">Senior</string>
+    <string name="quick_calc_result_explanation_reptile">PetPlace + Reptile Centre method: human years = age · 80 / species average lifespan. Long-lived turtles age more slowly in human years.</string>
+    <string name="quick_calc_life_stage_horse_foal">Foal</string>
+    <string name="quick_calc_life_stage_horse_yearling">Yearling</string>
+    <string name="quick_calc_life_stage_horse_young_adult">Young horse</string>
+    <string name="quick_calc_life_stage_horse_adult">Adult</string>
+    <string name="quick_calc_life_stage_horse_senior">Senior</string>
+    <string name="quick_calc_result_explanation_horse">AAEP + PetMD method: 3-phase formula — year 1 = 6.5 HY, year 2 = 13, year 3 = 18, year 4 = 20.5, then +2.5 HY/year.</string>
+    <string name="quick_calc_life_stage_fish_fry">Fry</string>
+    <string name="quick_calc_life_stage_fish_juvenile">Juvenile</string>
+    <string name="quick_calc_life_stage_fish_adult">Adult</string>
+    <string name="quick_calc_life_stage_fish_senior">Senior</string>
+    <string name="quick_calc_result_explanation_fish">PetMD + AquariumStoreDepot method: human years = age · 80 / species average lifespan. Long-lived koi age more slowly in human years.</string>
 
 </resources>
