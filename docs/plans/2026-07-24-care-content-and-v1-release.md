@@ -221,12 +221,14 @@ Pitest / Baseline Profiles / ACRA сознательно отложены в Pla
 - [x] run `./gradlew :core:domain:test :core:domain:koverVerify --no-daemon` — 10 dog quality-тестов **Green**;
   `verify-care-content.sh` OK (10 файлов); koverVerify (domain ≥ 90%) зелёный — must pass before next task
 
-### Task 3: Cat care content (5 stages × ru/en)
-- [ ] author контент `care/cat/{kitten,young_adult,mature_adult,senior,end_of_life}/{ru,en}.json` по
-  AAHA/AAFP 2021 Feline Life Stage Guidelines; отразить indoor/outdoor различия и senior-переход в описаниях
-- [ ] заполнить все поля + `source_url`/`source_name` = AAHA/AAFP 2021 + дисклеймер §3.3
-- [ ] add `Species.Cat` в `contentComplete`
-- [ ] run `./gradlew :core:domain:test --no-daemon` — Green для cat; detekt + koverVerify — must pass before next task
+### Task 3: Cat care content (5 stages × ru/en) ✅
+- [x] author контент `care/cat/{kitten,young_adult,mature_adult,senior,end_of_life}/{ru,en}.json` по
+  AAHA/AAFP 2021 Feline Life Stage Guidelines; indoor/outdoor различия и senior-переход (10+, объединение
+  senior/super-senior) отражены в описаниях
+- [x] заполнены все поля + `source_url`/`source_name` = AAHA/AAFP 2021 (catvets.com) + дисклеймер §3.3
+- [x] add `Species.Cat` в `contentComplete` (Kotlin + shell)
+- [x] run `./gradlew :core:domain:test :core:domain:koverVerify --no-daemon` — 10 cat quality-тестов Green;
+  `verify-care-content.sh` OK (20 файлов) — must pass before next task
 
 ### Task 4: Rabbit care content (5 stages × ru/en)
 - [ ] author контент `care/rabbit/{infancy,adolescence,young_adult,adult,senior}/{ru,en}.json` по House

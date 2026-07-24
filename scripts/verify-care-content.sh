@@ -32,7 +32,8 @@ CARE_ROOT="app/src/main/assets/care"
 # Grows by one entry per content task (Tasks 2–13). Empty at Task 1.
 CONTENT_COMPLETE=(
     "dog"
-    # Task 3+: cat rabbit hamster guinea_pig rat mouse ferret bird reptile horse fish
+    "cat"
+    # Task 4+: rabbit hamster guinea_pig rat mouse ferret bird reptile horse fish
 )
 
 # species_id|stage1,stage2,...  (source of truth: LifeStage.*.all() in :core:model)

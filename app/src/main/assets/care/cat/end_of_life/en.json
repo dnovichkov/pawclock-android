@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO (Plan 1 placeholder): scientifically-backed description of the end-of-life stage (approaching expected lifespan — 12–18 years for indoor cats). Text will be replaced in Plan 2.",
-  "nutrition": "TODO: priority is appetite and comfort. Warm soft food, individualized schedule, encourage eating with treats.",
-  "activity": "TODO: calm environment, warmth, easy access to resources. Comfort and owner presence matter most.",
-  "veterinary_check_frequency": "TODO: individualized palliative care schedule. Discuss a quality-of-life plan with your veterinarian.",
-  "dental_care": "TODO: hygienic care if not stressful. Professional cleaning typically not indicated.",
-  "warning_signs": "TODO: significant decline in quality of life — discuss humane options with your veterinarian.",
+  "stage_description": "The end-of-life stage arrives when chronic or incurable disease (end-stage kidney disease, cancer, severe arthritis) limits quality of life. Care centers on palliative support: pain relief, comfort, and appetite. Cats tend to hide pain, so an honest quality-of-life assessment with the veterinarian and a timely, humane decision are essential.",
+  "nutrition": "Feed to appetite: warm, aromatic food, a quiet calm feeding spot, and vet-prescribed appetizing or therapeutic diets if needed. The priority is enjoyment of food and adequate hydration rather than strict dietary targets.",
+  "activity": "Calm, warmth, and easy access to water, litter, and hiding spots without needing to jump. Gentle contact as the cat wishes; the goal of this stage is comfort and companionship, not activity.",
+  "veterinary_check_frequency": "Frequent veterinary contact to manage pain and symptoms on an individualized palliative-care plan, sometimes weekly or more often. A hospice plan and objective quality-of-life criteria are discussed.",
+  "dental_care": "Gentle mouth care for comfort; painful dental procedures are deferred unless they improve well-being. Offer soft or moist food if the mouth is sore.",
+  "warning_signs": "Refusing food and water, uncontrolled pain, labored breathing, stopping self-grooming, hiding, and complete apathy. These signs call for an urgent quality-of-life discussion with the veterinarian.",
   "source_url": "https://catvets.com/guidelines/practice-guidelines/feline-life-stage-guidelines/",
   "source_name": "AAHA/AAFP 2021 Feline Life Stage Guidelines",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

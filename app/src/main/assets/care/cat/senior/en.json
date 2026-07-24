@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO (Plan 1 placeholder): scientifically-backed description of the senior stage (10+ years; AAHA/AAFP 2021 merges senior and super senior). Text will be replaced in Plan 2.",
-  "nutrition": "TODO: senior cat food, kidney support, higher protein digestibility.",
-  "activity": "TODO: gentle regular activity, accessible bedding and litter boxes (low sides), warmth and comfort.",
-  "veterinary_check_frequency": "TODO: exams every 6 months, expanded blood chemistry, urinalysis, blood pressure monitoring, T4. Source: AAHA/AAFP 2021.",
-  "dental_care": "TODO: regular dental evaluation — periodontal disease is particularly common at this stage.",
-  "warning_signs": "TODO: CKD (chronic kidney disease), hyperthyroidism, arthritis, cognitive dysfunction — monitor for changes.",
+  "stage_description": "The senior stage is 10+ years; the 2021 AAHA/AAFP update merged the former senior and super-senior stages into one. Chronic kidney disease, hyperthyroidism, hypertension, arthritis, and cognitive dysfunction become more common. For indoor cats this is usually the final third of a 12–18 year life. The goal of care is early disease detection, arthritis pain relief, and maintaining comfort.",
+  "nutrition": "A senior diet with digestible, quality protein and kidney support where indicated. Monitor appetite and weight closely: subtle weight loss is a common early sign of disease. Adequate hydration is especially important.",
+  "activity": "Gentle regular activity and mental stimulation within the cat's ability. Make resources accessible: low-sided litter boxes, steps to favorite spots, warm soft beds, and non-slip surfaces for arthritic joints.",
+  "veterinary_check_frequency": "Exams every 6 months with expanded blood chemistry, urinalysis, blood-pressure measurement, and T4 (thyroid) testing to detect and manage age-related disease early.",
+  "dental_care": "Regular dental assessment — periodontal disease and tooth-resorptive lesions are particularly common and painful at this stage. Cleaning is done weighing the older cat's anesthetic risk.",
+  "warning_signs": "Increased thirst, weight loss, appetite changes, disorientation or night-time vocalizing (cognitive dysfunction), stiffness, and reduced grooming. Any of these warrants a veterinary evaluation.",
   "source_url": "https://catvets.com/guidelines/practice-guidelines/feline-life-stage-guidelines/",
   "source_name": "AAHA/AAFP 2021 Feline Life Stage Guidelines",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."
