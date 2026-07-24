@@ -193,22 +193,23 @@ Pitest / Baseline Profiles / ACRA сознательно отложены в Pla
 
 ## Implementation Steps
 
-### Task 1: Care content quality gate + registry infrastructure (TDD harness)
-- [ ] write FAILING test `CareContentQualityTest` в `:core:domain/src/test/kotlin/app/pawclock/domain/care/`
+### Task 1: Care content quality gate + registry infrastructure (TDD harness) ✅
+- [x] write test `CareContentQualityTest` в `:core:domain/src/test/kotlin/app/pawclock/domain/care/`
   (`@TestFactory`), итерирующий по `contentComplete` реестру × стадии × {ru,en}; проверки: no-`TODO`,
   дисклеймер §3.3 дословно (per-locale), min-length (stage_description ≥ 120, прочие ≥ 40, dental ≥ 30
-  или null для fish), валидный `source_url`, непустой `source_name`
-- [ ] define реестр `contentComplete: Set<Species>` как single source of truth в тесте (initially **пустой**)
-  — строгие проверки идут только по нему, поэтому пустой реестр = тест тривиально зелёный (нет Red-фазы
+  или null для fish), валидный `source_url`, непустой `source_name` — extract'нута `verifyQuality()`
+  ради detekt; + always-green `@Test registry only references implemented species`
+- [x] define реестр `contentComplete: Set<Species>` как single source of truth в тесте (initially **пустой**)
+  — строгие проверки идут только по нему, пустой реестр → 0 динамических тестов = зелёно (нет Red-фазы
   инфраструктуры, Red наступает per-species в Tasks 2–13)
-- [ ] add канонические дисклеймеры (ru/en) как test-константы, сверенные с существующими файлами
-- [ ] create `scripts/verify-care-content.sh` — shell-зеркало гейта (no-`TODO` + дисклеймер + min-length),
-  принимает список «готовых» видов (или проверяет по факту отсутствия `TODO`), graceful fallback без `node`;
-  `chmod +x` через `git update-index --chmod=+x`
-- [ ] write test для скрипта: на текущем (placeholder) состоянии `verify-care-content.sh` со списком видов
-  корректно репортит `TODO`-нарушения (проверка что гейт вообще ловит placeholder)
-- [ ] run `./gradlew :core:domain:test --no-daemon` + `bash scripts/verify-care-content.sh` — must pass
-  before next task (пустой реестр → зелёно; existing `CareAssetsIntegrityTest` зелёный)
+- [x] add канонические дисклеймеры (ru/en) как test-константы, сверенные с существующими файлами
+- [x] create `scripts/verify-care-content.sh` — shell-зеркало гейта (no-`TODO` + дисклеймер + min-length),
+  принимает список «готовых» видов (CLI args override `CONTENT_COMPLETE[]`), node-валидатор через quoted
+  heredoc + graceful fallback без `node`; `chmod +x` через `git update-index --chmod=+x`
+- [x] write test для скрипта: `verify-care-content.sh dog` на placeholder корректно репортит `TODO`-нарушения
+  по всем полям (exit 1); `verify-care-content.sh` (пустой набор) → exit 0
+- [x] run `./gradlew :core:domain:test :core:domain:detekt --no-daemon` + `bash scripts/verify-care-content.sh`
+  — зелёно (пустой реестр; existing `CareAssetsIntegrityTest` зелёный; detekt clean)
 
 ### Task 2: Dog care content (5 stages × ru/en)
 - [ ] author реальный контент в `app/src/main/assets/care/dog/{puppy,young_adult,mature_adult,senior,end_of_life}/{ru,en}.json`
