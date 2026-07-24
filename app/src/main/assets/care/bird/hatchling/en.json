@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"hatchling\" stage for bird.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The hatchling or chick stage covers roughly the first 5% of a companion bird's expected lifespan — a few weeks for a budgerigar but several months for a macaw or cockatoo, since parrot lifespans range from about 7–10 years to over 50. Chicks hatch nearly naked with closed eyes, cannot regulate their own body temperature, and depend completely on a parent or an experienced hand-feeder for warmth and food. Growth is rapid: down and pin feathers emerge, the eyes open, and body weight climbs quickly day by day.",
+  "nutrition": "Chicks are fed entirely by the parents or by hand with a warmed formula of the correct temperature and consistency, given on a schedule, and the crop should empty between feedings. Improper hand-feeding risks burns, aspiration, or crop stasis, so it should be done only under guidance from an avian vet or an experienced breeder, with fresh formula each time.",
+  "activity": "Very little activity is expected — chicks mainly sleep and eat inside a clean, warm brooder. Keep the environment quiet and draft-free, and begin gentle, brief handling as the chick grows to build early socialisation. There is no out-of-cage flight at this age; warmth, hygiene, and rest matter most.",
+  "veterinary_check_frequency": "Schedule a first wellness exam with an avian (exotic) vet and weigh the chick daily on a gram scale. The vet checks hydration, crop function, and steady growth, and confirms the chick is developing normally. Establishing a relationship with an avian vet now sets up a lifetime of preventive care.",
+  "dental_care": "The beak is still soft and developing and should look symmetrical. Watch for malformations such as scissor beak or an under- or overshot jaw; birds have no teeth, so any beak deviation should be checked by an avian vet early, while it may still be corrected.",
+  "warning_signs": "A crop that does not empty, refusal to beg or feed, weight that stalls or drops, a cold or weak chick, or any breathing difficulty are emergencies. Because chicks decline very quickly, contact an avian vet right away if anything seems off rather than waiting to see.",
   "source_url": "https://lafeber.com/vet/",
   "source_name": "AAV Care for Senior Parrots & Lafeber Vet",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

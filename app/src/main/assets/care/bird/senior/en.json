@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"senior\" stage for bird.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The senior stage covers roughly the last 70–90% of expected lifespan, and because bird lifespans vary so much it arrives at very different ages — a budgerigar around 6–8 years, but a large macaw or cockatoo only in its thirties or forties. Aging is gradual: activity may decline, weight can shift, and early cataracts, arthritis (especially in the feet and legs), and reduced muscle tone may appear. The aim of care is to catch age-related disease early and keep the bird comfortable.",
+  "nutrition": "Continue a formulated, vegetable-rich diet but adjust it to the aging bird — trim calories if activity drops to prevent obesity, or soften foods if eating becomes harder. Watch weight closely, since loss can be the first sign of disease, and maintain vitamin A and calcium. The vet may tailor the diet for kidney, liver, or heart health.",
+  "activity": "Keep the bird active but ease the demands of aging: lower the perches, place food and water within easy reach, and use varied-diameter, non-slip perches to relieve arthritic feet. Continue gentle foraging and mental enrichment and steady social contact so an older bird does not become sedentary and bored.",
+  "veterinary_check_frequency": "Increase visits to at least twice a year (every 6 months) with an avian (exotic) vet. Exams should track weight and include bloodwork and screening for age-related conditions such as atherosclerosis, arthritis, tumours, organ decline, and cataracts. Early detection makes these far more manageable.",
+  "dental_care": "An older bird that chews less, or that has liver disease, may develop an overgrown beak, so check its smoothness and alignment regularly. Overgrowth, flaking, or abnormal colour needs an avian vet, who can trim it safely and look for an underlying cause. Never trim the beak at home.",
+  "warning_signs": "Watch for subtle change: fluffed feathers, more sleeping, weight loss, reduced appetite, tail-bobbing or breathing effort, lameness or reluctance to perch, increased drinking, or new lumps. Because birds hide illness, any sudden change — especially a bird sitting on the cage floor — is urgent.",
   "source_url": "https://lafeber.com/vet/",
   "source_name": "AAV Care for Senior Parrots & Lafeber Vet",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

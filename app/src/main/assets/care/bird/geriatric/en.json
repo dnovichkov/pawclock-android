@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"geriatric\" stage for bird.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The geriatric stage is the final phase beyond about 90% of expected lifespan — the oldest and most fragile time, which in long-lived species such as macaws and cockatoos can still span several years. Frailty sets in: reduced mobility, arthritis, cataracts and failing vision, a weaker immune system, and often chronic organ disease. Care now centres on comfort, quality of life, and steady management of long-term conditions alongside the avian vet.",
+  "nutrition": "Offer easy-to-eat, palatable, nutrient-dense food, softening pellets if a worn beak or stiffness makes eating hard, and serve frequent small meals. Keep the bird well hydrated and monitor weight closely, since loss is common and serious at this age. Follow the vet's diet plan for any chronic disease and gently support the appetite.",
+  "activity": "Keep enrichment gentle and low-stress, and make the environment easy and safe: low, wide, non-slip or cushioned perches, food and water within reach, added warmth, and extra rest. Lower the cage furnishings to prevent injury from falls, and continue quiet companionship and mild mental stimulation without overexertion.",
+  "veterinary_check_frequency": "Work closely with an avian (exotic) vet, with exams every 3–6 months or as advised, to monitor and manage chronic conditions and reassess quality of life. Arthritis pain and organ disease may need ongoing, vet-prescribed support, so keep communication frequent and prompt.",
+  "dental_care": "Keep monitoring the beak; older birds that chew little or have organ disease often develop overgrowth or flaking that needs periodic professional trimming by an avian vet. Keep cuttlebone available to help wear, and never file or clip the beak yourself, as it can bleed and cause pain.",
+  "warning_signs": "Any decline needs prompt attention: not eating, marked weight loss, difficulty perching or frequent falls, laboured breathing, or sitting fluffed and inactive on the cage floor. At this fragile stage small changes escalate fast, so contact the avian vet quickly and discuss comfort and quality of life.",
   "source_url": "https://lafeber.com/vet/",
   "source_name": "AAV Care for Senior Parrots & Lafeber Vet",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

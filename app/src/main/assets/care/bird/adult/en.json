@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"adult\" stage for bird.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The adult stage spans the long middle of life — roughly 20% to 70% of a bird's expected lifespan — so in years it looks utterly different by species: a budgerigar may be adult from about age one, while a macaw stays in its prime for decades. The bird is now physically and sexually mature, with stable weight, full plumage, and a settled personality, and seasonal hormonal behaviours may appear. This is the maintenance stage, where consistent daily routines protect a potentially very long life.",
+  "nutrition": "Feed a balanced diet built on formulated pellets, with daily fresh vegetables and leafy greens and only small amounts of fruit, seed, or nuts as treats. Avoid all-seed diets, which cause obesity, fatty liver, and vitamin A and calcium deficiency. Never feed avocado, chocolate, caffeine, alcohol, or salty foods, and offer cuttlebone for calcium.",
+  "activity": "Provide daily out-of-cage time, flight or wing exercise, and several hours of interaction. Rotate foraging toys, puzzles, and shreddable items, and offer regular bathing, to keep this intelligent, social animal engaged and to prevent feather-plucking, screaming, and boredom. Ensure 10–12 hours of dark, quiet sleep each night.",
+  "veterinary_check_frequency": "Book an annual wellness exam with an avian (exotic) vet even when the bird seems healthy, since birds instinctively mask illness. The visit should include weighing, a full physical, a beak, nail, and feather assessment, and baseline bloodwork as the vet advises.",
+  "dental_care": "Birds have a beak, not teeth. It should be smooth, symmetrical, and correctly aligned, wearing down naturally as the bird chews; offer cuttlebone and safe wood to help condition it. Overgrowth, flaking, or discolouration can signal liver or nutritional disease and warrants an avian vet.",
+  "warning_signs": "A fluffed-up, quiet, lethargic bird, tail-bobbing or laboured breathing, appetite loss, changes in droppings, sitting on the cage floor, or sudden feather-plucking are all red flags. Because birds hide illness until it is advanced, any of these signs merits a prompt avian-vet visit.",
   "source_url": "https://lafeber.com/vet/",
   "source_name": "AAV Care for Senior Parrots & Lafeber Vet",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."
