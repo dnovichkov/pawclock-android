@@ -54,7 +54,7 @@ class CareContentQualityTest {
             Species.Bird,
             Species.Reptile,
             Species.Horse,
-            // Task 13: Species.Fish добавляется здесь (последний вид).
+            Species.Fish,
         )
 
     /** Канонический дисклеймер §3.3 — дословно, сверен с существующими care-файлами (per-locale). */
@@ -119,6 +119,20 @@ class CareContentQualityTest {
     fun `registry only references implemented species`() {
         val orphans = contentComplete.filterNot { it in Species.implemented() }
         assertTrue(orphans.isEmpty(), "contentComplete references non-implemented species: ${orphans.map { it.id }}")
+    }
+
+    /**
+     * После Plan 3 Task 13 весь content-pass завершён: КАЖДЫЙ реализованный вид имеет готовый контент.
+     * Эта инвариант-проверка ловит «тихий пропуск» вида (no silent caps) — если в будущем добавят новый
+     * `Species` с `isImplemented = true`, но забудут наполнить его care-контентом, тест упадёт.
+     */
+    @Test
+    fun `every implemented species has content-complete care assets`() {
+        val missing = Species.implemented().filterNot { it in contentComplete }
+        assertTrue(
+            missing.isEmpty(),
+            "These implemented species are missing real care content (still placeholder): ${missing.map { it.id }}",
+        )
     }
 
     private fun verifyQuality(

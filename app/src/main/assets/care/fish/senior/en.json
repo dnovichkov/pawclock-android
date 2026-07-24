@@ -1,9 +1,9 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"senior\" stage for fish.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "A fish is considered senior in the final quarter of its life, from about 75% of the expected lifespan onward, which varies enormously by species — perhaps a guppy of eighteen months, but a koi of twenty-five years or more. Older fish often slow down, stop growing, and lose some of their color. They remain fully dependent on pristine, stable water, and tend to tolerate sudden changes even less well than younger fish.",
+  "nutrition": "Offer high-quality, easily digestible food in modest amounts, since older fish may eat less as their metabolism slows. Favor variety and quality over quantity, and continue to avoid overfeeding so that leftover food does not spoil the water.",
+  "activity": "Provide a calm, stable environment with gentle water flow, easy access to food, and plenty of resting and hiding places. Avoid aggressive tankmates and minimize sudden changes, as reducing stress matters more than ever at this age.",
+  "veterinary_check_frequency": "Be even more vigilant about water quality — test regularly, keep up partial water changes, and hold the temperature steady, because aging fish cope poorly with swings. Consult a vet experienced with aquatic species about disease or age-related decline.",
+  "warning_signs": "Reduced appetite, weight loss, fading color, lethargy, gasping, clamped fins, lumps or growths, and trouble staying upright or swimming normally are all red flags. Check the water first, then seek a fish-savvy vet if problems persist.",
   "source_url": "https://www.petmd.com/fish",
   "source_name": "PetMD How Long Do Fish Live & Kodama Koi Farm",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

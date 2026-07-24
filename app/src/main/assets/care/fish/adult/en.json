@@ -1,9 +1,9 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"adult\" stage for fish.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The adult stage is the long, stable middle of a fish's life, spanning roughly 20% to 75% of its expected lifespan — a wide range that means very different real ages for a two-year guppy, a ten- to fifteen-year goldfish, or a koi living well past twenty-five. Fully grown and showing mature color, an adult fish's health depends almost entirely on stable, cycled, clean water and sensible stocking; most adult illness can be traced back to poor water quality or an overcrowded tank.",
+  "nutrition": "Feed a balanced, species-appropriate maintenance diet once or twice a day, offering only what the fish finish in a few minutes. Vary the menu, and take care not to overfeed, because uneaten food decays and degrades water quality — a frequent, avoidable cause of health problems.",
+  "activity": "Keep adults in a stable, well-filtered tank with enough space, plants, hiding spots, and compatible tankmates, and resist the urge to overstock. A consistent temperature and steady routine reduce stress and support long-term health.",
+  "veterinary_check_frequency": "For fish, the essential ongoing 'check-up' is water-quality monitoring: routinely test ammonia, nitrite, nitrate, and pH, and carry out regular partial water changes and filter maintenance. Consult an aquatic or exotics vet at the first sign of disease rather than waiting.",
+  "warning_signs": "Clamped fins, gasping at the surface, white spots, fading color, refusing food, lethargy, bloating, sores, or erratic swimming all warrant attention. Since these often reflect water conditions, test the water promptly and review stocking and maintenance.",
   "source_url": "https://www.petmd.com/fish",
   "source_name": "PetMD How Long Do Fish Live & Kodama Koi Farm",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."
