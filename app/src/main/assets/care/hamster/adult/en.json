@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"adult\" stage for hamster.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The adult stage is the prime of life, roughly from two months to one year. The hamster is fully grown, active at night, and settled into a steady routine. Given the short lifespan (on average about 2–3 years depending on species — Syrian, dwarf, or Roborovski), this single year is a large part of the animal's life. Syrian and most dwarf hamsters are kept strictly alone, as they are territorial and will fight cage mates.",
+  "nutrition": "The diet is built on a complete hamster food plus a small amount of fresh vegetables a few times a week. Give fatty seeds and sugary treats only in tiny quantities, as hamsters tend toward obesity. Remember that a hamster stuffs food into its cheek pouches and hoards it — regularly clear out perishable caches. Fresh water should always be available.",
+  "activity": "An adult hamster needs a large solid wheel, deep bedding to burrow in, tunnels, hideouts, and things to explore. Supervised time in a secure exercise ball or a fenced play area adds extra exercise. Activity peaks in the evening and at night, so avoid disturbing your pet during the day.",
+  "veterinary_check_frequency": "A routine exam with an exotics veterinarian about once a year is enough. The visit should check weight, teeth, coat, and skin. At home it helps to weigh your hamster regularly and gently feel its body so that any lumps are noticed early.",
+  "dental_care": "The incisors grow continuously, so safe gnawing materials are always needed — wooden sticks, branches from safe woods, or a mineral chew. Signs of trouble include drooling, refusing hard food, and weight loss; overgrown or misaligned teeth can only be corrected by a veterinarian.",
+  "warning_signs": "See a veterinarian for weight loss, lethargy, a ruffled coat, eye or nose discharge, labored breathing, diarrhea, or any lump or swelling you can feel. A wet coat around the tail with watery diarrhea (\"wet tail\") needs immediate care.",
   "source_url": "https://www.rvc.ac.uk/vetcompass",
   "source_name": "RVC VetCompass Hamster Study & PetMD",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

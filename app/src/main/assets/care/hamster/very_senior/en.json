@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"very senior\" stage for hamster.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The very senior stage covers the last months of life, usually after about one-and-a-half years. The hamster slows down markedly, sleeps most of the time, loses weight and muscle, and its coat thins and dulls; palpable lumps and tumors are common. Because a hamster's average lifespan is only about 2–3 years, care at this stage focuses above all on comfort and quality of life.",
+  "nutrition": "Food should be as easy to reach and to eat as possible: softened food, soft pieces of vegetable, and, if needed, an energy-rich supplement to slow weight loss. Place the water bottle and food right next to the nest. Make sure the hamster is actually eating and drinking every day.",
+  "activity": "Strenuous exercise is dropped. Remove tall structures and provide a low, warm, safe home with soft, deep bedding and a comfortable nest. Handle your pet gently and only briefly. What matters now is calm, warmth, and as little stress as possible.",
+  "veterinary_check_frequency": "See an exotics veterinarian at every noticeable decline, not just on a schedule. The vet can help assess quality of life, ease discomfort, and advise on caring for a fading pet; where suffering is severe, humane options are discussed.",
+  "dental_care": "If the hamster eats little, the teeth wear down poorly and easily overgrow. Check the incisors regularly and offer soft gnawing materials; when teeth overgrow, or the hamster drools or stops eating, a veterinarian trims them so the animal can feed.",
+  "warning_signs": "A complete refusal of food and water, rapid wasting, labored breathing, an inability to move, fast-growing tumors, non-healing sores, and clear signs of pain all point to serious decline. In that situation, contact a veterinarian as soon as possible, including for a quality-of-life assessment.",
   "source_url": "https://www.rvc.ac.uk/vetcompass",
   "source_name": "RVC VetCompass Hamster Study & PetMD",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

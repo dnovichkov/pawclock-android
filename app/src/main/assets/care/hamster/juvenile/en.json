@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"juvenile\" stage for hamster.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The juvenile stage runs from roughly three weeks to two months. By 3–4 weeks the pups are weaned, fully furred, curious, and active. They grow quickly and mature sexually very early, so young hamsters are separated by sex at about four weeks to prevent early and inbred litters. Syrian and most dwarf hamsters grow territorial as they mature and should be housed alone.",
+  "nutrition": "A growing hamster needs constant access to a complete hamster food (pellets or a seed mix) with slightly higher protein. Introduce small pieces of fresh vegetables gradually and one at a time so they do not trigger diarrhea. Fresh water must always be available from a bottle.",
+  "activity": "This is an age of eager exploration. Provide a large solid-surface wheel with no rungs, tunnels, safe hideouts, and deep bedding for burrowing. Hamsters are nocturnal, so most activity happens in the evening and at night — do not wake them during the day.",
+  "veterinary_check_frequency": "It is a good idea to have a new pet examined by an exotics veterinarian soon after you bring it home, to check its overall condition and weight. After that, a routine check about once a year is enough unless warning signs appear.",
+  "dental_care": "The incisors grow throughout life and must be worn down. Always offer safe things to gnaw — purpose-made wooden sticks or a mineral chew. Check that the upper and lower teeth meet evenly and are not overgrowing.",
+  "warning_signs": "The main danger at this age is \"wet tail\": watery diarrhea, a wet matted coat around the tail, lethargy, and refusal to eat. This is an emergency that needs immediate veterinary care. Also watch for sneezing, watery eyes, weight loss, and listlessness.",
   "source_url": "https://www.rvc.ac.uk/vetcompass",
   "source_name": "RVC VetCompass Hamster Study & PetMD",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

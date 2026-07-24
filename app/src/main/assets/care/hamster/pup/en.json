@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"pup\" stage for hamster.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The pup stage covers the first three weeks of life. Hamster pups are born hairless, blind, and deaf, and depend entirely on their mother's milk. Fur appears during the first two weeks and the eyes open at around two weeks, when the pups begin to sample solid food. During this time you must not handle the babies or disturb the nest: a frightened mother may abandon or even cannibalize her litter. Keep the area quiet, warm, and undisturbed.",
+  "nutrition": "The only food is the mother's milk. Give the nursing mother an enriched diet: good-quality hamster food, a little protein (such as a small piece of cooked egg), and constant access to clean water. Toward three weeks the pups start nibbling the same food, softened or finely crumbled.",
+  "activity": "No special activity is needed, and forcing it is harmful — pups belong in the nest. Do not move the family, do a full cage clean, or add a wheel for the babies. A warm, quiet spot with deep bedding, where the mother can care for her litter, is all that is required.",
+  "veterinary_check_frequency": "Routine visits are usually avoided at this age so the nest is not disturbed. Contact an exotics veterinarian only for a clear problem: the mother has abandoned the litter, a pup is cold and motionless, or a baby is obviously failing to develop.",
+  "dental_care": "The incisors erupt and immediately begin their lifelong continuous growth, as in every hamster. No special care is needed yet — toward the end of this stage the pups are offered the same safe gnawing items as adults so the teeth wear down naturally.",
+  "warning_signs": "Warning signs include the mother dragging pups out of the nest or eating them, a baby lying apart, cold and not moving, poor weight gain, or a bloated belly. Diarrhea (\"wet tail\") in young hamsters is an emergency. Any of these means the animal should be seen by a veterinarian right away.",
   "source_url": "https://www.rvc.ac.uk/vetcompass",
   "source_name": "RVC VetCompass Hamster Study & PetMD",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."
