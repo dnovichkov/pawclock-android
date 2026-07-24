@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"end of life\" stage for rat.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "By around two and a half years a rat has usually reached the end of its natural lifespan. This final stage often brings weakness or partial paralysis of the hind legs, marked weight and muscle loss, advanced tumours, and chronic breathing difficulty. The focus shifts entirely to comfort and dignity — keeping your rat warm, clean, fed, and pain-free — and to working with your vet on quality-of-life decisions, including humane euthanasia when suffering can no longer be relieved.",
+  "nutrition": "Offer highly palatable, soft or moist, calorie-dense foods and hand-feed if needed to keep your rat eating. Support hydration with easily reached water or moisture-rich foods, since strength and mobility are failing.",
+  "activity": "Keep activity minimal and gentle, with low, soft bedding and food, water, and hides within a step. Provide warmth and quiet, reassuring contact rather than demanding exercise or handling.",
+  "veterinary_check_frequency": "This is the time for a palliative-care conversation with your vet about pain relief and an honest quality-of-life assessment, and for recognising when timely, humane euthanasia is the kindest option.",
+  "dental_care": "Make sure your rat can still eat comfortably; offer soft foods if gnawing is too hard, and have a vet trim the incisors if they are overgrowing because the rat no longer wears them down.",
+  "warning_signs": "Contact your vet promptly if your rat stops eating or drinking, struggles badly to breathe, cannot move, withdraws, or shows signs of pain, so that comfort and quality of life can be reassessed.",
   "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3733029/",
   "source_name": "Sengupta 2013, Int J Prev Med 4(6):624-630",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

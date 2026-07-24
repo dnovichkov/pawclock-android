@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"adult\" stage for rat.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "Adulthood spans roughly six months to a year and a half and is the rat's prime. The body is fully grown, temperament is settled, and a well-cared-for rat is at its most robust and confident. Because the whole lifespan is only about two to three years, this stage passes quickly, so it is the time to keep good routines of diet, enrichment, and social company firmly in place.",
+  "nutrition": "Offer a maintenance formulated rat block plus small portions of fresh vegetables. Guard against obesity by limiting fatty or sugary treats and keeping portions modest, especially for less active or neutered rats.",
+  "activity": "Keep up daily out-of-cage exploration, climbing, foraging, and interactive play, along with constant companionship from cage-mates. Rotating toys and rearranging the cage keeps a clever adult rat mentally engaged.",
+  "veterinary_check_frequency": "A wellness exam once or twice a year with a rodent-experienced vet is ideal. Weigh your rat regularly at home and have the teeth, weight, coat, and breathing checked at each visit.",
+  "dental_care": "The incisors never stop growing, so keep providing safe things to gnaw. Watch for drooling, dropped food, or difficulty eating, which can signal overgrown or misaligned teeth.",
+  "warning_signs": "Book a vet visit for any new lump or swelling, sneezing or laboured breathing, red staining around the eyes or nose, or noticeable changes in weight, appetite, or activity.",
   "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3733029/",
   "source_name": "Sengupta 2013, Int J Prev Med 4(6):624-630",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"pup\" stage for rat.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The pup stage covers roughly the first five weeks of life. Rat pups are born blind, deaf, and hairless; their eyes open at about two weeks, fur fills in, and they grow very quickly. They depend on their mother's milk and the warmth of their littermates, and by the end of this stage they begin to eat solid food and explore. Early gentle handling lays the foundation for the sociable, trusting temperament rats are known for.",
+  "nutrition": "The mother's milk provides complete nutrition; from about two and a half to three weeks, pups start nibbling crushed or softened formulated rat block. Keep fresh food and water within easy reach of small bodies.",
+  "activity": "Keep pups with their mother and littermates for warmth and social development. Once their eyes open, begin short, gentle daily handling to socialise them, but avoid separating them from the litter too early.",
+  "veterinary_check_frequency": "Arrange a health check when pups are weaned or first brought home, ideally with a vet experienced in rodents and exotics, to confirm they are growing well and free of congenital or respiratory problems.",
+  "dental_care": "The continuously growing incisors erupt within the first two weeks. As pups begin to gnaw solid food, that chewing starts the lifelong wear that keeps these teeth at a healthy length.",
+  "warning_signs": "Contact a vet if a pup fails to gain weight, is not nursing, feels cold or lethargic, is pushed away from the litter, or shows diarrhoea, laboured breathing, or nasal discharge.",
   "source_url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3733029/",
   "source_name": "Sengupta 2013, Int J Prev Med 4(6):624-630",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."
