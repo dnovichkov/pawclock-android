@@ -211,15 +211,15 @@ Pitest / Baseline Profiles / ACRA сознательно отложены в Pla
 - [x] run `./gradlew :core:domain:test :core:domain:detekt --no-daemon` + `bash scripts/verify-care-content.sh`
   — зелёно (пустой реестр; existing `CareAssetsIntegrityTest` зелёный; detekt clean)
 
-### Task 2: Dog care content (5 stages × ru/en)
-- [ ] author реальный контент в `app/src/main/assets/care/dog/{puppy,young_adult,mature_adult,senior,end_of_life}/{ru,en}.json`
-  по AAHA 2019 Canine Life Stage Guidelines (Content authoring standard выше); учитывать size-зависимость
-  порогов senior (Toy/Small 11+, Medium 9+, Large 7+, Giant 5+) в описаниях
-- [ ] заполнить все поля (`stage_description` 1–2 абзаца, nutrition/activity/vet/warning/dental), `source_url`
+### Task 2: Dog care content (5 stages × ru/en) ✅
+- [x] author реальный контент в `app/src/main/assets/care/dog/{puppy,young_adult,mature_adult,senior,end_of_life}/{ru,en}.json`
+  по AAHA 2019 Canine Life Stage Guidelines (Content authoring standard выше); size-зависимость
+  порогов senior (мелкие 11+, средние 9+, крупные 7+, гигантские 5–6) отражена в stage_description
+- [x] заполнены все поля (`stage_description` 1–2 абзаца, nutrition/activity/vet/warning/dental), `source_url`
   и `source_name` = AAHA 2019, `disclaimer` дословно §3.3
-- [ ] add `Species.Dog` в реестр `contentComplete` (Task 1)
-- [ ] run `./gradlew :core:domain:test --no-daemon` — `CareContentQualityTest` для dog **Red → Green**;
-  detekt + koverVerify (domain ≥ 90%) зелёные — must pass before next task
+- [x] add `Species.Dog` в реестр `contentComplete` (Kotlin) + `CONTENT_COMPLETE` (shell)
+- [x] run `./gradlew :core:domain:test :core:domain:koverVerify --no-daemon` — 10 dog quality-тестов **Green**;
+  `verify-care-content.sh` OK (10 файлов); koverVerify (domain ≥ 90%) зелёный — must pass before next task
 
 ### Task 3: Cat care content (5 stages × ru/en)
 - [ ] author контент `care/cat/{kitten,young_adult,mature_adult,senior,end_of_life}/{ru,en}.json` по

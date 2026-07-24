@@ -31,7 +31,8 @@ CARE_ROOT="app/src/main/assets/care"
 # Content-complete species — mirror of contentComplete in CareContentQualityTest.kt.
 # Grows by one entry per content task (Tasks 2–13). Empty at Task 1.
 CONTENT_COMPLETE=(
-    # Task 2+: dog cat rabbit hamster guinea_pig rat mouse ferret bird reptile horse fish
+    "dog"
+    # Task 3+: cat rabbit hamster guinea_pig rat mouse ferret bird reptile horse fish
 )
 
 # species_id|stage1,stage2,...  (source of truth: LifeStage.*.all() in :core:model)

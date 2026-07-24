@@ -43,7 +43,8 @@ class CareContentQualityTest {
      */
     private val contentComplete: Set<Species> =
         setOf(
-            // Task 2+: Species.Dog, Species.Cat, … добавляются здесь по мере авторинга контента.
+            Species.Dog,
+            // Task 3+: Species.Cat, … добавляются здесь по мере авторинга контента.
         )
 
     /** Канонический дисклеймер §3.3 — дословно, сверен с существующими care-файлами (per-locale). */
