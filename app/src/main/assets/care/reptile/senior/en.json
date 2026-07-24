@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"senior\" stage for reptile.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The senior stage begins at roughly 75% of a reptile's expected lifespan and, because species differ so much, corresponds to very different ages: a leopard gecko may be senior in its teens, while a box turtle may not be until well past 30. Older reptiles tend to slow down, eat less, and may show reduced activity or stiffer movement. Excellent, species-appropriate husbandry remains essential, and the emphasis now shifts toward early detection of age-related problems and keeping the animal comfortable in its remaining years.",
+  "nutrition": "Continue a species-appropriate diet but adjust for a slower metabolism and lower activity to avoid obesity, as many seniors eat less and less often. Keep offering calcium and, for many species, vitamin D3 as advised, make sure food is easy to eat, and provide constant fresh water, since older reptiles can be prone to dehydration. Watch body condition closely and discuss any changes with the vet.",
+  "activity": "Keep the enclosure easy to navigate with a gentle temperature gradient, an accessible basking spot, correct UVB, low-effort hides, and, for many species, shallow water for soaking. An aging reptile still benefits from enrichment, but favour easy climbing and secure footing over demanding obstacles. Maintain warmth carefully, as older animals may regulate temperature and shed less efficiently than they once did.",
+  "veterinary_check_frequency": "Increase wellness exams with a reptile or exotics veterinarian to about every 6 months so age-related disease is caught early, with weight checks, a husbandry review, and bloodwork or other diagnostics as the vet advises. Home monitoring of weight, appetite, and shedding becomes especially valuable at this stage.",
+  "dental_care": "Continue checking the mouth for infectious stomatitis (mouth rot), to which older animals with weaker defenses may be more prone, remembering that most reptiles cannot have their teeth brushed. Watch for drooling, swelling, or difficulty eating, and involve a reptile vet promptly.",
+  "warning_signs": "Seek veterinary care for marked lethargy, ongoing refusal to eat, noticeable weight loss, a swollen jaw, open-mouth or laboured breathing, or persistently retained shed. New lumps, swelling, changes in the droppings, or difficulty moving deserve prompt attention, as older reptiles hide illness well and decline can be gradual.",
   "source_url": "https://www.thereptilecentre.com/",
   "source_name": "PetPlace, Reptile Centre & A-Z Animals lifespan sheets",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

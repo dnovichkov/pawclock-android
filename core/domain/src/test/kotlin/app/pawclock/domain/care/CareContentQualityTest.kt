@@ -52,7 +52,8 @@ class CareContentQualityTest {
             Species.Mouse,
             Species.Ferret,
             Species.Bird,
-            // Task 11+: Species.Reptile, … добавляются здесь по мере авторинга контента.
+            Species.Reptile,
+            // Task 12+: Species.Horse, … добавляются здесь по мере авторинга контента.
         )
 
     /** Канонический дисклеймер §3.3 — дословно, сверен с существующими care-файлами (per-locale). */

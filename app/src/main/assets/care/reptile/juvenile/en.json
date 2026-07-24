@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO(content-pass-after-plan-2): description of the \"juvenile\" stage for reptile.",
-  "nutrition": "TODO(content-pass-after-plan-2): nutrition recommendations.",
-  "activity": "TODO(content-pass-after-plan-2): activity and environmental enrichment.",
-  "veterinary_check_frequency": "TODO(content-pass-after-plan-2): veterinary check frequency.",
-  "dental_care": "TODO(content-pass-after-plan-2): dental care.",
-  "warning_signs": "TODO(content-pass-after-plan-2): warning signs.",
+  "stage_description": "The juvenile stage runs from after hatching up to roughly 20% of the species' expected lifespan, the fast-growing childhood before sexual maturity. Because lifespans range so widely, from a leopard gecko at about 15–20 years to a box turtle at 40 or more, the same juvenile label can mean very different calendar ages. This is a period of rapid growth, so consistent, species-appropriate husbandry remains the foundation of health: a correct temperature gradient with a basking spot, proper UVB for diurnal species, and the right humidity. Enclosure size should scale up as the animal grows so it always has room to thermoregulate and hide.",
+  "nutrition": "Juveniles grow quickly and generally eat more frequently than adults. Match the diet to the species, whether carnivore, insectivore, omnivore, or herbivore, and increase prey size or food volume as the animal grows. Continue calcium and, for many species, vitamin D3 supplementation to support bone development, and offer variety within what is appropriate. Provide fresh water and, for many species, a dish for soaking.",
+  "activity": "As the juvenile grows, upgrade to a larger enclosure that keeps a proper warm-to-cool gradient, a basking area, correct UVB, and several hides. Encourage natural behaviour with climbing branches, cork bark, live or artificial plants, and a digging substrate suited to the species. Regular gentle handling, where the species tolerates it, helps the animal grow accustomed to people and makes future checks easier.",
+  "veterinary_check_frequency": "An annual wellness exam with a reptile or exotics veterinarian is appropriate for a healthy juvenile, including a weight check, a husbandry review, and fecal testing for parasites as advised. Track growth and weight at home between visits so any slowdown or loss is noticed and reported early.",
+  "dental_care": "Reptiles are generally not brushed, so oral care means monitoring for mouth rot (infectious stomatitis) and, in species with teeth, checking for injury from hard prey or cage furnishings. Correct diet and husbandry prevent most problems; report drooling, swelling, or reluctance to eat to a reptile vet.",
+  "warning_signs": "Seek veterinary advice if a juvenile stops growing or loses weight, refuses food repeatedly, becomes lethargic, develops a swollen jaw or bent or soft limbs that may signal metabolic bone disease, breathes with an open mouth, or repeatedly has retained shed. Runny eyes or nose and mucus around the mouth can indicate a respiratory infection.",
   "source_url": "https://www.thereptilecentre.com/",
   "source_name": "PetPlace, Reptile Centre & A-Z Animals lifespan sheets",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."
