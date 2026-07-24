@@ -90,6 +90,24 @@ ci.yml workflow.
 (кроме чтения тестовых JSON-фикстур из assets через Robolectric, что
 изолировано в `:app/test/`).
 
+### Care content gate (Plan 3)
+
+Care-рекомендации (`app/src/main/assets/care/{species}/{stage}/{ru,en}.json`) покрыты двумя
+JVM-тестами в `:core:domain` над реальными assets:
+
+- `CareAssetsIntegrityTest` — **структура и наличие** для всех реализованных видов (файл существует,
+  поля непусты, дисклеймер присутствует).
+- `CareContentQualityTest` — **готовность контента** для видов из реестра `contentComplete`: нет
+  `TODO`-маркеров, дословный дисклеймер §3.3, минимальная длина полей, dental-правило (у `fish`
+  поле `null`), валидный `source_url`; плюс инвариант `contentComplete == Species.implemented()`
+  (защита от «тихого пропуска» вида при будущем расширении — no silent caps). См. [ADR-0010](adr/0010-care-content-from-published-guidelines.md).
+
+```bash
+./gradlew :core:domain:test                # оба теста
+bash scripts/verify-care-assets.sh         # shell-зеркало: структура
+bash scripts/verify-care-content.sh        # shell-зеркало: готовность контента (no-TODO + дисклеймер + длина)
+```
+
 ### Integration (Room, DataStore — `androidTest`)
 
 ```bash
