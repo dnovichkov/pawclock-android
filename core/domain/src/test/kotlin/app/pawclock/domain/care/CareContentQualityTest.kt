@@ -64,7 +64,7 @@ class CareContentQualityTest {
                 "Информация носит ознакомительный характер и не заменяет консультацию ветеринарного врача.",
             "en" to
                 "This information is for educational purposes only and does not " +
-                    "replace consultation with a veterinarian.",
+                "replace consultation with a veterinarian.",
         )
 
     /** Стадии жизни для каждого вида (источник истины — `LifeStage.*.all()`), как в [CareAssetsIntegrityTest]. */
