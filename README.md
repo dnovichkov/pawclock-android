@@ -151,6 +151,7 @@ PawClock — **No data collected, no data shared** (Google Play Data Safety):
 - ✅ Все настройки — в DataStore Preferences (локально).
 - ✅ Фото питомца (опционально) — через Photo Picker (`ACTION_PICK_IMAGES`) **без runtime-разрешений** на READ_MEDIA_IMAGES.
 
+Полная политика конфиденциальности (ru + en) — [docs/PRIVACY.md](docs/PRIVACY.md).
 Подробности — [§9 спецификации](docs/specs/pawclock-specification.md#9-приватность-и-безопасность).
 
 ## Sources

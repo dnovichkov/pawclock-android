@@ -39,6 +39,28 @@ else
     fail "versionCode must be $EXPECTED_VERSION_CODE in $GRADLE (§8.10: MAJOR*10000+MINOR*100+PATCH) (found: $(grep -E 'versionCode[[:space:]]*=' "$GRADLE" | tr -s ' '))"
 fi
 
+# ---------------------------------------------------------------------------
+# Task 15 — privacy policy (§9): "No data collected / No data shared"
+# ---------------------------------------------------------------------------
+PRIVACY="docs/PRIVACY.md"
+echo "==> [privacy] checking $PRIVACY ..."
+if [ ! -s "$PRIVACY" ]; then
+    fail "$PRIVACY is missing or empty (§9 Data Safety statement required)"
+else
+    for phrase in "No data collected" "No data shared"; do
+        if grep -qF "$phrase" "$PRIVACY"; then
+            ok "privacy states \"$phrase\""
+        else
+            fail "$PRIVACY must state \"$phrase\" (§9 Google Play Data Safety)"
+        fi
+    done
+    if grep -qiE "no (internet|network)|INTERNET" "$PRIVACY"; then
+        ok "privacy notes absence of network/INTERNET permission"
+    else
+        fail "$PRIVACY should note the absence of the INTERNET permission (§9)"
+    fi
+fi
+
 echo ""
 if [ $EXIT_CODE -eq 0 ]; then
     echo "✅ Release metadata checks passed."

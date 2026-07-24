@@ -314,13 +314,13 @@ Pitest / Baseline Profiles / ACRA сознательно отложены в Pla
   контент по §14); проставить корректную дату релиза-подготовки; `[Unreleased]` оставить пустым
 - [x] run verify-скрипт — Green; must pass before next task
 
-### Task 15: Privacy policy (§9)
-- [ ] write FAILING test: `scripts/verify-release-metadata.sh` проверяет наличие `docs/PRIVACY.md` +
+### Task 15: Privacy policy (§9) ✅
+- [x] write FAILING test: `scripts/verify-release-metadata.sh` проверяет наличие `docs/PRIVACY.md` +
   обязательные фразы («No data collected», «No data shared» / ru-эквиваленты) + отсутствие противоречий
-- [ ] create `docs/PRIVACY.md` (ru + en секции): «No data collected, No data shared», нет INTERNET-разрешения
+- [x] create `docs/PRIVACY.md` (ru + en секции): «No data collected, No data shared», нет INTERNET-разрешения
   (§9), нет аналитики/трекеров, все данные локально, export/import — по явному действию пользователя через SAF
-- [ ] link из README (раздел Privacy) на `docs/PRIVACY.md`
-- [ ] run verify-скрипт — Green; must pass before next task
+- [x] link из README (раздел Privacy) на `docs/PRIVACY.md`
+- [x] run verify-скрипт — Green; must pass before next task
 
 ### Task 16: fastlane metadata для Google Play
 - [ ] write FAILING test: `scripts/verify-release-metadata.sh` проверяет структуру
