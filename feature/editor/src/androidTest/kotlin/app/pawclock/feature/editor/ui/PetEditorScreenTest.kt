@@ -6,12 +6,14 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import app.pawclock.domain.pet.PetValidationError
 import app.pawclock.feature.editor.PetEditorEvent
 import app.pawclock.feature.editor.PetEditorSaveResult
 import app.pawclock.feature.editor.PetEditorState
 import app.pawclock.feature.editor.SubcategoryOption
+import app.pawclock.feature.editor.ui.section.BIRTH_DATE_FIELD_TEST_TAG
 import app.pawclock.model.DogSize
 import app.pawclock.model.Species
 import java.time.LocalDate
@@ -274,5 +276,28 @@ class PetEditorScreenTest {
         }
 
         composeRule.onNodeWithText("2020-01-15").assertIsDisplayed()
+    }
+
+    // Регрессия b0f220b: read-only OutlinedTextField с enabled=true сам потреблял
+    // тап (забирал фокус), и clickable родительского Box'а не срабатывал —
+    // DatePickerDialog не открывался вовсе. Тест кликает по полю реальным
+    // pointer-событием и проверяет, что диалог появился (кнопка «ОК» видна).
+    @Test
+    fun birthDateField_click_opensDatePickerDialog() {
+        composeRule.setContent {
+            PetEditorContent(
+                state = PetEditorState.Empty,
+                onEvent = { },
+                onBack = { },
+                onSaved = { },
+            )
+        }
+
+        composeRule
+            .onNodeWithTag(BIRTH_DATE_FIELD_TEST_TAG)
+            .performScrollTo()
+            .performClick()
+
+        composeRule.onNodeWithText("ОК").assertIsDisplayed()
     }
 }

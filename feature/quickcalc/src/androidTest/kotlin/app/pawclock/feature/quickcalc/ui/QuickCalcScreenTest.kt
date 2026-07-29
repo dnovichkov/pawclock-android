@@ -6,12 +6,14 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import app.pawclock.domain.pet.CalculatedAge
 import app.pawclock.feature.quickcalc.QuickCalcEvent
 import app.pawclock.feature.quickcalc.QuickCalcResult
 import app.pawclock.feature.quickcalc.QuickCalcState
 import app.pawclock.feature.quickcalc.QuickCalcSubcategoryOption
 import app.pawclock.feature.quickcalc.QuickCalcValidationError
+import app.pawclock.feature.quickcalc.ui.section.QUICK_CALC_BIRTH_DATE_FIELD_TEST_TAG
 import app.pawclock.feature.quickcalc.ui.section.quickCalcMethodTag
 import app.pawclock.feature.quickcalc.ui.section.quickCalcSpeciesChipTag
 import app.pawclock.model.BirdType
@@ -307,5 +309,27 @@ class QuickCalcScreenTest {
 
         composeRule.onNodeWithText("34 ЧГ").assertIsDisplayed()
         composeRule.onNodeWithText("Взрослая").assertIsDisplayed()
+    }
+
+    // Регрессия b0f220b (та же, что в PetEditor BirthDateField): read-only
+    // OutlinedTextField с enabled=true потреблял тап, clickable родительского
+    // Box'а не срабатывал — DatePickerDialog не открывался. Тест кликает по
+    // полю реальным pointer-событием и проверяет появление диалога.
+    @Test
+    fun birthDateField_click_opensDatePickerDialog() {
+        composeRule.setContent {
+            QuickCalcContent(
+                state = QuickCalcState.Empty,
+                onEvent = { },
+                onBack = { },
+            )
+        }
+
+        composeRule
+            .onNodeWithTag(QUICK_CALC_BIRTH_DATE_FIELD_TEST_TAG)
+            .performScrollTo()
+            .performClick()
+
+        composeRule.onNodeWithText("ОК").assertIsDisplayed()
     }
 }

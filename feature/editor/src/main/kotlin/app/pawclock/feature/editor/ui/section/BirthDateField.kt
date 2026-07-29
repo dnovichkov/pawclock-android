@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
+import androidx.compose.material3.DatePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -19,6 +20,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import app.pawclock.feature.editor.R
 import java.time.Instant
 import java.time.LocalDate
@@ -28,8 +32,8 @@ import java.time.ZoneId
  * Поле даты рождения с DatePickerDialog'ом (Material 3).
  *
  * Read-only OutlinedTextField (визуально совпадает с другими полями формы) +
- * pointerInput-перехват кликов открывает modal DatePicker. Это лучше, чем
- * Inline-DatePicker на одном экране с длинной формой — экономит вертикальное место.
+ * прозрачный clickable-оверлей поверх него открывает modal DatePicker. Это лучше,
+ * чем Inline-DatePicker на одном экране с длинной формой — экономит вертикальное место.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,16 +66,12 @@ internal fun BirthDateField(
                     ?: defaultInitialMillis,
         )
 
-    // OutlinedTextField сам не ловит таппинг в read-only режиме, поэтому
-    // оборачиваем в Box с clickable. Раньше использовался pointerInput с awaitPointerEvent
-    // в while(true) — это ловило ВСЕ pointer-события (Down/Move/Up/Cancel), из-за
-    // чего диалог переоткрывался от случайного касания после dismiss'а.
+    val label = stringResource(R.string.pet_editor_birth_date_label)
     Box(
         modifier =
             modifier
                 .fillMaxWidth()
-                .testTag(BIRTH_DATE_FIELD_TEST_TAG)
-                .clickable { showDialog = true },
+                .testTag(BIRTH_DATE_FIELD_TEST_TAG),
     ) {
         OutlinedTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -80,43 +80,33 @@ internal fun BirthDateField(
             readOnly = true,
             // enabled намеренно остаётся true: при false Material 3 рендерит поле
             // приглушённым цветом (выглядит как "недоступно"), TalkBack озвучивает
-            // как disabled, и isError-стиль не применяется. Тапы ловит родительский
-            // Box.clickable, поэтому read-only-сценарий работает без enabled = false.
-            label = { Text(text = stringResource(R.string.pet_editor_birth_date_label)) },
+            // как disabled, и isError-стиль не применяется.
+            label = { Text(text = label) },
             isError = isError,
             singleLine = true,
+        )
+        // Оверлей объявлен ПОСЛЕ поля: enabled read-only текстовое поле само
+        // потребляет тапы (остаётся фокусируемым для выделения текста), поэтому
+        // clickable на родительском Box не срабатывает — событие до него не доходит.
+        // matchParentSize не участвует в измерении Box'а — оверлей растягивается
+        // ровно до размеров поля. Оверлей заслоняет поле и в accessibility-дереве,
+        // поэтому дублирует label и выбранную дату в contentDescription для TalkBack.
+        val overlayDescription = value?.let { "$label: $it" } ?: label
+        Box(
+            modifier =
+                Modifier
+                    .matchParentSize()
+                    .semantics { contentDescription = overlayDescription }
+                    .clickable(role = Role.Button) { showDialog = true },
         )
     }
 
     if (showDialog) {
-        DatePickerDialog(
-            onDismissRequest = { showDialog = false },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        val millis = datePickerState.selectedDateMillis
-                        if (millis != null) {
-                            val date =
-                                Instant
-                                    .ofEpochMilli(millis)
-                                    .atZone(ZoneId.of("UTC"))
-                                    .toLocalDate()
-                            onChange(date)
-                        }
-                        showDialog = false
-                    },
-                ) {
-                    Text(text = stringResource(R.string.pet_editor_date_ok))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showDialog = false }) {
-                    Text(text = stringResource(R.string.pet_editor_date_cancel))
-                }
-            },
-        ) {
-            DatePicker(state = datePickerState)
-        }
+        BirthDatePickerDialog(
+            state = datePickerState,
+            onConfirm = onChange,
+            onDismiss = { showDialog = false },
+        )
     }
 
     LaunchedEffect(value) {
@@ -126,6 +116,43 @@ internal fun BirthDateField(
                 datePickerState.selectedDateMillis = asMillis
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun BirthDatePickerDialog(
+    state: DatePickerState,
+    onConfirm: (LocalDate) -> Unit,
+    onDismiss: () -> Unit,
+) {
+    DatePickerDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    val millis = state.selectedDateMillis
+                    if (millis != null) {
+                        val date =
+                            Instant
+                                .ofEpochMilli(millis)
+                                .atZone(ZoneId.of("UTC"))
+                                .toLocalDate()
+                        onConfirm(date)
+                    }
+                    onDismiss()
+                },
+            ) {
+                Text(text = stringResource(R.string.pet_editor_date_ok))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = stringResource(R.string.pet_editor_date_cancel))
+            }
+        },
+    ) {
+        DatePicker(state = state)
     }
 }
 
