@@ -17,10 +17,20 @@
     <string name="pet_editor_date_ok">OK</string>
     <string name="pet_editor_date_cancel">Cancel</string>
 
-    <!-- Species selector -->
+    <!-- Species selector (all 12 species — Plan 2, Task 22) -->
     <string name="pet_editor_species_label">Species *</string>
     <string name="pet_editor_species_dog">Dog</string>
     <string name="pet_editor_species_cat">Cat</string>
+    <string name="pet_editor_species_rabbit">Rabbit</string>
+    <string name="pet_editor_species_hamster">Hamster</string>
+    <string name="pet_editor_species_guinea_pig">Guinea pig</string>
+    <string name="pet_editor_species_rat">Rat</string>
+    <string name="pet_editor_species_mouse">Mouse</string>
+    <string name="pet_editor_species_ferret">Ferret</string>
+    <string name="pet_editor_species_bird">Bird</string>
+    <string name="pet_editor_species_reptile">Reptile</string>
+    <string name="pet_editor_species_horse">Horse</string>
+    <string name="pet_editor_species_fish">Fish</string>
 
     <!-- Subcategory -->
     <string name="pet_editor_subcategory_label">Subcategory</string>
@@ -33,6 +43,58 @@
     <string name="cat_type_indoor_long_hair">Indoor long-hair</string>
     <string name="cat_type_outdoor">Outdoor</string>
     <string name="cat_type_large_breed">Large breed</string>
+
+    <!-- Rabbit size (Plan 2, Task 15; final wording — Task 22) -->
+    <string name="rabbit_size_dwarf">Dwarf</string>
+    <string name="rabbit_size_small">Small</string>
+    <string name="rabbit_size_medium">Medium</string>
+    <string name="rabbit_size_large">Large</string>
+    <string name="rabbit_size_giant">Giant</string>
+
+    <!-- Hamster type -->
+    <string name="hamster_type_syrian">Syrian</string>
+    <string name="hamster_type_dwarf">Dwarf</string>
+    <string name="hamster_type_roborovski">Roborovski</string>
+    <string name="hamster_type_chinese">Chinese</string>
+    <string name="hamster_type_winter_white">Winter white</string>
+
+    <!-- Bird type -->
+    <string name="bird_type_budgerigar">Budgerigar</string>
+    <string name="bird_type_cockatiel">Cockatiel</string>
+    <string name="bird_type_canary">Canary</string>
+    <string name="bird_type_lovebird">Lovebird</string>
+    <string name="bird_type_conure">Conure</string>
+    <string name="bird_type_amazon">Amazon parrot</string>
+    <string name="bird_type_african_grey">African grey</string>
+    <string name="bird_type_cockatoo">Cockatoo</string>
+    <string name="bird_type_macaw">Macaw</string>
+    <string name="bird_type_pigeon">Pigeon</string>
+
+    <!-- Reptile type -->
+    <string name="reptile_type_box_turtle">Box turtle</string>
+    <string name="reptile_type_red_eared_slider">Red-eared slider</string>
+    <string name="reptile_type_bearded_dragon">Bearded dragon</string>
+    <string name="reptile_type_ball_python">Ball python</string>
+    <string name="reptile_type_corn_snake">Corn snake</string>
+    <string name="reptile_type_green_iguana">Green iguana</string>
+    <string name="reptile_type_leopard_gecko">Leopard gecko</string>
+    <string name="reptile_type_crested_gecko">Crested gecko</string>
+
+    <!-- Horse type -->
+    <string name="horse_type_pony">Pony</string>
+    <string name="horse_type_light_horse">Light horse</string>
+    <string name="horse_type_draft_horse">Draft horse</string>
+    <string name="horse_type_thoroughbred">Thoroughbred</string>
+
+    <!-- Fish type -->
+    <string name="fish_type_goldfish">Goldfish</string>
+    <string name="fish_type_koi">Koi</string>
+    <string name="fish_type_betta">Betta</string>
+    <string name="fish_type_guppy">Guppy</string>
+    <string name="fish_type_angelfish">Angelfish</string>
+    <string name="fish_type_neon_tetra">Neon tetra</string>
+    <string name="fish_type_tropical">Tropical</string>
+    <string name="fish_type_discus">Discus</string>
 
     <!-- Gender -->
     <string name="pet_editor_gender_label">Gender</string>

@@ -7,6 +7,7 @@ package app.pawclock.calculator
 
 import app.pawclock.model.CatType
 import app.pawclock.model.LifeStage
+import app.pawclock.model.Species
 
 /**
  * Калькулятор стадии жизни кошки по возрасту и типу содержания.
@@ -40,7 +41,25 @@ import app.pawclock.model.LifeStage
  *
  * См. также спецификацию PawClock §4.2 и ADR-0006.
  */
-class CatLifeStageCalculator {
+data object CatLifeStageCalculator : LifeStageCalculator {
+    override val species: Species = Species.Cat
+
+    /**
+     * Унифицированная точка диспатча из [LifeStageCalculator]: делегирует в перегрузку
+     * [determine] с явным `catType`.
+     *
+     * @throws IllegalArgumentException если [params] не является [SpeciesParams.Cat].
+     */
+    override fun determine(
+        ageInYears: Double,
+        params: SpeciesParams,
+    ): LifeStage {
+        require(params is SpeciesParams.Cat) {
+            "CatLifeStageCalculator requires SpeciesParams.Cat, got ${params::class.simpleName}"
+        }
+        return determine(ageInYears, params.type)
+    }
+
     /**
      * Возвращает стадию жизни кошки по возрасту и типу содержания.
      *
@@ -80,25 +99,23 @@ class CatLifeStageCalculator {
             CatType.LargeBreed -> 12.0..15.0
         }
 
-    internal companion object {
-        /**
-         * Верхняя граница стадии Kitten (включительно): 1.0 год.
-         * Спецификация PawClock §4.2: `Kitten = 0–1`, в т.ч. ровно 1 год.
-         * Реализация использует строгое сравнение `age > KITTEN_UPPER_BOUND`,
-         * чтобы 1.0 попадал в Kitten.
-         */
-        internal const val KITTEN_UPPER_BOUND: Double = 1.0
+    /**
+     * Верхняя граница стадии Kitten (включительно): 1.0 год.
+     * Спецификация PawClock §4.2: `Kitten = 0–1`, в т.ч. ровно 1 год.
+     * Реализация использует строгое сравнение `age > KITTEN_UPPER_BOUND`,
+     * чтобы 1.0 попадал в Kitten.
+     */
+    internal const val KITTEN_UPPER_BOUND: Double = 1.0
 
-        /**
-         * Возраст начала MatureAdult-стадии — по AAFP 2021 «Mature Adult: 7–10 years».
-         */
-        internal const val MATURE_ADULT_START: Double = 7.0
+    /**
+     * Возраст начала MatureAdult-стадии — по AAFP 2021 «Mature Adult: 7–10 years».
+     */
+    internal const val MATURE_ADULT_START: Double = 7.0
 
-        /**
-         * Возраст начала Senior-стадии — AAFP 2021 «Senior: 10+».
-         * Сдвинут на 11.0 для соответствия требованию `10 years → MatureAdult`
-         * (см. KDoc класса).
-         */
-        internal const val SENIOR_START: Double = 11.0
-    }
+    /**
+     * Возраст начала Senior-стадии — AAFP 2021 «Senior: 10+».
+     * Сдвинут на 11.0 для соответствия требованию `10 years → MatureAdult`
+     * (см. KDoc класса).
+     */
+    internal const val SENIOR_START: Double = 11.0
 }

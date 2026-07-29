@@ -56,5 +56,57 @@
     <string name="life_stage_cat_mature_adult">Mature adult</string>
     <string name="life_stage_cat_senior">Senior</string>
     <string name="life_stage_cat_end_of_life">End of life</string>
+    <string name="life_stage_rabbit_infancy">Infancy</string>
+    <string name="life_stage_rabbit_adolescence">Adolescence</string>
+    <string name="life_stage_rabbit_young_adult">Young adult</string>
+    <string name="life_stage_rabbit_adult">Adult</string>
+    <string name="life_stage_rabbit_senior">Senior</string>
+    <string name="life_stage_hamster_pup">Pup</string>
+    <string name="life_stage_hamster_juvenile">Juvenile</string>
+    <string name="life_stage_hamster_adult">Adult</string>
+    <string name="life_stage_hamster_senior">Senior</string>
+    <string name="life_stage_hamster_very_senior">Very senior</string>
+    <string name="life_stage_guinea_pig_pup">Pup</string>
+    <string name="life_stage_guinea_pig_juvenile">Juvenile</string>
+    <string name="life_stage_guinea_pig_adult">Adult</string>
+    <string name="life_stage_guinea_pig_senior">Senior</string>
+    <string name="life_stage_guinea_pig_geriatric">Geriatric</string>
+    <string name="life_stage_rat_pup">Pup</string>
+    <string name="life_stage_rat_juvenile">Juvenile</string>
+    <string name="life_stage_rat_adult">Adult</string>
+    <string name="life_stage_rat_senior">Senior</string>
+    <string name="life_stage_rat_end_of_life">End of life</string>
+    <string name="life_stage_mouse_pup">Pup</string>
+    <string name="life_stage_mouse_juvenile">Juvenile</string>
+    <string name="life_stage_mouse_adult">Adult</string>
+    <string name="life_stage_mouse_senior">Senior</string>
+    <string name="life_stage_mouse_end_of_life">End of life</string>
+    <string name="life_stage_ferret_kit">Kit</string>
+    <string name="life_stage_ferret_juvenile">Juvenile</string>
+    <string name="life_stage_ferret_adult">Adult</string>
+    <string name="life_stage_ferret_senior">Senior</string>
+    <string name="life_stage_ferret_geriatric">Geriatric</string>
+    <string name="life_stage_bird_hatchling">Hatchling</string>
+    <string name="life_stage_bird_juvenile">Juvenile</string>
+    <string name="life_stage_bird_adult">Adult</string>
+    <string name="life_stage_bird_senior">Senior</string>
+    <string name="life_stage_bird_geriatric">Geriatric</string>
+    <string name="pet_detail_calc_bird">Method: AAV + Lafeber Vet. Scalar formula: human years = age · 80 / species average lifespan. For chicks under 6 months a ×1.3 correction applies.</string>
+    <string name="life_stage_reptile_hatchling">Hatchling</string>
+    <string name="life_stage_reptile_juvenile">Juvenile</string>
+    <string name="life_stage_reptile_adult">Adult</string>
+    <string name="life_stage_reptile_senior">Senior</string>
+    <string name="pet_detail_calc_reptile">Method: PetPlace + Reptile Centre. Scalar formula: human years = age · 80 / species average lifespan. Long-lived turtles age more slowly in human years.</string>
+    <string name="life_stage_horse_foal">Foal</string>
+    <string name="life_stage_horse_yearling">Yearling</string>
+    <string name="life_stage_horse_young_adult">Young horse</string>
+    <string name="life_stage_horse_adult">Adult</string>
+    <string name="life_stage_horse_senior">Senior</string>
+    <string name="pet_detail_calc_horse">Method: AAEP + PetMD. 3-phase formula: year 1 = 6.5 HY, year 2 = 13, year 3 = 18, year 4 = 20.5, then +2.5 HY/year.</string>
+    <string name="life_stage_fish_fry">Fry</string>
+    <string name="life_stage_fish_juvenile">Juvenile</string>
+    <string name="life_stage_fish_adult">Adult</string>
+    <string name="life_stage_fish_senior">Senior</string>
+    <string name="pet_detail_calc_fish">Method: PetMD + AquariumStoreDepot. Scalar formula: human years = age · 80 / species average lifespan. Long-lived koi age more slowly in human years.</string>
 
 </resources>

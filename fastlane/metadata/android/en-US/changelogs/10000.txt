@@ -1,0 +1,9 @@
+First release of PawClock 1.0.0.
+
+• Age & life-stage calculator for 12 species: dogs, cats, rabbits, hamsters, guinea pigs, rats, mice, ferrets, birds, reptiles, horses, and fish.
+• Science-based formulas with cited sources.
+• Life stages with practical, source-backed care guidance.
+• Save unlimited pet profiles, fully offline.
+• Export and import your data.
+• Material You, light/dark themes, Russian and English.
+• No ads, no tracking, no Internet permission.

@@ -1,0 +1,63 @@
+# Maestro E2E flow (§11.10 спецификации, Task 23 / Plan 2).
+#
+# Сценарий: Quick Calculator для экзотического вида (кролик) → проверка, что
+# species selector показывает все 12 видов и что subcategory dropdown для кролика
+# (RabbitSize) рендерится и выбирается. Покрывает расширение Plan 2 Tasks 2/16.
+#
+# Запуск:
+#   maestro test maestro/quick_calc_rabbit.yaml
+#
+# Локаль: русские строки (default по §6).
+#
+# ВАЖНО про эталонное значение ЧГ: спецификация даёт «кролик 2 года = 27 ЧГ», но
+# QuickCalcBirthDateField по умолчанию ставит дату «1 год назад» (см. fallback в
+# QuickCalcBirthDateField.kt → кролик 1 год = 21 ЧГ). Вождение Material DatePicker
+# к точной дате (ровно 2 года назад) из Maestro хрупко и зависит от локали/формата —
+# та же причина, по которой quick_calc_dog.yaml не ассертит конкретное число.
+# Поэтому здесь проверяется ФАКТ расчёта (дескриптор «В человеческих годах») и
+# работа subcategory dropdown, а точные значения формулы покрыты unit-тестами
+# RabbitAgeCalculatorTest (§4.3).
+appId: app.pawclock.debug
+---
+- clearState
+- launchApp
+
+# Перейти из PetsList в QuickCalculator (IconButton с contentDescription).
+- tapOn: "Быстрый расчёт"
+- assertVisible: "Быстрый расчёт"
+
+# Выбрать вид «Кролик». scrollUntilVisible — no-op, если chip уже на экране;
+# страхует от ситуации, когда FlowRow из 12 видов уносит поздние chip'ы под фолд.
+- scrollUntilVisible:
+    element:
+      text: "Кролик"
+    direction: DOWN
+    timeout: 20000
+- tapOn: "Кролик"
+
+# Subcategory dropdown для кролика (RabbitSize). «Средний» = rabbit_size_medium —
+# отличается от собачьей «Средняя» (DogSize), проверяет species-aware маппинг меток.
+- scrollUntilVisible:
+    element:
+      text: "Средний"
+    direction: DOWN
+    timeout: 20000
+- assertVisible: "Средний"
+- tapOn: "Средний"
+
+# Указать дату рождения (тап по полю → ОК). Дефолт = «1 год назад».
+- scrollUntilVisible:
+    element:
+      id: "quick_calc_birth_date_field"
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    id: "quick_calc_birth_date_field"
+- tapOn: "ОК"
+
+# Рассчитать (FAB закреплён Scaffold'ом — всегда на экране).
+- tapOn:
+    id: "quick_calc_calculate_fab"
+
+# Result sheet с ЧГ должен появиться.
+- assertVisible: "В человеческих годах"

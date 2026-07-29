@@ -21,6 +21,14 @@ android {
         compose = true
     }
 
+    // LifeStageLabelLocalizationTest (Task 22) — Robolectric резолвит строки стадий жизни
+    // на JVM через AAPT2. Нужен includeAndroidResources = true.
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -81,6 +89,15 @@ dependencies {
     testImplementation(libs.turbine)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
+    // Robolectric — LifeStageLabelLocalizationTest (Task 22) загружает Android-ресурсы
+    // (строки стадий жизни) на JVM и резолвит их в ru/en. Vintage engine запускает JUnit 4
+    // Robolectric-тесты рядом с JUnit 5 (Jupiter). Зеркалит настройку :core:designsystem.
+    testImplementation(libs.robolectric)
+    testImplementation(libs.junit4)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.androidx.test.rules)
+    testRuntimeOnly(libs.junit.vintage.engine)
+
     // Android instrumented tests — Compose UI тесты PetsListScreen/PetDetailScreen
     // через createAndroidComposeRule. Compose-ui-test-junit4 1.11.1 в offline cache
     // (управляется BOM 2026.05.00). Запуск — на эмуляторе в nightly.yml.
@@ -95,7 +112,10 @@ dependencies {
 }
 
 tasks.withType<Test>().configureEach {
-    useJUnitPlatform()
+    useJUnitPlatform {
+        // Vintage engine разрешает JUnit 4 (Robolectric) тесты, Jupiter — JUnit 5.
+        includeEngines("junit-jupiter", "junit-vintage")
+    }
     testLogging {
         events("passed", "failed", "skipped")
     }

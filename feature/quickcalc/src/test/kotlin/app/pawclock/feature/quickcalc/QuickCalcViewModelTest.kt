@@ -1,16 +1,18 @@
 package app.pawclock.feature.quickcalc
 
 import app.cash.turbine.test
-import app.pawclock.calculator.CatAgeCalculator
-import app.pawclock.calculator.CatLifeStageCalculator
-import app.pawclock.calculator.DogAgeCalculator
-import app.pawclock.calculator.DogLifeStageCalculator
 import app.pawclock.domain.usecase.CalculatePetAgeUseCase
 import app.pawclock.feature.quickcalc.fakes.FakeSettingsReader
+import app.pawclock.model.BirdType
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
+import app.pawclock.model.FishType
+import app.pawclock.model.HamsterType
+import app.pawclock.model.HorseType
 import app.pawclock.model.LifeStage
+import app.pawclock.model.RabbitSize
+import app.pawclock.model.ReptileType
 import app.pawclock.model.Species
 import java.time.Clock
 import java.time.LocalDate
@@ -61,10 +63,6 @@ class QuickCalcViewModelTest {
     private fun newViewModel(settingsReader: FakeSettingsReader = FakeSettingsReader()): QuickCalcViewModel {
         val calculatePetAge =
             CalculatePetAgeUseCase(
-                dogAgeCalculator = DogAgeCalculator(),
-                dogLifeStageCalculator = DogLifeStageCalculator(),
-                catAgeCalculator = CatAgeCalculator(),
-                catLifeStageCalculator = CatLifeStageCalculator(),
                 settingsReader = settingsReader,
                 clock = fixedClock,
             )
@@ -305,5 +303,158 @@ class QuickCalcViewModelTest {
             assertIs<QuickCalcResult.Success>(result)
             // Cat 2 года indoor = 15 + 9 = 24 ЧГ; outdoor добавил бы +15% после 2 лет.
             assertEquals(LifeStage.Cat.YoungAdult, result.calculatedAge.lifeStage)
+        }
+
+    // --- Plan 2, Task 16: все 12 видов в Quick Calculator ---
+
+    @Test
+    fun `selecting Rabbit exposes RabbitSize subcategories`() =
+        runTest {
+            val viewModel = newViewModel()
+            viewModel.handleEvent(QuickCalcEvent.SelectSpecies(Species.Rabbit))
+
+            val s = viewModel.state.value
+            assertEquals(Species.Rabbit, s.species)
+            assertEquals(
+                RabbitSize.entries.map { it.id },
+                s.availableSubcategories.map { it.id },
+            )
+            // Как и у Dog/Cat — subcategory не предвыбирается, дефолт применяется при расчёте.
+            assertNull(s.subcategory)
+        }
+
+    @Test
+    fun `selecting species with subcategories exposes matching enum ids`() =
+        runTest {
+            val cases =
+                mapOf(
+                    Species.Hamster to HamsterType.entries.map { it.id },
+                    Species.Bird to BirdType.entries.map { it.id },
+                    Species.Reptile to ReptileType.entries.map { it.id },
+                    Species.Fish to FishType.entries.map { it.id },
+                    Species.Horse to HorseType.entries.map { it.id },
+                )
+            for ((species, expectedIds) in cases) {
+                val viewModel = newViewModel()
+                viewModel.handleEvent(QuickCalcEvent.SelectSpecies(species))
+
+                val s = viewModel.state.value
+                assertEquals(species, s.species)
+                assertEquals(
+                    expectedIds,
+                    s.availableSubcategories.map { it.id },
+                    "availableSubcategories for $species must match its subcategory enum",
+                )
+            }
+        }
+
+    @Test
+    fun `selecting subcategoryless species exposes no subcategories`() =
+        runTest {
+            for (species in listOf(Species.GuineaPig, Species.Rat, Species.Mouse, Species.Ferret)) {
+                val viewModel = newViewModel()
+                viewModel.handleEvent(QuickCalcEvent.SelectSpecies(species))
+
+                val s = viewModel.state.value
+                assertEquals(species, s.species)
+                assertTrue(
+                    s.availableSubcategories.isEmpty(),
+                    "$species has no subcategories — selector must be empty",
+                )
+            }
+        }
+
+    @Test
+    fun `Calculate for Rabbit Medium 5y emits ~45 human years and Adult`() =
+        runTest {
+            val viewModel = newViewModel()
+            viewModel.handleEvent(QuickCalcEvent.SelectSpecies(Species.Rabbit))
+            viewModel.handleEvent(QuickCalcEvent.SetSubcategory(RabbitSize.Medium.id))
+            // 2026-05-28 fixedClock; рождение 2021-05-28 → ~5 лет (4.999 из-за 365.25).
+            viewModel.handleEvent(QuickCalcEvent.SetBirthDate(LocalDate.of(2021, 5, 28)))
+
+            viewModel.handleEvent(QuickCalcEvent.Calculate)
+
+            val result = viewModel.state.value.result
+            assertIs<QuickCalcResult.Success>(result)
+            // Rabbit 5y: 21 + 6·(5−1) = 45 ЧГ (House Rabbit Society / AVMA, §4.3).
+            assertEquals(45.0, result.calculatedAge.humanYears, 0.1)
+            // 4.999 < 5.0 (SENIOR_START) → Adult.
+            assertEquals(LifeStage.Rabbit.Adult, result.calculatedAge.lifeStage)
+        }
+
+    @Test
+    fun `Calculate for Rabbit without subcategory defaults to Medium`() =
+        runTest {
+            val viewModel = newViewModel()
+            viewModel.handleEvent(QuickCalcEvent.SelectSpecies(Species.Rabbit))
+            // Subcategory не указана — ViewModel дефолтит к RabbitSize.Medium, как и UseCase.
+            viewModel.handleEvent(QuickCalcEvent.SetBirthDate(LocalDate.of(2021, 5, 28)))
+
+            viewModel.handleEvent(QuickCalcEvent.Calculate)
+
+            val result = viewModel.state.value.result
+            assertIs<QuickCalcResult.Success>(result)
+            // Размер не влияет на формулу кролика → тот же результат, что с явным Medium.
+            assertEquals(45.0, result.calculatedAge.humanYears, 0.1)
+        }
+
+    @Test
+    fun `Calculate for Bird Budgerigar 3y emits ~34 human years and Adult`() =
+        runTest {
+            val viewModel = newViewModel()
+            viewModel.handleEvent(QuickCalcEvent.SelectSpecies(Species.Bird))
+            viewModel.handleEvent(QuickCalcEvent.SetSubcategory(BirdType.Budgerigar.id))
+            // ~3 года.
+            viewModel.handleEvent(QuickCalcEvent.SetBirthDate(LocalDate.of(2023, 5, 28)))
+
+            viewModel.handleEvent(QuickCalcEvent.Calculate)
+
+            val result = viewModel.state.value.result
+            assertIs<QuickCalcResult.Success>(result)
+            // Budgerigar lifespan 7: 3·80/7 ≈ 34.3 ЧГ (AAV scalar ratio, §4.8).
+            assertEquals(34.3, result.calculatedAge.humanYears, 0.2)
+            // fraction 3/7 ≈ 0.43 → Adult (20–70 %).
+            assertEquals(LifeStage.Bird.Adult, result.calculatedAge.lifeStage)
+        }
+
+    @Test
+    fun `Calculate for Horse LightHorse 10y emits ~35 human years and Adult`() =
+        runTest {
+            val viewModel = newViewModel()
+            viewModel.handleEvent(QuickCalcEvent.SelectSpecies(Species.Horse))
+            viewModel.handleEvent(QuickCalcEvent.SetSubcategory(HorseType.LightHorse.id))
+            // ~10 лет.
+            viewModel.handleEvent(QuickCalcEvent.SetBirthDate(LocalDate.of(2016, 5, 28)))
+
+            viewModel.handleEvent(QuickCalcEvent.Calculate)
+
+            val result = viewModel.state.value.result
+            assertIs<QuickCalcResult.Success>(result)
+            // Horse 10y: 18 + 2.5·(10−3) = 35.5 ЧГ (AAEP 3-фаза, §4.10).
+            assertEquals(35.5, result.calculatedAge.humanYears, 0.2)
+            // Senior начинается с 15 лет (AAEP Senior Horse Care) → 10y = Adult.
+            // (План в чек-листе ошибочно указывает Senior; формула стадий из Task 9 даёт Adult.)
+            assertEquals(LifeStage.Horse.Adult, result.calculatedAge.lifeStage)
+        }
+
+    @Test
+    fun `setting method on non-Dog Success does not change fixed method`() =
+        runTest {
+            val viewModel = newViewModel()
+            viewModel.handleEvent(QuickCalcEvent.SelectSpecies(Species.Rabbit))
+            viewModel.handleEvent(QuickCalcEvent.SetSubcategory(RabbitSize.Medium.id))
+            viewModel.handleEvent(QuickCalcEvent.SetBirthDate(LocalDate.of(2021, 5, 28)))
+            viewModel.handleEvent(QuickCalcEvent.Calculate)
+
+            val before = (viewModel.state.value.result as QuickCalcResult.Success).calculatedAge
+
+            // Кролик использует единственный метод — переключение Wang/Size не влияет на результат.
+            viewModel.handleEvent(QuickCalcEvent.SetMethod(CalculationMethod.SIZE_BASED))
+
+            val after = viewModel.state.value.result
+            assertIs<QuickCalcResult.Success>(after)
+            assertEquals(before.humanYears, after.calculatedAge.humanYears, 0.0001)
+            assertEquals(CalculationMethod.EPIGENETIC, after.calculatedAge.method)
         }
 }

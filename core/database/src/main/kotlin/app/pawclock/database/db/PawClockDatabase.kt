@@ -11,6 +11,16 @@ import app.pawclock.database.entity.PetEntity
  * **Версия 1 (Plan 1):** одна таблица `pets`.
  * Миграции на будущие версии регистрируются в `app.pawclock.database.migration.Migrations`.
  *
+ * **Plan 2 (10 новых видов) — миграция НЕ требуется, версия остаётся 1.**
+ * Подкатегории всех новых видов (RabbitSize, HamsterType, BirdType, ReptileType,
+ * HorseType, FishType) хранятся в существующей колонке `subcategory TEXT` как стабильные
+ * id-строки. Поскольку колонка уже принимает любую строку, расширение domain-enum'ов
+ * не меняет SQL-схему — следовательно `DATABASE_VERSION` остаётся 1, `Migrations.all()`
+ * пуст, а `PetMapper` не требует правок (он передаёт subcategory насквозь, не зная вида).
+ * Это прямое следствие schema-decoupling, заложенного в [app.pawclock.database.entity.PetEntity]:
+ * «изменять domain-enum'ы без миграции БД, если id остаются стабильными».
+ * Контракт round-trip новых id зафиксирован в `PetMapperTest` (Plan 2 Task 12).
+ *
  * Schema export ВРЕМЕННО ОТКЛЮЧЁН (Task 17, ⚠️ known issue):
  * Room 2.8.4 + kotlinx-serialization 1.8.1 + Kotlin 2.0.21 имеют binary-incompat между
  * `androidx.room.migration.bundle.FieldBundle$$serializer` (компилированный с серилизацией

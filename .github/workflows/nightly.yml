@@ -5,8 +5,11 @@ name: Nightly
 #
 # Coverage: API 24 (minSdk), 30 (median field device), 35 (targetSdk).
 # Tests: Compose UI (connectedDebugAndroidTest) + Maestro E2E flows.
-# Maestro flows arrived in Plan 1 Task 23 (maestro/*.yaml). The Maestro job
-# is still guarded by a path check so future flow removals do not break the
+# Maestro flows arrived in Plan 1 Task 23 (create_first_pet, quick_calc_dog) and
+# were extended in Plan 2 Task 23 (quick_calc_rabbit/bird/horse, export_import_roundtrip).
+# The run step globs the whole maestro/ directory (`maestro test maestro/`), so new
+# flow files are picked up automatically without editing this workflow. The Maestro
+# job is still guarded by a path check so future flow removals do not break the
 # workflow — the check skips cleanly if no flows exist.
 
 on:

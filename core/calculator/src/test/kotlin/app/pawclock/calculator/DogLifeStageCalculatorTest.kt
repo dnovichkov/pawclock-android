@@ -21,7 +21,7 @@ import org.junit.jupiter.params.provider.CsvSource
  *  - EndOfLife: близко к expected lifespan (верхняя граница из McMillan 2024)
  */
 class DogLifeStageCalculatorTest {
-    private val calculator = DogLifeStageCalculator()
+    private val calculator = DogLifeStageCalculator
 
     // ===== Базовые кейсы из плана =====
 

@@ -1,0 +1,148 @@
+package app.pawclock.calculator
+
+import app.pawclock.model.BirdType
+import app.pawclock.model.CalculationMethod
+import app.pawclock.model.CatType
+import app.pawclock.model.DogSize
+import app.pawclock.model.FishType
+import app.pawclock.model.HamsterType
+import app.pawclock.model.HorseType
+import app.pawclock.model.RabbitSize
+import app.pawclock.model.ReptileType
+
+/**
+ * Параметры расчёта возраста/стадии жизни, специфичные для каждого вида.
+ *
+ * Sealed-маркер, передаваемый в унифицированные методы [AgeCalculator.toHumanYears] и
+ * [LifeStageCalculator.determine]. Каждая реализация [AgeCalculator] ожидает «свой»
+ * подтип и проверяет это через `require(params is …)` — это сознательный компромисс
+ * type-safety ради того, чтобы [AgeCalculator.forSpecies] возвращал единый тип, который
+ * `CalculatePetAgeUseCase` вызывает без generics.
+ *
+ * Расширяется по мере добавления видов в Plan 2 (Rabbit, Hamster, … — каждый со своим
+ * набором подкатегорий). См. спецификацию PawClock §4.
+ */
+sealed interface SpeciesParams {
+    /**
+     * Параметры собаки.
+     *
+     * @param method выбранный метод расчёта (Wang EPIGENETIC / AKC SIZE_BASED).
+     * @param size размер собаки (для SIZE_BASED обязателен; для EPIGENETIC игнорируется,
+     *   но передаётся для расчёта стадии жизни через [DogLifeStageCalculator]).
+     */
+    data class Dog(
+        val method: CalculationMethod,
+        val size: DogSize,
+    ) : SpeciesParams
+
+    /**
+     * Параметры кошки.
+     *
+     * @param type тип содержания (влияет на поправки старения и порог EndOfLife).
+     */
+    data class Cat(
+        val type: CatType,
+    ) : SpeciesParams
+
+    /**
+     * Параметры кролика.
+     *
+     * @param size порода/размер кролика. На формулу расчёта возраста не влияет
+     *   (она едина для всех пород — House Rabbit Society), используется только для оценки
+     *   ожидаемой продолжительности жизни. См. [RabbitSize] и §4.3 спецификации.
+     */
+    data class Rabbit(
+        val size: RabbitSize,
+    ) : SpeciesParams
+
+    /**
+     * Параметры хомяка.
+     *
+     * @param type вид хомяка. На формулу расчёта возраста не влияет (она едина для всех
+     *   видов — RVC VetCompass), используется только для оценки ожидаемой продолжительности
+     *   жизни. См. [HamsterType] и §4.4 спецификации.
+     */
+    data class Hamster(
+        val type: HamsterType,
+    ) : SpeciesParams
+
+    /**
+     * Параметры морской свинки.
+     *
+     * У морской свинки нет подкатегорий (формула §4.5 едина для всех, размер на расчёт
+     * не влияет), поэтому это `data object` без полей — маркер, передаваемый в
+     * [GuineaPigAgeCalculator] / [GuineaPigLifeStageCalculator]. См. §4.5 спецификации.
+     */
+    data object GuineaPig : SpeciesParams
+
+    /**
+     * Параметры крысы.
+     *
+     * У крысы нет подкатегорий (линейная формула §4.6 Sengupta 2013 едина для всех),
+     * поэтому это `data object` без полей — маркер, передаваемый в
+     * [RatAgeCalculator] / [RatLifeStageCalculator]. См. §4.6 спецификации.
+     */
+    data object Rat : SpeciesParams
+
+    /**
+     * Параметры мыши.
+     *
+     * У мыши нет подкатегорий (кусочная формула §4.6 Dutta & Sengupta 2016 едина для всех),
+     * поэтому это `data object` без полей — маркер, передаваемый в
+     * [MouseAgeCalculator] / [MouseLifeStageCalculator]. См. §4.6 спецификации.
+     */
+    data object Mouse : SpeciesParams
+
+    /**
+     * Параметры хорька.
+     *
+     * У хорька нет подкатегорий (кусочная формула §4.7 едина для всех), поэтому это
+     * `data object` без полей — маркер, передаваемый в [FerretAgeCalculator] /
+     * [FerretLifeStageCalculator]. См. §4.7 спецификации.
+     */
+    data object Ferret : SpeciesParams
+
+    /**
+     * Параметры птицы.
+     *
+     * @param type вид птицы. В отличие от большинства видов, [type] **влияет на формулу**
+     *   расчёта возраста: скалярная формула §4.8 масштабируется по [BirdType.averageLifespanYears]
+     *   (см. [BirdAgeCalculator] / [BirdLifeStageCalculator]). См. §4.8 спецификации.
+     */
+    data class Bird(
+        val type: BirdType,
+    ) : SpeciesParams
+
+    /**
+     * Параметры рептилии.
+     *
+     * @param type вид рептилии. Как и у птицы, [type] **влияет на формулу** расчёта возраста:
+     *   скалярная формула §4.9 масштабируется по [ReptileType.averageLifespanYears]
+     *   (см. [ReptileAgeCalculator] / [ReptileLifeStageCalculator]). См. §4.9 спецификации.
+     */
+    data class Reptile(
+        val type: ReptileType,
+    ) : SpeciesParams
+
+    /**
+     * Параметры лошади.
+     *
+     * @param type тип/порода лошади. На формулу расчёта возраста не влияет (3-фазная формула
+     *   AAEP §4.10 едина для всех), используется только для оценки ожидаемой продолжительности
+     *   жизни. См. [HorseType] и §4.10 спецификации.
+     */
+    data class Horse(
+        val type: HorseType,
+    ) : SpeciesParams
+
+    /**
+     * Параметры рыбы.
+     *
+     * @param type вид рыбы. Как и у птицы/рептилии, [type] **влияет на формулу** расчёта возраста:
+     *   скалярная формула §4.11 масштабируется по [FishType.averageLifespanYears]
+     *   (см. [FishAgeCalculator] / [FishLifeStageCalculator]). См. §4.11 спецификации.
+     */
+    data class Fish(
+        val type: FishType,
+    ) : SpeciesParams
+}

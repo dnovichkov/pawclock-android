@@ -7,7 +7,57 @@
 
 ## [Unreleased]
 
+_Пока пусто. Следующие изменения после v1.0.0 попадут сюда._
+
+## [1.0.0] - 2026-07-24
+
+Полный MVP v1.0 (§12.1): все 12 групп животных + миграция данных между устройствами (§3.5) +
+реальный научно-обоснованный care-контент для всех видов. Дата релиза проставляется при
+тегировании `v1.0.0`.
+
 ### Added
+
+#### Plan 3 — реальный care-контент + релизная готовность
+
+- **Care-контент для всех 12 видов**: 116 JSON-файлов (58 стадий × ru/en) наполнены реальным
+  husbandry-контентом по опубликованным guidelines §14 (AAHA 2019, AAHA/AAFP 2021, House Rabbit
+  Society, Oxbow, RVC VetCompass, Sengupta 2013/2016, PMC Senior Ferret, AAV/Lafeber, PetPlace,
+  AAEP, PetMD) — заменили placeholder-заглушки Plan 2. Уровень контента — общая husbandry-гид по
+  стадиям жизни с обязательным дисклеймером §3.3 (см. ADR-0010).
+- **Content quality gate**: `CareContentQualityTest` (`:core:domain`) + `scripts/verify-care-content.sh`
+  — no-TODO, дословный дисклеймер §3.3, min-length, dental-правило (null только у fish), валидный
+  source_url; инвариант `contentComplete == Species.implemented()` (no silent caps).
+- **Релизная готовность v1.0.0**: bump `versionName 1.0.0` / `versionCode 10000` (§8.10), privacy
+  policy `docs/PRIVACY.md` («No data collected, No data shared», §9), fastlane-метаданные Google Play
+  (`fastlane/metadata/android/{ru,en-US}/`), финализация README, ADR-0010 (провенанс care-контента).
+
+#### Plan 2 — все виды + export/import
+
+- **10 новых калькуляторов возраста** (строгий TDD, KDoc с первоисточником у каждой формулы):
+  Rabbit (House Rabbit Society/AVMA), Hamster (RVC), GuineaPig (Oxbow), Rat (Sengupta 2013),
+  Mouse (Dutta & Sengupta 2016), Ferret (PMC), Bird (AAV scalar), Reptile (PetPlace scalar),
+  Horse (AAEP 3-фаза), Fish (PetMD scalar). Все 12 видов теперь `isImplemented = true`.
+- **Strategy-pattern диспатч**: sealed `AgeCalculator` / `LifeStageCalculator` + фабрики
+  `forSpecies()`; `CalculatePetAgeUseCase` диспатчит без god-object `when` (см. ADR-0008).
+- **Подкатегории видов**: `RabbitSize`, `HamsterType`, `BirdType`, `ReptileType`, `FishType`,
+  `HorseType` со стабильными `id` для сериализации; расширенный sealed `LifeStage` (12 видов).
+- **Property-based tests** (Kotest) для всех новых калькуляторов: монотонность, позитивность,
+  непрерывность/bounded-jump на стыках кусочных формул.
+- **Export/Import** (§3.5): `ExportPetsUseCase` / `ImportPetsUseCase`, JSON (версионируемая схема
+  `schema_version = 1`) и CSV (RFC 4180); MERGE/REPLACE стратегии, dry-run preview (см. ADR-0009).
+- **Settings UI** для Export/Import через Storage Access Framework (`ACTION_CREATE_DOCUMENT` /
+  `ACTION_OPEN_DOCUMENT`, Activity Result API) с выбором формата и стратегии.
+- **Care recommendations placeholder** для всех 10 новых видов (96 JSON-файлов ru/en с TODO-контентом
+  + обязательный дисклеймер §3.3); трекер `docs/CARE_CONTENT.md` + `scripts/verify-care-assets.sh`.
+- **Векторные иконки видов** (`ic_species_*`, моно-линейные) + `SpeciesIcon` composable — замена
+  emoji-плейсхолдеров в PetCard / PetEditor / QuickCalculator.
+- **UI на все 12 видов**: PetEditor и QuickCalculator поддерживают все виды и их подкатегории без
+  хардкодов (`Species.implemented()`).
+- **Локализация** ru/en для всех новых видов, подкатегорий, стадий жизни и строк Export/Import.
+- **Maestro E2E**: `quick_calc_rabbit/bird/horse`, `export_import_roundtrip`; обновлены flow Plan 1.
+- **2 новых ADR**: ADR-0008 (AgeCalculator sealed interface), ADR-0009 (export/import schema versioning).
+
+#### Plan 1 — foundation + Dog/Cat MVP
 
 - Foundation проекта: Gradle multi-module skeleton (12 модулей по §7.3 спецификации).
 - `:core:calculator` — формулы расчёта возраста для собак (Wang 2020 + AKC/AAHA 2019)
@@ -22,8 +72,7 @@
 - `:feature:editor` — PetEditor для создания/редактирования питомца.
 - `:feature:quickcalc` — Quick Calculator для одноразового расчёта без сохранения.
 - `:feature:settings` — Settings + About экраны.
-- Care recommendations для Dog/Cat по стадиям жизни (placeholder content,
-  заменится реальным научным контентом в Plan 2).
+- Care recommendations для Dog/Cat по стадиям жизни (placeholder content).
 - Локализация ru (default) + en с plurals по CLDR-правилам.
 - LocaleConfig для Android 13+ in-app locale picker.
 - 7 стартовых ADR (Jetpack Compose, multi-module, TDD, Room, no-internet,
@@ -41,5 +90,13 @@
 
 - Запрет INTERNET permission через `<uses-permission tools:node="remove">`
   (см. ADR-0005). Data Safety на Google Play — "No data collected".
+- **Защита CSV-экспорта от formula injection** (OWASP): свободные поля (`name`/`notes`),
+  начинающиеся с `=`/`+`/`-`/`@`/TAB/CR, префиксуются апострофом, чтобы не выполнялись как
+  формулы при открытии в Excel/Sheets; импорт снимает префикс симметрично (round-trip сохранён).
+- **Доменная валидация импортируемых данных**: дата рождения в будущем / нереалистичный год /
+  не-конечный или отрицательный вес отклоняются до записи в БД (зеркалит `SavePetUseCase`).
+- **Атомарный импорт REPLACE**: очистка + вставка выполняются в одной Room-транзакции, а валидация —
+  до любой мутации; сбой больше не оставляет пользователя без старых и новых данных.
 
-[Unreleased]: https://github.com/dnovichkov/pawclock-android/commits/main
+[Unreleased]: https://github.com/dnovichkov/pawclock-android/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/dnovichkov/pawclock-android/releases/tag/v1.0.0

@@ -32,6 +32,8 @@ class FakePetRepository : PetRepository {
 
     override fun observeAll(): Flow<List<Pet>> = state.asStateFlow()
 
+    override suspend fun getAll(): List<Pet> = state.value
+
     override suspend fun getById(id: Long): Pet? = state.value.firstOrNull { it.id == id }
 
     override suspend fun insert(pet: Pet): Long {
@@ -56,6 +58,10 @@ class FakePetRepository : PetRepository {
         val before = state.value.size
         state.update { current -> current.filterNot { it.id == id } }
         return before - state.value.size
+    }
+
+    override suspend fun clearAll() {
+        state.value = emptyList()
     }
 
     /** Тестовый helper для прямой подмены содержимого без прохождения CRUD-проверок. */

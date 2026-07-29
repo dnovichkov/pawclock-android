@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO (Plan 1 placeholder): scientifically-backed description of the kitten stage (0–1 year per AAHA/AAFP 2021). Text will be replaced in Plan 2.",
-  "nutrition": "TODO: kitten-specific food with elevated protein, 3–4 meals a day. Free access to water.",
-  "activity": "TODO: interactive wand-toy play, hunting behavior development, socialization (2–7 weeks — critical window).",
-  "veterinary_check_frequency": "TODO: every 3–4 weeks until 16 weeks (vaccinations, deworming). Source: AAHA/AAFP 2021.",
-  "dental_care": "TODO: accustom to teeth brushing from an early age, with cat-specific toothpaste.",
-  "warning_signs": "TODO: diarrhea over 24 hours, vomiting, refusal to eat, sneezing with discharge, discomfort during toileting.",
+  "stage_description": "The kitten stage runs from birth to 1 year (AAHA/AAFP 2021). It is a period of rapid growth and behavioral shaping: the critical socialization window falls between 2 and 7 weeks, when the kitten should calmly get used to people, handling, other animals, and its surroundings. Core vaccinations, deworming, and litter-box and scratching-post training happen now. Early habits strongly shape the adult cat's temperament.",
+  "nutrition": "A kitten-specific food with higher protein and calories for growth, fed 3–4 times a day. Transition gradually to an adult diet as the kitten approaches one year. Keep fresh water available; wet food is a useful source of moisture for cats.",
+  "activity": "Frequent interactive play with wand toys to develop hunting behavior, plus safe exploration of the environment. Play matters not only for fitness but for socialization and stress relief. Early gentle socialization produces a well-balanced adult cat.",
+  "veterinary_check_frequency": "Visits every 3–4 weeks until about 16 weeks for the vaccination series (panleukopenia, calicivirus, rhinotracheitis, rabies) and deworming. Spay/neuter and FeLV/FIV testing are discussed at these appointments.",
+  "dental_care": "Baby teeth are replaced by permanent teeth by about 6 months; the veterinarian monitors the bite and tooth eruption. Introduce toothbrushing with cat-specific paste early to build a lifelong habit.",
+  "warning_signs": "Diarrhea lasting more than 24 hours, vomiting, refusing food, sneezing with eye and nose discharge, or discomfort when urinating. Kittens dehydrate and weaken quickly, so seek prompt veterinary care if these appear.",
   "source_url": "https://catvets.com/guidelines/practice-guidelines/feline-life-stage-guidelines/",
   "source_name": "AAHA/AAFP 2021 Feline Life Stage Guidelines",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

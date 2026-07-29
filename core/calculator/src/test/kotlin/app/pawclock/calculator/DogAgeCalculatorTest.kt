@@ -17,7 +17,7 @@ import org.junit.jupiter.params.provider.CsvSource
  * DOI: 10.1016/j.cels.2020.06.006.
  */
 class DogAgeCalculatorTest {
-    private val calculator = DogAgeCalculator()
+    private val calculator = DogAgeCalculator
 
     @Test
     fun `Wang formula returns 31 human years for 1 year old dog`() {

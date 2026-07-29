@@ -2,6 +2,7 @@ package app.pawclock.calculator
 
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.DogSize
+import app.pawclock.model.Species
 import kotlin.math.ln
 import kotlin.math.pow
 
@@ -44,7 +45,25 @@ import kotlin.math.pow
  *
  * См. также спецификацию PawClock §4.1 и ADR-0006.
  */
-class DogAgeCalculator {
+data object DogAgeCalculator : AgeCalculator {
+    override val species: Species = Species.Dog
+
+    /**
+     * Унифицированная точка диспатча из [AgeCalculator]: делегирует в перегрузку
+     * [toHumanYears] с явными `method` и `size`.
+     *
+     * @throws IllegalArgumentException если [params] не является [SpeciesParams.Dog].
+     */
+    override fun toHumanYears(
+        ageInYears: Double,
+        params: SpeciesParams,
+    ): Double {
+        require(params is SpeciesParams.Dog) {
+            "DogAgeCalculator requires SpeciesParams.Dog, got ${params::class.simpleName}"
+        }
+        return toHumanYears(ageInYears, params.method, params.size)
+    }
+
     /**
      * Возвращает возраст собаки в человеческих годах по эпигенетической формуле (Wang 2020).
      *
@@ -122,19 +141,20 @@ class DogAgeCalculator {
             WANG_OFFSET * ageInYears.pow(WANG_PUPPY_EXPONENT)
         }
 
-    internal companion object {
-        /** Коэффициент при `ln(age)` в формуле Wang 2020. */
-        internal const val WANG_COEFFICIENT: Double = 16.0
+    // Числовые константы формулы Wang 2020. Хранятся в теле `object` (а не в companion,
+    // которого у object-декларации быть не может); путь доступа `DogAgeCalculator.WANG_*` сохранён.
 
-        /** Сдвиг (значение ЧГ при `age = 1`) в формуле Wang 2020. */
-        internal const val WANG_OFFSET: Double = 31.0
+    /** Коэффициент при `ln(age)` в формуле Wang 2020. */
+    internal const val WANG_COEFFICIENT: Double = 16.0
 
-        /**
-         * Экспонента в степенной аппроксимации для puppy-стадии.
-         *
-         * Выбрана эмпирически: даёт ~9 ЧГ для 7-недельного щенка и ~20 ЧГ для 6-месячного,
-         * что согласуется с AAHA puppy-guidance и обеспечивает непрерывность в age=1.
-         */
-        internal const val WANG_PUPPY_EXPONENT: Double = 0.6
-    }
+    /** Сдвиг (значение ЧГ при `age = 1`) в формуле Wang 2020. */
+    internal const val WANG_OFFSET: Double = 31.0
+
+    /**
+     * Экспонента в степенной аппроксимации для puppy-стадии.
+     *
+     * Выбрана эмпирически: даёт ~9 ЧГ для 7-недельного щенка и ~20 ЧГ для 6-месячного,
+     * что согласуется с AAHA puppy-guidance и обеспечивает непрерывность в age=1.
+     */
+    internal const val WANG_PUPPY_EXPONENT: Double = 0.6
 }

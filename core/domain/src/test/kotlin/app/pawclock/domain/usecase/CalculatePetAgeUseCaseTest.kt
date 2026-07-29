@@ -1,9 +1,5 @@
 package app.pawclock.domain.usecase
 
-import app.pawclock.calculator.CatAgeCalculator
-import app.pawclock.calculator.CatLifeStageCalculator
-import app.pawclock.calculator.DogAgeCalculator
-import app.pawclock.calculator.DogLifeStageCalculator
 import app.pawclock.domain.fakes.FakeSettingsReader
 import app.pawclock.model.CalculationMethod
 import app.pawclock.model.LifeStage
@@ -34,10 +30,6 @@ class CalculatePetAgeUseCaseTest {
 
     private fun useCase(defaultMethod: CalculationMethod = CalculationMethod.EPIGENETIC): CalculatePetAgeUseCase =
         CalculatePetAgeUseCase(
-            dogAgeCalculator = DogAgeCalculator(),
-            dogLifeStageCalculator = DogLifeStageCalculator(),
-            catAgeCalculator = CatAgeCalculator(),
-            catLifeStageCalculator = CatLifeStageCalculator(),
             settingsReader = FakeSettingsReader(defaultMethod),
             clock = fixedClock,
         )
@@ -97,6 +89,25 @@ class CalculatePetAgeUseCaseTest {
             assertEquals(CalculationMethod.SIZE_BASED, result.method)
             // Medium 5 лет по AKC/AAHA таблице — 36 ЧГ
             assertEquals(36.0, result.humanYears, absoluteTolerance = 0.5)
+        }
+
+    @Test
+    fun `dog with unrecognized subcategory falls back to Medium default`() =
+        runTest {
+            // Импорт/ручная правка могут сохранить произвольную строку подкатегории; resolveDogSize
+            // тихо деградирует к DogSize.Medium. Проверяем на SIZE_BASED, где размер наблюдаем в ЧГ.
+            val unknown = dog(birthDate = fixedToday.minusYears(5), subcategoryId = "banana")
+            val medium = dog(birthDate = fixedToday.minusYears(5), subcategoryId = "medium")
+
+            val unknownResult = useCase(defaultMethod = CalculationMethod.SIZE_BASED).invoke(unknown)
+            val mediumResult = useCase(defaultMethod = CalculationMethod.SIZE_BASED).invoke(medium)
+
+            assertEquals(
+                mediumResult.humanYears,
+                unknownResult.humanYears,
+                absoluteTolerance = 0.001,
+            )
+            assertEquals(36.0, unknownResult.humanYears, absoluteTolerance = 0.5)
         }
 
     @Test
@@ -189,6 +200,165 @@ class CalculatePetAgeUseCaseTest {
 
     // ─── Errors ───────────────────────────────────────────────────────────
 
+    // ─── Rat / Mouse (no subcategory) ──────────────────────────────────────
+
+    @Test
+    fun `rat 2 years returns approx 29 human years and Senior`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 3L,
+                    name = "Splinter",
+                    species = Species.Rat,
+                    birthDate = fixedToday.minusYears(2),
+                )
+            val result = useCase().invoke(pet)
+            assertEquals(2.0, result.ageInYears, absoluteTolerance = 0.01)
+            assertEquals(29.0, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Rat.Senior, result.lifeStage)
+            assertEquals(CalculationMethod.EPIGENETIC, result.method)
+        }
+
+    @Test
+    fun `mouse 2 years returns approx 74 human years and Senior`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 4L,
+                    name = "Jerry",
+                    species = Species.Mouse,
+                    birthDate = fixedToday.minusYears(2),
+                )
+            val result = useCase().invoke(pet)
+            assertEquals(2.0, result.ageInYears, absoluteTolerance = 0.01)
+            assertEquals(74.5, result.humanYears, absoluteTolerance = 0.3)
+            assertEquals(LifeStage.Mouse.Senior, result.lifeStage)
+            assertEquals(CalculationMethod.EPIGENETIC, result.method)
+        }
+
+    @Test
+    fun `ferret 3 years returns approx 48 human years and Senior`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 5L,
+                    name = "Frankie",
+                    species = Species.Ferret,
+                    birthDate = fixedToday.minusYears(3),
+                )
+            val result = useCase().invoke(pet)
+            assertEquals(3.0, result.ageInYears, absoluteTolerance = 0.01)
+            assertEquals(48.0, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Ferret.Senior, result.lifeStage)
+            assertEquals(CalculationMethod.EPIGENETIC, result.method)
+        }
+
+    @Test
+    fun `bird 3 years with null subcategory falls back to Budgerigar`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 6L,
+                    name = "Kesha",
+                    species = Species.Bird,
+                    birthDate = fixedToday.minusYears(3),
+                )
+            val result = useCase().invoke(pet)
+            assertEquals(3.0, result.ageInYears, absoluteTolerance = 0.01)
+            // Budgerigar ЧЖ 7: 3·80/7 ≈ 34.3; доля 3/7 ≈ 0.43 → Adult
+            assertEquals(34.29, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Bird.Adult, result.lifeStage)
+            assertEquals(CalculationMethod.EPIGENETIC, result.method)
+        }
+
+    @Test
+    fun `bird honours macaw subcategory for slower ageing`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 7L,
+                    name = "Rio",
+                    species = Species.Bird,
+                    subcategory = "macaw",
+                    birthDate = fixedToday.minusYears(15),
+                )
+            val result = useCase().invoke(pet)
+            // Macaw ЧЖ 50: 15·80/50 = 24; доля 15/50 = 0.30 → Adult
+            assertEquals(24.0, result.humanYears, absoluteTolerance = 0.1)
+            assertEquals(LifeStage.Bird.Adult, result.lifeStage)
+        }
+
+    @Test
+    fun `reptile 6 years with null subcategory falls back to BeardedDragon`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 8L,
+                    name = "Spike",
+                    species = Species.Reptile,
+                    birthDate = fixedToday.minusYears(6),
+                )
+            val result = useCase().invoke(pet)
+            assertEquals(6.0, result.ageInYears, absoluteTolerance = 0.01)
+            // BeardedDragon ЧЖ 12: 6·80/12 = 40; доля 6/12 = 0.50 → Adult
+            assertEquals(40.0, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Reptile.Adult, result.lifeStage)
+            assertEquals(CalculationMethod.EPIGENETIC, result.method)
+        }
+
+    @Test
+    fun `reptile honours box turtle subcategory for slower ageing`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 9L,
+                    name = "Shelly",
+                    species = Species.Reptile,
+                    subcategory = "box_turtle",
+                    birthDate = fixedToday.minusYears(35),
+                )
+            val result = useCase().invoke(pet)
+            // BoxTurtle ЧЖ 40: 35·80/40 = 70; доля 35/40 = 0.875 → Senior
+            // (35 лет — заведомо внутри полосы Senior, в отличие от граничных 30/40 = 0.75)
+            assertEquals(70.0, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Reptile.Senior, result.lifeStage)
+        }
+
+    @Test
+    fun `horse 10 years with null subcategory falls back to LightHorse`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 10L,
+                    name = "Spirit",
+                    species = Species.Horse,
+                    birthDate = fixedToday.minusYears(10),
+                )
+            val result = useCase().invoke(pet)
+            assertEquals(10.0, result.ageInYears, absoluteTolerance = 0.01)
+            // AAEP: 20.5 + 2.5·6 = 35.5; 10 лет в полосе Adult (4–15)
+            assertEquals(35.5, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Horse.Adult, result.lifeStage)
+            assertEquals(CalculationMethod.EPIGENETIC, result.method)
+        }
+
+    @Test
+    fun `horse 20 years pony subcategory is Senior`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 11L,
+                    name = "Thunder",
+                    species = Species.Horse,
+                    subcategory = "pony",
+                    birthDate = fixedToday.minusYears(20),
+                )
+            val result = useCase().invoke(pet)
+            // AAEP формула не зависит от породы: 20.5 + 2.5·16 = 60.5
+            assertEquals(60.5, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Horse.Senior, result.lifeStage)
+        }
+
     @Test
     fun `birthDate in future throws IllegalArgumentException`() =
         runTest {
@@ -204,20 +374,38 @@ class CalculatePetAgeUseCaseTest {
         }
 
     @Test
-    fun `unsupported species throws UnsupportedSpeciesException`() =
+    fun `fish 5 years with null subcategory falls back to Goldfish`() =
         runTest {
             val pet =
                 Pet(
-                    id = 1L,
-                    name = "Bunny",
-                    species = Species.Rabbit,
-                    birthDate = fixedToday.minusYears(2),
+                    id = 12L,
+                    name = "Nemo",
+                    species = Species.Fish,
+                    birthDate = fixedToday.minusYears(5),
                 )
-            val ex =
-                assertFailsWith<app.pawclock.domain.pet.UnsupportedSpeciesException> {
-                    useCase().invoke(pet)
-                }
-            assertEquals(Species.Rabbit, ex.species)
+            val result = useCase().invoke(pet)
+            assertEquals(5.0, result.ageInYears, absoluteTolerance = 0.01)
+            // Goldfish ЧЖ 15: 5·80/15 ≈ 26.67; доля 5/15 ≈ 0.33 → Adult
+            assertEquals(26.67, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Fish.Adult, result.lifeStage)
+            assertEquals(CalculationMethod.EPIGENETIC, result.method)
+        }
+
+    @Test
+    fun `fish honours koi subcategory for slower ageing`() =
+        runTest {
+            val pet =
+                Pet(
+                    id = 13L,
+                    name = "Splash",
+                    species = Species.Fish,
+                    subcategory = "koi",
+                    birthDate = fixedToday.minusYears(27),
+                )
+            val result = useCase().invoke(pet)
+            // Koi ЧЖ 30: 27·80/30 = 72; доля 27/30 = 0.90 → Senior
+            assertEquals(72.0, result.humanYears, absoluteTolerance = 0.2)
+            assertEquals(LifeStage.Fish.Senior, result.lifeStage)
         }
 
     // ─── Calendar age computation ─────────────────────────────────────────

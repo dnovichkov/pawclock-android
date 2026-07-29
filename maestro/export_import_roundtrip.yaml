@@ -1,0 +1,138 @@
+# Maestro E2E flow (§3.5 / §11.10 спецификации, Task 23 / Plan 2).
+#
+# Сценарий: добавить трёх питомцев разных видов (Dog/Cat/Rabbit) → открыть Settings →
+# пройти UI-флоу экспорта (диалог формата JSON/CSV) и импорта (диалог стратегии
+# Merge/Replace) → убедиться, что данные питомцев не пострадали.
+#
+# Запуск:
+#   maestro test maestro/export_import_roundtrip.yaml
+#
+# Локаль: русские строки (default по §6).
+#
+# ┌─ ГРАНИЦА SAF (важно) ───────────────────────────────────────────────────────┐
+# │ Реальный экспорт/импорт идёт через Storage Access Framework (системные        │
+# │ Activity CreateDocument / OpenDocument). Это ВНЕШНИЙ системный file picker,    │
+# │ который Maestro не может детерминированно водить в CI (UI варьируется между    │
+# │ OEM/версиями Android, см. Post-Completion плана). Поэтому подтверждение        │
+# │ диалога (кнопка «Продолжить») здесь НЕ нажимается — иначе flow завис бы на     │
+# │ системном пикере. Вместо этого flow проверяет UI-флоу ДО запуска SAF           │
+# │ (раскрытие диалогов + опции форматов/стратегий) и целостность данных после     │
+# │ закрытия диалогов.                                                            │
+# │                                                                               │
+# │ Фактический файловый round-trip (export → clear → import → данные совпадают)   │
+# │ детерминированно покрыт unit-тестами: SettingsViewModelTest (через FakeBackup* │
+# │ порты) + ExportPetsUseCaseTest / ImportPetsUseCaseTest. См. также RoundTripTest │
+# │ из Task 24.                                                                    │
+# └───────────────────────────────────────────────────────────────────────────────┘
+appId: app.pawclock.debug
+---
+- clearState
+- launchApp
+
+# Пустой стейт.
+- assertVisible: "Питомцы"
+- assertVisible: "Добавьте первого питомца"
+
+# --- Добавить Dog «Рекс» ---
+- tapOn: "Добавить"
+- assertVisible: "Новый питомец"
+- tapOn:
+    id: "pet_editor_name_field"
+- inputText: "Рекс"
+- hideKeyboard
+- tapOn: "Собака"
+- tapOn:
+    id: "pet_editor_birth_date_field"
+- tapOn: "ОК"
+- tapOn:
+    id: "pet_editor_save_fab"
+- assertVisible: "Питомцы"
+- assertVisible: "Рекс"
+
+# --- Добавить Cat «Мурка» ---
+- tapOn: "Добавить"
+- assertVisible: "Новый питомец"
+- tapOn:
+    id: "pet_editor_name_field"
+- inputText: "Мурка"
+- hideKeyboard
+- tapOn: "Кошка"
+- tapOn:
+    id: "pet_editor_birth_date_field"
+- tapOn: "ОК"
+- tapOn:
+    id: "pet_editor_save_fab"
+- assertVisible: "Мурка"
+
+# --- Добавить Rabbit «Снежок» ---
+- tapOn: "Добавить"
+- assertVisible: "Новый питомец"
+- tapOn:
+    id: "pet_editor_name_field"
+- inputText: "Снежок"
+- hideKeyboard
+- scrollUntilVisible:
+    element:
+      text: "Кролик"
+    direction: DOWN
+    timeout: 20000
+- tapOn: "Кролик"
+- scrollUntilVisible:
+    element:
+      id: "pet_editor_birth_date_field"
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    id: "pet_editor_birth_date_field"
+- tapOn: "ОК"
+- tapOn:
+    id: "pet_editor_save_fab"
+
+# Все трое в списке.
+- assertVisible: "Рекс"
+- assertVisible: "Мурка"
+- assertVisible: "Снежок"
+
+# --- Settings → UI-флоу экспорта ---
+- tapOn: "Настройки"
+- assertVisible: "Настройки"
+
+# Раздел «Резервная копия» с двумя строками действий.
+- scrollUntilVisible:
+    element:
+      id: "settings_export_row"
+    direction: DOWN
+    timeout: 20000
+- assertVisible:
+    id: "settings_export_row"
+- assertVisible:
+    id: "settings_import_row"
+
+# Экспорт → диалог формата (JSON / CSV). Выбираем JSON, но НЕ подтверждаем
+# (см. «ГРАНИЦА SAF» выше) — закрываем «Отмена».
+- tapOn:
+    id: "settings_export_row"
+- assertVisible:
+    id: "settings_export_dialog"
+- assertVisible: "JSON"
+- assertVisible: "CSV"
+- tapOn:
+    id: "settings_export_format_json"
+- tapOn: "Отмена"
+
+# Импорт → диалог стратегии (Merge / Replace). Выбираем Merge, не подтверждаем.
+- tapOn:
+    id: "settings_import_row"
+- assertVisible:
+    id: "settings_import_dialog"
+- assertVisible: "Объединить"
+- assertVisible: "Заменить"
+- tapOn:
+    id: "settings_import_strategy_merge"
+- tapOn: "Отмена"
+
+# Вернуться в список — данные не пострадали (диалоги были отменены, мутаций нет).
+- back
+- assertVisible: "Рекс"
+- assertVisible: "Мурка"
+- assertVisible: "Снежок"

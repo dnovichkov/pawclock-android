@@ -23,7 +23,7 @@ import org.junit.jupiter.params.provider.CsvSource
  *    Indoor ≈ 16, Outdoor ≈ 4, LargeBreed ≈ 13)
  */
 class CatLifeStageCalculatorTest {
-    private val calculator = CatLifeStageCalculator()
+    private val calculator = CatLifeStageCalculator
 
     // ===== Базовые кейсы из плана (Task 10) =====
 

@@ -1,0 +1,54 @@
+# Maestro E2E flow (§11.10 спецификации, Task 23 / Plan 2).
+#
+# Сценарий: Quick Calculator для лошади → выбор подкатегории «Верховая» (LightHorse) →
+# расчёт. Покрывает расширение Plan 2 Tasks 9/16 (3-фазная формула AAEP + HorseType
+# subcategory selector).
+#
+# Запуск:
+#   maestro test maestro/quick_calc_horse.yaml
+#
+# Локаль: русские строки (default по §6).
+#
+# Эталонное значение ЧГ (лошадь 10 лет = 35.5 ЧГ по §4.10) не ассертится: дефолтная
+# дата = «1 год назад» (лошадь 1 год = 6.5 ЧГ), вождение DatePicker к точной дате
+# хрупко (см. комментарий в quick_calc_rabbit.yaml). Точные значения формулы —
+# в HorseAgeCalculatorTest.
+appId: app.pawclock.debug
+---
+- clearState
+- launchApp
+
+- tapOn: "Быстрый расчёт"
+- assertVisible: "Быстрый расчёт"
+
+# Выбрать вид «Лошадь» (11-й chip в FlowRow — почти наверняка под фолдом, scroll).
+- scrollUntilVisible:
+    element:
+      text: "Лошадь"
+    direction: DOWN
+    timeout: 20000
+- tapOn: "Лошадь"
+
+# Subcategory dropdown для лошади (HorseType). «Верховая» = horse_type_light_horse.
+- scrollUntilVisible:
+    element:
+      text: "Верховая"
+    direction: DOWN
+    timeout: 20000
+- assertVisible: "Верховая"
+- tapOn: "Верховая"
+
+# Указать дату рождения (дефолт = «1 год назад»).
+- scrollUntilVisible:
+    element:
+      id: "quick_calc_birth_date_field"
+    direction: DOWN
+    timeout: 20000
+- tapOn:
+    id: "quick_calc_birth_date_field"
+- tapOn: "ОК"
+
+- tapOn:
+    id: "quick_calc_calculate_fab"
+
+- assertVisible: "В человеческих годах"

@@ -21,6 +21,11 @@ complexity:
   LongParameterList:
     functionThreshold: 7
     constructorThreshold: 7
+    # Compose screen composables легитимно принимают state + набор callback'ов
+    # (часто 7+ параметров); это идиома Compose, а не code smell. Применяется только
+    # к @Composable-функциям, обычные функции/конструкторы держим под порогом 7.
+    ignoreAnnotated:
+      - 'Composable'
   CyclomaticComplexMethod:
     threshold: 18
   TooManyFunctions:
@@ -60,6 +65,10 @@ naming:
       - 'Test'
       - 'ParameterizedTest'
       - 'RepeatedTest'
+  PackageNaming:
+    # Allow a trailing underscore in package segments — Kotlin idiom for reserved-word
+    # packages (e.g. `import_`, since `import` is a keyword). See :core:domain export/import.
+    packagePattern: '[a-z]+(\.[a-z][A-Za-z0-9_]*)*'
 
 empty-blocks:
   active: true

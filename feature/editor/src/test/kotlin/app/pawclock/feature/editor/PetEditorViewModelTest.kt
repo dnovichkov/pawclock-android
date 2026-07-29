@@ -4,10 +4,16 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import app.pawclock.domain.pet.PetValidationError
 import app.pawclock.feature.editor.fakes.FakePetRepository
+import app.pawclock.model.BirdType
 import app.pawclock.model.CatType
 import app.pawclock.model.DogSize
+import app.pawclock.model.FishType
 import app.pawclock.model.Gender
+import app.pawclock.model.HamsterType
+import app.pawclock.model.HorseType
 import app.pawclock.model.Pet
+import app.pawclock.model.RabbitSize
+import app.pawclock.model.ReptileType
 import app.pawclock.model.Species
 import java.time.Clock
 import java.time.LocalDate
@@ -124,6 +130,129 @@ class PetEditorViewModelTest {
                     s.availableSubcategories.map { it.id },
                 )
                 cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `selecting Rabbit species exposes RabbitSize subcategories`() =
+        runTest {
+            val viewModel = newViewModel()
+            viewModel.handleEvent(PetEditorEvent.SelectSpecies(Species.Rabbit))
+
+            viewModel.state.test {
+                val s = awaitItem()
+                assertEquals(Species.Rabbit, s.species)
+                assertEquals(
+                    RabbitSize.entries.map { it.id },
+                    s.availableSubcategories.map { it.id },
+                )
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `selecting Hamster species exposes HamsterType subcategories`() =
+        runTest {
+            val viewModel = newViewModel()
+            viewModel.handleEvent(PetEditorEvent.SelectSpecies(Species.Hamster))
+
+            viewModel.state.test {
+                val s = awaitItem()
+                assertEquals(Species.Hamster, s.species)
+                assertEquals(
+                    HamsterType.entries.map { it.id },
+                    s.availableSubcategories.map { it.id },
+                )
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `selecting Bird species exposes BirdType subcategories`() =
+        runTest {
+            val viewModel = newViewModel()
+            viewModel.handleEvent(PetEditorEvent.SelectSpecies(Species.Bird))
+
+            viewModel.state.test {
+                val s = awaitItem()
+                assertEquals(Species.Bird, s.species)
+                assertEquals(
+                    BirdType.entries.map { it.id },
+                    s.availableSubcategories.map { it.id },
+                )
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `selecting Reptile species exposes ReptileType subcategories`() =
+        runTest {
+            val viewModel = newViewModel()
+            viewModel.handleEvent(PetEditorEvent.SelectSpecies(Species.Reptile))
+
+            viewModel.state.test {
+                val s = awaitItem()
+                assertEquals(Species.Reptile, s.species)
+                assertEquals(
+                    ReptileType.entries.map { it.id },
+                    s.availableSubcategories.map { it.id },
+                )
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `selecting Fish species exposes FishType subcategories`() =
+        runTest {
+            val viewModel = newViewModel()
+            viewModel.handleEvent(PetEditorEvent.SelectSpecies(Species.Fish))
+
+            viewModel.state.test {
+                val s = awaitItem()
+                assertEquals(Species.Fish, s.species)
+                assertEquals(
+                    FishType.entries.map { it.id },
+                    s.availableSubcategories.map { it.id },
+                )
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `selecting Horse species exposes HorseType subcategories`() =
+        runTest {
+            val viewModel = newViewModel()
+            viewModel.handleEvent(PetEditorEvent.SelectSpecies(Species.Horse))
+
+            viewModel.state.test {
+                val s = awaitItem()
+                assertEquals(Species.Horse, s.species)
+                assertEquals(
+                    HorseType.entries.map { it.id },
+                    s.availableSubcategories.map { it.id },
+                )
+                cancelAndIgnoreRemainingEvents()
+            }
+        }
+
+    @Test
+    fun `selecting subcategoryless species exposes no subcategories`() =
+        runTest {
+            // Rat, Mouse, Ferret и GuineaPig не имеют подкатегорий (§4.5–4.6 — формула
+            // едина, у вида нет вариантов размера/типа).
+            listOf(Species.Rat, Species.Mouse, Species.Ferret, Species.GuineaPig).forEach { species ->
+                val viewModel = newViewModel()
+                viewModel.handleEvent(PetEditorEvent.SelectSpecies(species))
+
+                viewModel.state.test {
+                    val s = awaitItem()
+                    assertEquals(species, s.species)
+                    assertTrue(
+                        s.availableSubcategories.isEmpty(),
+                        "expected no subcategories for $species",
+                    )
+                    cancelAndIgnoreRemainingEvents()
+                }
             }
         }
 

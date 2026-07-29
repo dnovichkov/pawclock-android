@@ -28,16 +28,28 @@ appId: app.pawclock.debug
 # IconButton'а — assertVisible подтверждает переход на новый экран).
 - assertVisible: "Быстрый расчёт"
 
-# Выбрать вид «Собака».
+# Выбрать вид «Собака» (1-й chip — всегда в первом ряду FlowRow).
 - tapOn: "Собака"
 
-# Подкатегория «Средняя» (default для собак — см. QuickCalcViewModel).
+# Подкатегория «Средняя» (DogSize chip). Plan 2 расширил species selector с 2 до
+# 12 видов (FlowRow в 3–4 ряда), поэтому subcategory section уезжает под фолд →
+# scrollUntilVisible перед assert (раньше chip был на экране при 2 видах).
+- scrollUntilVisible:
+    element:
+      text: "Средняя"
+    direction: DOWN
+    timeout: 20000
 - assertVisible: "Средняя"
 
 # Указать дату рождения (тап по полю → ОК). QuickCalcBirthDateField
 # устанавливает initialSelectedDateMillis = "1 год назад" когда value=null
 # (см. fallback в QuickCalcBirthDateField.kt) — этого достаточно для smoke E2E:
-# дата валидна, расчёт пройдёт.
+# дата валидна, расчёт пройдёт. scrollUntilVisible — date field ниже species selector.
+- scrollUntilVisible:
+    element:
+      id: "quick_calc_birth_date_field"
+    direction: DOWN
+    timeout: 20000
 - tapOn:
     id: "quick_calc_birth_date_field"
 - tapOn: "ОК"

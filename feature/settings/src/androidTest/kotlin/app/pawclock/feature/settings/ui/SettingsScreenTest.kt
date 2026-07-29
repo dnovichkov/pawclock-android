@@ -6,10 +6,18 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import app.pawclock.domain.export.ExportFormat
+import app.pawclock.domain.import_.ImportStrategy
 import app.pawclock.feature.settings.SettingsEvent
 import app.pawclock.feature.settings.SettingsState
+import app.pawclock.feature.settings.ui.section.EXPORT_DIALOG_TEST_TAG
+import app.pawclock.feature.settings.ui.section.EXPORT_ROW_TEST_TAG
+import app.pawclock.feature.settings.ui.section.IMPORT_DIALOG_TEST_TAG
+import app.pawclock.feature.settings.ui.section.IMPORT_ROW_TEST_TAG
 import app.pawclock.feature.settings.ui.section.LanguageOption
 import app.pawclock.feature.settings.ui.section.calculationMethodOptionTag
+import app.pawclock.feature.settings.ui.section.exportFormatOptionTag
+import app.pawclock.feature.settings.ui.section.importStrategyOptionTag
 import app.pawclock.feature.settings.ui.section.languageOptionTag
 import app.pawclock.feature.settings.ui.section.themeModeOptionTag
 import app.pawclock.model.CalculationMethod
@@ -163,5 +171,119 @@ class SettingsScreenTest {
 
         // "Назад" — contentDescription у IconButton в topBar.
         composeRule.onNodeWithText("Настройки").assertIsDisplayed()
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Plan 2 (§3.5) — секция «Резервная копия».
+    // ---------------------------------------------------------------------------------------------
+
+    @Test
+    fun backup_exportRowVisible() {
+        composeRule.setContent {
+            SettingsContent(
+                state = SettingsState.Default,
+                onEvent = { },
+                onBack = { },
+                onOpenAbout = { },
+            )
+        }
+
+        composeRule.onNodeWithTag(EXPORT_ROW_TEST_TAG).assertIsDisplayed()
+    }
+
+    @Test
+    fun backup_importRowVisible() {
+        composeRule.setContent {
+            SettingsContent(
+                state = SettingsState.Default,
+                onEvent = { },
+                onBack = { },
+                onOpenAbout = { },
+            )
+        }
+
+        composeRule.onNodeWithTag(IMPORT_ROW_TEST_TAG).assertIsDisplayed()
+    }
+
+    @Test
+    fun backup_clickingExportShowsFormatDialog() {
+        composeRule.setContent {
+            SettingsContent(
+                state = SettingsState.Default,
+                onEvent = { },
+                onBack = { },
+                onOpenAbout = { },
+            )
+        }
+
+        composeRule.onNodeWithTag(EXPORT_ROW_TEST_TAG).performClick()
+
+        composeRule.onNodeWithTag(EXPORT_DIALOG_TEST_TAG).assertIsDisplayed()
+        composeRule.onNode(hasTestTag(exportFormatOptionTag(ExportFormat.JSON))).assertIsDisplayed()
+        composeRule.onNode(hasTestTag(exportFormatOptionTag(ExportFormat.CSV))).assertIsDisplayed()
+    }
+
+    @Test
+    fun backup_clickingImportShowsStrategyDialog() {
+        composeRule.setContent {
+            SettingsContent(
+                state = SettingsState.Default,
+                onEvent = { },
+                onBack = { },
+                onOpenAbout = { },
+            )
+        }
+
+        composeRule.onNodeWithTag(IMPORT_ROW_TEST_TAG).performClick()
+
+        composeRule.onNodeWithTag(IMPORT_DIALOG_TEST_TAG).assertIsDisplayed()
+        composeRule.onNode(hasTestTag(importStrategyOptionTag(ImportStrategy.MERGE))).assertIsDisplayed()
+        composeRule.onNode(hasTestTag(importStrategyOptionTag(ImportStrategy.REPLACE))).assertIsDisplayed()
+    }
+
+    @Test
+    fun backup_confirmingExportFormatInvokesCallback() {
+        val chosenFormats = mutableListOf<ExportFormat>()
+        composeRule.setContent {
+            SettingsContent(
+                state = SettingsState.Default,
+                onEvent = { },
+                onBack = { },
+                onOpenAbout = { },
+                onExportFormatChosen = chosenFormats::add,
+            )
+        }
+
+        composeRule.onNodeWithTag(EXPORT_ROW_TEST_TAG).performClick()
+        composeRule.onNode(hasTestTag(exportFormatOptionTag(ExportFormat.CSV))).performClick()
+        composeRule.onNodeWithText("Продолжить").performClick()
+
+        assertTrue(
+            "Confirming export dialog must invoke onExportFormatChosen with the selected format",
+            chosenFormats == listOf(ExportFormat.CSV),
+        )
+    }
+
+    @Test
+    fun backup_confirmingImportStrategyInvokesCallback() {
+        val chosenStrategies = mutableListOf<ImportStrategy>()
+        composeRule.setContent {
+            SettingsContent(
+                state = SettingsState.Default,
+                onEvent = { },
+                onBack = { },
+                onOpenAbout = { },
+                onImportStrategyChosen = chosenStrategies::add,
+            )
+        }
+
+        composeRule.onNodeWithTag(IMPORT_ROW_TEST_TAG).performClick()
+        composeRule.onNode(hasTestTag(importStrategyOptionTag(ImportStrategy.REPLACE))).performClick()
+        composeRule.onNodeWithText("Продолжить").performClick()
+
+        assertTrue(
+            "Confirming import dialog must invoke onImportStrategyChosen with the selected strategy",
+            chosenStrategies == listOf(ImportStrategy.REPLACE),
+        )
     }
 }

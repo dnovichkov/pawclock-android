@@ -11,11 +11,11 @@
 [![Google Play](https://img.shields.io/badge/Google%20Play-pending-lightgrey)](https://play.google.com/store/apps/details?id=app.pawclock)
 [![F-Droid](https://img.shields.io/badge/F--Droid-planned%20(Plan%203)-lightgrey)](https://f-droid.org/packages/app.pawclock/)
 
-> **Статус проекта:** Plan 1 (foundation + Dog/Cat MVP). Поддерживаются собаки и кошки. Остальные 10 групп животных (см. §4 спецификации) приедут в Plan 2.
+> **Статус проекта:** полный MVP v1.0, готов к релизу. Поддерживаются **все 12 групп животных** (§4 спецификации): собака, кошка, кролик, хомяк, морская свинка, крыса, мышь, хорёк, птица, рептилия, лошадь, рыба. Реализованы экспорт/импорт данных (JSON/CSV через SAF, §3.5); care-рекомендации по стадиям жизни наполнены реальным контентом по опубликованным ветеринарным guidelines (§14, см. [ADR-0010](docs/adr/0010-care-content-from-published-guidelines.md)).
 
 ## Screenshots
 
-<!-- TODO: добавить реальные screenshots после первого release (Plan 2). -->
+<!-- TODO: добавить реальные screenshots после первого release (отдельный graphic pass, см. fastlane/README.md). -->
 
 | PetsList | PetDetail | QuickCalculator |
 |---|---|---|
@@ -29,15 +29,18 @@
 
 PawClock существует, потому что среди бесплатных Android-калькуляторов возраста животных:
 
-1. **Большинство забиты рекламой и трекерами.** PawClock не имеет ни сети, ни аналитики, ни рекламы — Data Safety «No data collected».
-2. **Большинство используют миф «умножь на 7».** PawClock применяет научно опубликованные формулы:
+1. **Самый широкий список видов.** PawClock поддерживает **все 12 групп животных** — собака, кошка, кролик, хомяк, морская свинка, крыса, мышь, хорёк, птица, рептилия, лошадь, рыба — с отдельной научной формулой и стадиями жизни для каждой (§4). Это ключевое USP среди бесплатных аналогов (§1.3).
+2. **Большинство забиты рекламой и трекерами.** PawClock не имеет ни сети, ни аналитики, ни рекламы — Data Safety «No data collected».
+3. **Большинство используют миф «умножь на 7».** PawClock применяет научно опубликованные формулы:
    - **Собаки:** Wang et al. 2020 (Cell Systems, DOI [10.1016/j.cels.2020.06.006](https://doi.org/10.1016/j.cels.2020.06.006)) — эпигенетическая формула `16 · ln(age) + 31`. Альтернатива — табличный метод AKC/AAHA 2019 с разбиением по размеру (Toy/Small/Medium/Large/Giant).
    - **Кошки:** AAHA/AAFP 2021 (DOI [10.1177/1098612X21993657](https://doi.org/10.1177/1098612X21993657)) — кусочная формула с поправками на outdoor/large breed.
-3. **Большинство не знают про стадии жизни.** PawClock определяет текущую стадию (Puppy/Kitten → YoungAdult → MatureAdult → Senior → EndOfLife) по AAHA 2019 и AAHA/AAFP 2021.
-4. **Большинство не локализованы.** PawClock — ru (default) + en с корректными CLDR plurals (`1 год` / `2 года` / `5 лет`).
-5. **Material You.** Динамические цвета на Android 12+, тональная палитра fallback на старых версиях.
-6. **Малый APK.** Целевой размер < 8 МБ release. Достижимо благодаря отсутствию Firebase / GMS / ads-SDK и lightweight-зависимостям.
-7. **Open source.** Apache 2.0, готовится публикация в F-Droid (Plan 3).
+   - **Экзотика:** кусочные формулы (Rabbit, Hamster, GuineaPig, Ferret), линейная Sengupta 2013 (Rat), Dutta & Sengupta 2016 (Mouse), 3-фазная AAEP (Horse) и scalar-ratio `age · 80 / lifespan` (Bird, Reptile, Fish) — каждая с KDoc-ссылкой на первоисточник.
+4. **Перенос данных между устройствами.** Экспорт/импорт всех питомцев в JSON (версионируемая схема) или CSV через Storage Access Framework — без облака и аккаунтов (§3.5).
+5. **Большинство не знают про стадии жизни.** PawClock определяет текущую стадию (например, Puppy/Kitten → YoungAdult → MatureAdult → Senior → EndOfLife) для каждого вида по соответствующим ветеринарным руководствам.
+6. **Большинство не локализованы.** PawClock — ru (default) + en с корректными CLDR plurals (`1 год` / `2 года` / `5 лет`).
+7. **Material You.** Динамические цвета на Android 12+, тональная палитра fallback на старых версиях.
+8. **Малый APK.** Целевой размер < 8 МБ release. Достижимо благодаря отсутствию Firebase / GMS / ads-SDK и lightweight-зависимостям.
+9. **Open source.** Apache 2.0, публикация в F-Droid запланирована на v1.1.
 
 Подробное сравнение с конкурентами — см. [§2 спецификации](docs/specs/pawclock-specification.md#2-анализ-конкурентов).
 
@@ -45,9 +48,9 @@ PawClock существует, потому что среди бесплатны
 
 PawClock пока **не опубликован** в магазинах. Доступные способы установки в текущей версии:
 
-- **Google Play:** _появится после Plan 2_
-- **APK from GitHub Releases:** _появится после первого тегированного релиза (см. [docs/RELEASE.md](docs/RELEASE.md))_
-- **F-Droid:** _запланировано на Plan 3_
+- **Google Play:** появится после первой публикации; сборка `bundleRelease` по тегу `v1.0.0` готова (см. [docs/RELEASE.md](docs/RELEASE.md)).
+- **APK from GitHub Releases:** появится после первого тегированного релиза (`v1.0.0-rc1` → workflow `release.yml`).
+- **F-Droid:** запланировано на v1.1 (§12.2).
 
 Для сборки локально из исходников — см. раздел **Development** ниже.
 
@@ -87,7 +90,7 @@ app/                 — :app модуль (Application, MainActivity, NavHost, 
 core/                — :core:* библиотеки (model, calculator, database, datastore, domain, designsystem)
 feature/             — :feature:* экраны (pets, editor, quickcalc, settings)
 docs/                — ARCHITECTURE, TESTING, CONTRIBUTING, RELEASE + ADR + specs + plans
-maestro/             — E2E flow'ы (create_first_pet, quick_calc_dog)
+maestro/             — E2E flow'ы (create_first_pet, quick_calc_dog/rabbit/bird/horse, export_import_roundtrip)
 scripts/             — pre-commit и verify-* скрипты
 gradle/              — version catalog (libs.versions.toml) и wrapper
 ```
@@ -146,8 +149,9 @@ PawClock — **No data collected, no data shared** (Google Play Data Safety):
 - ❌ Без аккаунтов и облачной синхронизации.
 - ✅ Все профили питомцев хранятся локально в Room SQLite (`/data/data/app.pawclock/databases/pawclock.db`).
 - ✅ Все настройки — в DataStore Preferences (локально).
-- ✅ Фото питомца (опционально) — через Photo Picker (`ACTION_PICK_IMAGES`) **без runtime-разрешений** на READ_MEDIA_IMAGES.
+- ✅ Стилизованные векторные иконки видов вместо фото питомца — приложению не нужны разрешения на доступ к медиа (фото-пикер отложён на будущие версии).
 
+Полная политика конфиденциальности (ru + en) — [docs/PRIVACY.md](docs/PRIVACY.md).
 Подробности — [§9 спецификации](docs/specs/pawclock-specification.md#9-приватность-и-безопасность).
 
 ## Sources

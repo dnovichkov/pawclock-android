@@ -7,8 +7,10 @@ package app.pawclock.model
  *  - стабильный [id] для сериализации в Room/DataStore/JSON care-recommendations;
  *  - флаг [isImplemented], показывающий, реализована ли формула расчёта возраста и стадии жизни.
  *
- * В рамках Plan 1 реализованы только [Dog] и [Cat] (см. §4.1, §4.2 спецификации).
- * Остальные виды объявлены как stubs для совместимости UI и будущей реализации в Plan 2.
+ * После Plan 2 (Task 10) реализованы все 12 видов — полный MVP v1.0 (§12.1): у каждого есть
+ * формула расчёта возраста ([app.pawclock.calculator.AgeCalculator]) и стадий жизни
+ * ([app.pawclock.calculator.LifeStageCalculator]). Флаг [isImplemented] сохранён для совместимости
+ * API и на случай добавления новых видов-stub в будущих планах.
  *
  * См. спецификацию PawClock §4 "Поддерживаемые виды животных".
  */
@@ -20,25 +22,25 @@ sealed class Species(
 
     data object Cat : Species(id = "cat", isImplemented = true)
 
-    data object Rabbit : Species(id = "rabbit", isImplemented = false)
+    data object Rabbit : Species(id = "rabbit", isImplemented = true)
 
-    data object Hamster : Species(id = "hamster", isImplemented = false)
+    data object Hamster : Species(id = "hamster", isImplemented = true)
 
-    data object GuineaPig : Species(id = "guinea_pig", isImplemented = false)
+    data object GuineaPig : Species(id = "guinea_pig", isImplemented = true)
 
-    data object Rat : Species(id = "rat", isImplemented = false)
+    data object Rat : Species(id = "rat", isImplemented = true)
 
-    data object Mouse : Species(id = "mouse", isImplemented = false)
+    data object Mouse : Species(id = "mouse", isImplemented = true)
 
-    data object Ferret : Species(id = "ferret", isImplemented = false)
+    data object Ferret : Species(id = "ferret", isImplemented = true)
 
-    data object Bird : Species(id = "bird", isImplemented = false)
+    data object Bird : Species(id = "bird", isImplemented = true)
 
-    data object Reptile : Species(id = "reptile", isImplemented = false)
+    data object Reptile : Species(id = "reptile", isImplemented = true)
 
-    data object Horse : Species(id = "horse", isImplemented = false)
+    data object Horse : Species(id = "horse", isImplemented = true)
 
-    data object Fish : Species(id = "fish", isImplemented = false)
+    data object Fish : Species(id = "fish", isImplemented = true)
 
     companion object {
         fun all(): List<Species> =

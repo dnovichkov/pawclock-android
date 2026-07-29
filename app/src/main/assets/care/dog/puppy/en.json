@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO (Plan 1 placeholder): scientifically-backed description of the puppy stage (birth — sexual maturity, ~9 months for most sizes). Text will be replaced in Plan 2 after veterinarian review.",
-  "nutrition": "TODO: feeding recommendations for puppies (4–5 meals/day, puppy-specific food, switch to adult food after sexual maturity). Source: AAHA 2019.",
-  "activity": "TODO: short play sessions, active socialization (3–16 weeks — critical window), gentle exercise for growing joints.",
-  "veterinary_check_frequency": "TODO: every 3–4 weeks until 16 weeks (vaccinations), then at 6 months. Source: AAHA 2019.",
-  "dental_care": "TODO: daily brushing with puppy toothpaste from early age — builds habit.",
-  "warning_signs": "TODO: diarrhea, vomiting, no appetite for over 12 hours, lethargy, pale gums.",
+  "stage_description": "The puppy stage runs from birth to social and sexual maturity (roughly 6–15 months; small breeds mature faster than giant ones). It is a period of rapid skeletal and muscular growth, immune development, and behavioral shaping. The critical socialization window falls between 3 and 14 weeks, when the puppy should calmly meet people, other animals, sounds, and surfaces. The core vaccination series and house-training happen during this stage.",
+  "nutrition": "Food labeled for puppies, with higher protein and calories for growth. Large- and giant-breed puppies need a dedicated large-breed puppy formula that slows growth and protects developing joints. Feed 3–4 times a day and transition to adult food as the puppy approaches maturity.",
+  "activity": "Short, frequent play sessions rather than long exertion. For large breeds, avoid jumping from heights, slippery floors, and forced runs until the growth plates close. The main goals are gentle socialization and basic obedience with positive reinforcement.",
+  "veterinary_check_frequency": "Visits every 3–4 weeks until about 16 weeks for the vaccination series (distemper, parvovirus, hepatitis, rabies) and deworming. Spay/neuter and parasite prevention are discussed at these appointments.",
+  "dental_care": "Deciduous teeth are replaced by permanent teeth by about 6–7 months; the veterinarian checks for retained baby teeth and a correct bite. Introduce toothbrushing early to build lifelong tolerance.",
+  "warning_signs": "Lethargy, refusing food, vomiting and diarrhea (parvovirus risk), failure to gain weight, coughing, or limping. Puppies decline very quickly, so seek veterinary care promptly if these appear.",
   "source_url": "https://www.aaha.org/practice-resources/2019-aaha-canine-life-stage-guidelines/",
   "source_name": "AAHA 2019 Canine Life Stage Guidelines",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

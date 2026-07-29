@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO (Plan 1 placeholder): scientifically-backed description of the senior stage (size-dependent: Toy/Small 11+ years, Medium 9+, Large 7+, Giant 5+). Text will be replaced in Plan 2.",
-  "nutrition": "TODO: senior dog food, increased protein with preserved kidney function, joint supplements.",
-  "activity": "TODO: gentle walks, swimming, avoid jumping from heights. Maintain muscle mass.",
-  "veterinary_check_frequency": "TODO: exams every 6 months, blood chemistry, urinalysis, blood pressure monitoring. Source: AAHA 2019.",
-  "dental_care": "TODO: regular dental evaluation — periodontal disease is particularly common at this stage.",
-  "warning_signs": "TODO: disorientation, tremors, changes in toileting habits, hearing or vision loss, signs of pain.",
+  "stage_description": "The senior stage begins in the last quarter of expected lifespan and depends heavily on size: small breeds from 11+ years, medium from 9+, large from 7+, and giant breeds from 5–6 years. Age-related changes appear: lower activity, possible joint, vision, and hearing problems, and cognitive decline. The goal of care is early disease detection and maintaining comfort and quality of life.",
+  "nutrition": "A senior formula with digestible protein (given healthy kidney function) and calorie control. Joint supplements may be indicated; any dietary change should be discussed with the veterinarian, especially where chronic disease is present.",
+  "activity": "Gentle, regular walks and swimming to maintain muscle and joint mobility; avoid jumping and sudden exertion. Mental enrichment helps slow cognitive aging and keeps the dog engaged.",
+  "veterinary_check_frequency": "Exams every 6 months with blood chemistry, urinalysis, and blood-pressure monitoring to catch age-related disease early.",
+  "dental_care": "Regular dental assessment — periodontal disease is particularly common at this stage and can affect the heart and kidneys. Professional cleaning is done as indicated, weighing anesthetic risk.",
+  "warning_signs": "Disorientation, tremors, changes in toileting habits, hearing or vision loss, noticeable weight loss, signs of pain, and limping. Any of these warrants a veterinary evaluation.",
   "source_url": "https://www.aaha.org/practice-resources/2019-aaha-canine-life-stage-guidelines/",
   "source_name": "AAHA 2019 Canine Life Stage Guidelines",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

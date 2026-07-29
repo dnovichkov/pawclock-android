@@ -1,10 +1,10 @@
 {
-  "stage_description": "TODO (Plan 1 placeholder): scientifically-backed description of the young adult stage (1–6 years). Text will be replaced in Plan 2.",
-  "nutrition": "TODO: quality adult cat food, 2 meals/day, weight management (obesity is a common problem).",
-  "activity": "TODO: daily 15–20 minute play sessions, environmental enrichment (shelves, scratchers, hiding spots).",
-  "veterinary_check_frequency": "TODO: annual exams, annual vaccinations, parasite prevention. Source: AAHA/AAFP 2021.",
-  "dental_care": "TODO: daily teeth brushing, oral assessment at annual exam.",
-  "warning_signs": "TODO: changes in appetite or thirst, weight loss or gain, behavioral changes.",
+  "stage_description": "Young adulthood runs from 1 to 6 years (AAHA/AAFP 2021). The cat is in its prime, physically and socially mature. Indoor cats at this stage are especially prone to weight gain and boredom when under-stimulated, while cats with outdoor access face injuries and infections that shorten their lives considerably. The main goal is to maintain a healthy weight, activity, and a stable routine.",
+  "nutrition": "A quality adult food, usually two meals a day or portioned feeding; control portions, since obesity is one of the most common problems in indoor cats. Ensure adequate water intake — wet food helps — and make any diet change gradual.",
+  "activity": "Daily 15–20 minute play sessions that mimic hunting, plus environmental enrichment: vertical shelves, scratching posts, hiding spots, and window views. Activity prevents boredom, obesity, and stress-related behavior and urinary problems.",
+  "veterinary_check_frequency": "A routine exam once a year with scheduled boosters, weight checks, and parasite control. The annual visit records a healthy cat's normal values for future comparison.",
+  "dental_care": "Regular toothbrushing with cat-specific paste and an oral assessment at the annual exam. Dental and gum disease is common in cats and often hidden, so preventive monitoring matters.",
+  "warning_signs": "Changes in appetite or thirst, weight loss or gain, changes in behavior, litter-box frequency, or urination. Noticeable departures from the cat's normal state warrant a veterinary visit.",
   "source_url": "https://catvets.com/guidelines/practice-guidelines/feline-life-stage-guidelines/",
   "source_name": "AAHA/AAFP 2021 Feline Life Stage Guidelines",
   "disclaimer": "This information is for educational purposes only and does not replace consultation with a veterinarian."

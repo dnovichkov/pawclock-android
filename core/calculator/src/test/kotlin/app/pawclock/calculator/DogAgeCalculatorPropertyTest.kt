@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test
  * Источник формулы: Wang T. et al. Cell Systems 2020, DOI: 10.1016/j.cels.2020.06.006.
  */
 class DogAgeCalculatorPropertyTest {
-    private val calculator = DogAgeCalculator()
+    private val calculator = DogAgeCalculator
 
     private val config = PropTestConfig(iterations = PROPERTY_ITERATIONS)
 

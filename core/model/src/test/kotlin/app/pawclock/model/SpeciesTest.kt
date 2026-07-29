@@ -1,7 +1,6 @@
 package app.pawclock.model
 
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -49,27 +48,29 @@ class SpeciesTest {
     }
 
     @Test
-    fun `only Dog and Cat are implemented in this plan`() {
-        assertTrue(Species.Dog.isImplemented)
-        assertTrue(Species.Cat.isImplemented)
-        assertFalse(Species.Rabbit.isImplemented)
-        assertFalse(Species.Hamster.isImplemented)
-        assertFalse(Species.GuineaPig.isImplemented)
-        assertFalse(Species.Rat.isImplemented)
-        assertFalse(Species.Mouse.isImplemented)
-        assertFalse(Species.Ferret.isImplemented)
-        assertFalse(Species.Bird.isImplemented)
-        assertFalse(Species.Reptile.isImplemented)
-        assertFalse(Species.Horse.isImplemented)
-        assertFalse(Species.Fish.isImplemented)
+    fun `all twelve species are implemented after Task 10`() {
+        // После Task 10 (Plan 2) реализованы все 12 видов — полный MVP v1.0 по §12.1.
+        Species.all().forEach { species ->
+            assertTrue(species.isImplemented, "${species.id} should be implemented after Task 10")
+        }
     }
 
     @Test
-    fun `implemented returns exactly Dog and Cat`() {
+    fun `implemented returns all twelve species realised through Task 10`() {
         val implemented = Species.implemented()
-        assertEquals(2, implemented.size)
+        assertEquals(12, implemented.size)
         assertTrue(implemented.contains(Species.Dog))
         assertTrue(implemented.contains(Species.Cat))
+        assertTrue(implemented.contains(Species.Rabbit))
+        assertTrue(implemented.contains(Species.Hamster))
+        assertTrue(implemented.contains(Species.GuineaPig))
+        assertTrue(implemented.contains(Species.Rat))
+        assertTrue(implemented.contains(Species.Mouse))
+        assertTrue(implemented.contains(Species.Ferret))
+        assertTrue(implemented.contains(Species.Bird))
+        assertTrue(implemented.contains(Species.Reptile))
+        assertTrue(implemented.contains(Species.Horse))
+        assertTrue(implemented.contains(Species.Fish))
     }
 
     @Test
