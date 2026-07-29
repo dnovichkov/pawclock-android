@@ -30,9 +30,10 @@ jobs:
           java-version: '17'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-home-cache-cleanup: true
+          # v3-имя input'а — gradle-home-cache-cleanup; в v4 переименован.
+          cache-cleanup: on-success
 
       - name: Run :core:calculator tests (TDD canary)
         run: ./gradlew :core:calculator:test --no-daemon --stacktrace
@@ -70,7 +71,7 @@ jobs:
           java-version: '17'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Run ktlint + detekt + Android Lint
         run: ./gradlew ktlintCheck detekt lintDebug --no-daemon --stacktrace
@@ -100,7 +101,7 @@ jobs:
           java-version: '17'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       - name: Assemble debug APK + bundle
         run: ./gradlew assembleDebug bundleDebug --no-daemon --stacktrace
