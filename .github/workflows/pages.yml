@@ -42,12 +42,11 @@ jobs:
           pip install --quiet markdown
           python scripts/build-pages-site.py
 
-      # enablement: true — включает Pages (source: GitHub Actions) через API
-      # при первом запуске, ручной настройки в Settings → Pages не требуется.
+      # Pages включается ОДИН раз вручную: Settings → Pages → Source:
+      # «GitHub Actions». API-создание сайта (enablement: true) недоступно
+      # стандартному GITHUB_TOKEN — «Resource not accessible by integration».
       - name: Configure Pages
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
 
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
