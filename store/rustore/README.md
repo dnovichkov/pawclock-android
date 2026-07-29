@@ -35,8 +35,9 @@ release-keystore, что и для Google Play (`docs/RELEASE.md` → GitHub Sec
 - **Категория**: «Дом и сад» или «Образ жизни» (на усмотрение; приложение —
   утилита для владельцев питомцев).
 - **Возрастной рейтинг**: 0+ (нет UGC, рекламы, покупок, сбора данных).
-- **Политика конфиденциальности**: обязателен публичный URL — контент готов в
-  `docs/PRIVACY.md`, требуется хостинг (GitHub Pages / pawclock.app). Тот же URL
+- **Политика конфиденциальности**:
+  <https://dnovichkov.github.io/pawclock-android/privacy/> (GitHub Pages,
+  публикуется workflow'ом `pages.yml` из `docs/PRIVACY.md`). Тот же URL
   используется для Google Play Data Safety.
 - **Email поддержки**: указать актуальный.
 - **Сбор данных**: приложение не собирает и не передаёт данные (INTERNET

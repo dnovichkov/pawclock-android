@@ -1,6 +1,7 @@
 # Privacy Policy — PawClock
 
-_Last updated: 2026-07-24 · Applies to: PawClock for Android (`app.pawclock`)_
+_Last updated: 2026-07-24 · Applies to: PawClock for Android (`app.pawclock`) ·
+Canonical URL: <https://dnovichkov.github.io/pawclock-android/privacy/>_
 
 PawClock is designed to be private by default. It works fully offline and is built so that
 your data never leaves your device.
@@ -50,7 +51,8 @@ PawClock is open source under the Apache License 2.0. Questions and issues:
 
 # Политика конфиденциальности — PawClock
 
-_Обновлено: 2026-07-24 · Относится к: PawClock для Android (`app.pawclock`)_
+_Обновлено: 2026-07-24 · Относится к: PawClock для Android (`app.pawclock`) ·
+Канонический URL: <https://dnovichkov.github.io/pawclock-android/privacy/>_
 
 PawClock создан приватным по умолчанию. Приложение работает полностью офлайн и устроено так,
 что ваши данные никогда не покидают устройство.

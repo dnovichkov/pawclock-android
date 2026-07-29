@@ -1,0 +1,67 @@
+name: Pages
+
+# Публикация privacy policy на GitHub Pages:
+# https://dnovichkov.github.io/pawclock-android/privacy/
+# Единый источник — docs/PRIVACY.md; конвертация в HTML —
+# scripts/build-pages-site.py. URL используется в Google Play Data Safety
+# и карточке RuStore (store/rustore/README.md).
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/PRIVACY.md'
+      - 'scripts/build-pages-site.py'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Build site from docs/PRIVACY.md
+        run: |
+          pip install --quiet markdown
+          python scripts/build-pages-site.py
+
+      # enablement: true — включает Pages (source: GitHub Actions) через API
+      # при первом запуске, ручной настройки в Settings → Pages не требуется.
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload site artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

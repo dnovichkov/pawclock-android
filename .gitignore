@@ -50,3 +50,4 @@ keystore.properties
 .history/
 .tmp/
 node_modules/
+_site/
