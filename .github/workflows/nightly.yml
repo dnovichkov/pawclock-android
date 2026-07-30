@@ -96,7 +96,10 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot-save -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew connectedDebugAndroidTest --no-daemon --stacktrace
+          # --continue: без него Gradle останавливается после первого модуля с
+          # упавшими тестами, и androidTest-отчёты остальных модулей не генерируются
+          # (джоба всё равно завершится failure — суммарный exit code ненулевой).
+          script: ./gradlew connectedDebugAndroidTest --no-daemon --stacktrace --continue
 
       - name: Upload androidTest reports on failure
         if: failure()
