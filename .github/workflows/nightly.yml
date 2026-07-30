@@ -73,7 +73,9 @@ jobs:
           path: |
             ~/.android/avd/*
             ~/.android/adb*
-          key: avd-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}
+          # profile входит в ключ: без него cache-hit вернул бы старый AVD с
+          # дефолтным крошечным экраном вместо pixel_5.
+          key: avd-${{ matrix.api-level }}-${{ matrix.target }}-${{ matrix.arch }}-pixel5
 
       - name: Create AVD snapshot for cache
         if: steps.avd-cache.outputs.cache-hit != 'true'
@@ -82,6 +84,11 @@ jobs:
           api-level: ${{ matrix.api-level }}
           target: ${{ matrix.target }}
           arch: ${{ matrix.arch }}
+          # Без profile avdmanager создаёт AVD с экраном ~320x480 — на нём низ
+          # длинных экранов (Settings/About/формы) за фолдом, и UI-тесты падали
+          # на assertIsDisplayed/кликах. pixel_5 (1080x2340) соответствует
+          # реальным устройствам целевой аудитории.
+          profile: pixel_5
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot -noaudio -no-boot-anim -camera-back none
           disable-animations: false
@@ -93,6 +100,7 @@ jobs:
           api-level: ${{ matrix.api-level }}
           target: ${{ matrix.target }}
           arch: ${{ matrix.arch }}
+          profile: pixel_5
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot-save -noaudio -no-boot-anim -camera-back none
           disable-animations: true
@@ -161,6 +169,8 @@ jobs:
           api-level: 30
           target: google_apis
           arch: x86_64
+          # Тот же профиль, что и в instrumented-джобах (см. комментарий там).
+          profile: pixel_5
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -no-snapshot-save -noaudio -no-boot-anim -camera-back none
           disable-animations: true
