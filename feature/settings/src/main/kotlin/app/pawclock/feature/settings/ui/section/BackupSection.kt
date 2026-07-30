@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.unit.dp
 import app.pawclock.domain.export.ExportFormat
 import app.pawclock.domain.import_.ImportStrategy
@@ -100,7 +102,13 @@ private fun ExportFormatDialog(
 ) {
     var selected by remember { mutableStateOf(ExportFormat.JSON) }
     AlertDialog(
-        modifier = Modifier.testTag(EXPORT_DIALOG_TEST_TAG),
+        // Диалог — отдельное окно со своим Compose-корнем: testTagsAsResourceId,
+        // включённый на корне MainActivity, сюда не распространяется. Без флага
+        // теги диалога и его опций невидимы для Maestro id-селекторов.
+        modifier =
+            Modifier
+                .semantics { testTagsAsResourceId = true }
+                .testTag(EXPORT_DIALOG_TEST_TAG),
         onDismissRequest = onDismiss,
         title = { Text(text = stringResource(R.string.settings_export_format_dialog_title)) },
         text = {
@@ -139,7 +147,12 @@ private fun ImportStrategyDialog(
 ) {
     var selected by remember { mutableStateOf(ImportStrategy.MERGE) }
     AlertDialog(
-        modifier = Modifier.testTag(IMPORT_DIALOG_TEST_TAG),
+        // См. комментарий у export-диалога: окно диалога требует собственного
+        // testTagsAsResourceId для Maestro.
+        modifier =
+            Modifier
+                .semantics { testTagsAsResourceId = true }
+                .testTag(IMPORT_DIALOG_TEST_TAG),
         onDismissRequest = onDismiss,
         title = { Text(text = stringResource(R.string.settings_import_strategy_dialog_title)) },
         text = {
