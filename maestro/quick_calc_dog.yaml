@@ -1,47 +1,48 @@
 # Maestro E2E flow (§11.10 спецификации, Task 23 / Plan 1).
 #
 # Сценарий: пользователь открывает Quick Calculator (без сохранения в БД) →
-# выбирает «Собака» + «Средняя» + текущую дату → видит результат → переключает
-# метод расчёта (Wang ↔ По размеру) и видит изменённое значение ЧГ.
+# выбирает Dog + Medium + текущую дату → видит результат → переключает
+# метод расчёта (Wang ↔ Size-based) и видит изменённое значение ЧГ.
 #
 # Этот flow покрывает §3.2 спецификации (educational angle про методы расчёта).
 #
 # Запуск:
 #   maestro test maestro/quick_calc_dog.yaml
 #
-# Локаль: русские строки (default по §6).
+# Локаль: английские селекторы — эмулятор CI работает в en-US, values-en
+# перекрывает default (ru). См. комментарий в create_first_pet.yaml.
 appId: app.pawclock.debug
 ---
 - clearState
 - launchApp
 
 # Перейти из PetsList в QuickCalculator через IconButton в TopAppBar (с
-# contentDescription «Быстрый расчёт» — см. PetsListScreen.kt). Раньше тут был
+# contentDescription "Quick calculator" — см. PetsListScreen.kt). Раньше тут был
 # openLink: "pawclock://quickcalc", но manifest не объявляет intent-filter под
 # эту схему (см. ADR-0005 — приложение полностью offline, никаких exported
 # deep-link сюрфейсов), и Maestro гарантированно падал. tapOn по
 # contentDescription устойчиво работает и точно отражает реальный пользовательский
 # путь в Plan 1 UI.
-- tapOn: "Быстрый расчёт"
+- tapOn: "Quick calculator"
 
 # Проверка, что мы внутри Quick Calculator (заголовок экрана идентичен label'у
 # IconButton'а — assertVisible подтверждает переход на новый экран).
-- assertVisible: "Быстрый расчёт"
+- assertVisible: "Quick calculator"
 
-# Выбрать вид «Собака» (1-й chip — всегда в первом ряду FlowRow).
-- tapOn: "Собака"
+# Выбрать вид Dog (1-й chip — всегда в первом ряду FlowRow).
+- tapOn: "Dog"
 
-# Подкатегория «Средняя» (DogSize chip). Plan 2 расширил species selector с 2 до
+# Подкатегория Medium (DogSize chip). Plan 2 расширил species selector с 2 до
 # 12 видов (FlowRow в 3–4 ряда), поэтому subcategory section уезжает под фолд →
 # scrollUntilVisible перед assert (раньше chip был на экране при 2 видах).
 - scrollUntilVisible:
     element:
-      text: "Средняя"
+      text: "Medium"
     direction: DOWN
     timeout: 20000
-- assertVisible: "Средняя"
+- assertVisible: "Medium"
 
-# Указать дату рождения (тап по полю → ОК). QuickCalcBirthDateField
+# Указать дату рождения (тап по полю → OK). QuickCalcBirthDateField
 # устанавливает initialSelectedDateMillis = "1 год назад" когда value=null
 # (см. fallback в QuickCalcBirthDateField.kt) — этого достаточно для smoke E2E:
 # дата валидна, расчёт пройдёт. scrollUntilVisible — date field ниже species selector.
@@ -52,17 +53,17 @@ appId: app.pawclock.debug
     timeout: 20000
 - tapOn:
     id: "quick_calc_birth_date_field"
-- tapOn: "ОК"
+- tapOn: "OK"
 
 # Рассчитать.
 - tapOn:
     id: "quick_calc_calculate_fab"
 
 # Должен появиться result sheet с ЧГ.
-- assertVisible: "В человеческих годах"
+- assertVisible: "In human years"
 
-# Переключить метод расчёта внутри bottom-sheet'а (Wang → По размеру).
-- tapOn: "По размеру"
+# Переключить метод расчёта внутри bottom-sheet'а (Wang → Size-based).
+- tapOn: "Size-based"
 
 # Sheet остаётся открытым; ЧГ автоматически пересчитывается без явного Calculate.
-- assertVisible: "В человеческих годах"
+- assertVisible: "In human years"

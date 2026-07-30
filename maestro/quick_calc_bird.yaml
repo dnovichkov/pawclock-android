@@ -1,13 +1,14 @@
 # Maestro E2E flow (§11.10 спецификации, Task 23 / Plan 2).
 #
-# Сценарий: Quick Calculator для птицы → выбор подкатегории «Корелла» (Cockatiel)
+# Сценарий: Quick Calculator для птицы → выбор подкатегории Cockatiel («Корелла»)
 # из BirdType dropdown → расчёт. Покрывает расширение Plan 2 Tasks 7/16 (scalar-ratio
 # формула AAV + species-aware subcategory selector с 10 типами птиц).
 #
 # Запуск:
 #   maestro test maestro/quick_calc_bird.yaml
 #
-# Локаль: русские строки (default по §6).
+# Локаль: английские селекторы — эмулятор CI работает в en-US, values-en
+# перекрывает default (ru). См. комментарий в create_first_pet.yaml.
 #
 # Эталонное значение ЧГ (cockatiel 5 лет ≈ 26.7 ЧГ по §4.8) не ассертится: дефолтная
 # дата = «1 год назад», вождение DatePicker к точной дате хрупко (см. комментарий в
@@ -17,25 +18,25 @@ appId: app.pawclock.debug
 - clearState
 - launchApp
 
-- tapOn: "Быстрый расчёт"
-- assertVisible: "Быстрый расчёт"
+- tapOn: "Quick calculator"
+- assertVisible: "Quick calculator"
 
-# Выбрать вид «Птица» (9-й chip в FlowRow — может быть под фолдом, поэтому scroll).
+# Выбрать вид Bird (9-й chip в FlowRow — может быть под фолдом, поэтому scroll).
 - scrollUntilVisible:
     element:
-      text: "Птица"
+      text: "Bird"
     direction: DOWN
     timeout: 20000
-- tapOn: "Птица"
+- tapOn: "Bird"
 
-# Subcategory dropdown для птицы (BirdType). «Корелла» = bird_type_cockatiel.
+# Subcategory dropdown для птицы (BirdType). Cockatiel = bird_type_cockatiel.
 - scrollUntilVisible:
     element:
-      text: "Корелла"
+      text: "Cockatiel"
     direction: DOWN
     timeout: 20000
-- assertVisible: "Корелла"
-- tapOn: "Корелла"
+- assertVisible: "Cockatiel"
+- tapOn: "Cockatiel"
 
 # Указать дату рождения (дефолт = «1 год назад»).
 - scrollUntilVisible:
@@ -45,9 +46,9 @@ appId: app.pawclock.debug
     timeout: 20000
 - tapOn:
     id: "quick_calc_birth_date_field"
-- tapOn: "ОК"
+- tapOn: "OK"
 
 - tapOn:
     id: "quick_calc_calculate_fab"
 
-- assertVisible: "В человеческих годах"
+- assertVisible: "In human years"

@@ -1,15 +1,19 @@
 # Maestro E2E flow (§11.10 спецификации, Task 23 / Plan 1).
 #
 # Сценарий: пользователь впервые открывает приложение → видит пустой стейт →
-# добавляет первого питомца (имя «Барсик», вид «Кошка», дата сегодняшняя по умолчанию) →
+# добавляет первого питомца (имя «Барсик», вид Cat, дата сегодняшняя по умолчанию) →
 # попадает на PetDetail с расчётом ЧГ и LifeStage.
 #
 # Запуск:
 #   maestro test maestro/create_first_pet.yaml
 #
-# Локаль: тест полагается на русские строки (default по §6). Применённая локаль
-# определяется системой эмулятора; для CI nightly.yml эмулятор стартует с
-# русской локалью при необходимости (см. nightly.yml).
+# Локаль: текстовые селекторы — АНГЛИЙСКИЕ. Эмулятор CI (и большинство локальных
+# AVD) работает в en-US, поэтому values-en перекрывает default (ru). Русские
+# строки здесь ломали каждый прогон. Имена питомцев — данные, не ресурсы,
+# и остаются кириллицей намеренно (заодно проверяют ввод кириллицы).
+#
+# FAB'ы и поля адресуются по id (Modifier.testTag → resource-id благодаря
+# testTagsAsResourceId на корне иерархии в MainActivity) — id не зависят от локали.
 #
 # applicationId — debug-вариант (см. app/build.gradle.kts applicationIdSuffix=".debug").
 appId: app.pawclock.debug
@@ -20,33 +24,35 @@ appId: app.pawclock.debug
 - launchApp
 
 # Проверка пустого стейта.
-- assertVisible: "Питомцы"
-- assertVisible: "Добавьте первого питомца"
+- assertVisible: "Pets"
+- assertVisible: "Add your first pet"
 
-# Открыть PetEditor через FAB «Добавить».
-- tapOn: "Добавить"
+# Открыть PetEditor через FAB (текст Extended FAB вычищен из semantics в M3 1.4,
+# поэтому по id, а не по тексту).
+- tapOn:
+    id: "pets_list_add_fab"
 
 # Заполнить имя.
-- assertVisible: "Новый питомец"
+- assertVisible: "New pet"
 - tapOn:
     id: "pet_editor_name_field"
 - inputText: "Барсик"
 # Скрыть клавиатуру, чтобы FAB Save был доступен на маленьких экранах.
 - hideKeyboard
 
-# Выбрать вид «Кошка» через FilterChip (2-й chip, всегда в первом ряду FlowRow).
-- tapOn: "Кошка"
+# Выбрать вид Cat через FilterChip (2-й chip, всегда в первом ряду FlowRow).
+- tapOn: "Cat"
 
-# Подкатегория «Домашняя короткошёрстная» — chip кошачьего subcategory selector.
+# Подкатегория Indoor short-hair — chip кошачьего subcategory selector.
 # Plan 2 расширил species selector с 2 до 12 видов (FlowRow в 3–4 ряда), поэтому
 # subcategory section уезжает под фолд → нужен scrollUntilVisible перед assert
 # (раньше chip был на экране при 2 видах). scroll — no-op, если уже видно.
 - scrollUntilVisible:
     element:
-      text: "Домашняя короткошёрстная"
+      text: "Indoor short-hair"
     direction: DOWN
     timeout: 20000
-- assertVisible: "Домашняя короткошёрстная"
+- assertVisible: "Indoor short-hair"
 
 # Открыть DatePicker и подтвердить. BirthDateField устанавливает
 # initialSelectedDateMillis = "1 год назад" когда value=null (см. fallback
@@ -60,7 +66,7 @@ appId: app.pawclock.debug
     timeout: 20000
 - tapOn:
     id: "pet_editor_birth_date_field"
-- tapOn: "ОК"
+- tapOn: "OK"
 
 # Сохранить.
 - tapOn:
@@ -68,5 +74,5 @@ appId: app.pawclock.debug
 
 # После save'а навигация возвращается в PetsList; должна появиться карточка
 # с именем «Барсик».
-- assertVisible: "Питомцы"
+- assertVisible: "Pets"
 - assertVisible: "Барсик"

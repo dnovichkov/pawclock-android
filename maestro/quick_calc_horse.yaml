@@ -1,13 +1,14 @@
 # Maestro E2E flow (§11.10 спецификации, Task 23 / Plan 2).
 #
-# Сценарий: Quick Calculator для лошади → выбор подкатегории «Верховая» (LightHorse) →
-# расчёт. Покрывает расширение Plan 2 Tasks 9/16 (3-фазная формула AAEP + HorseType
-# subcategory selector).
+# Сценарий: Quick Calculator для лошади → выбор подкатегории Light horse
+# («Верховая») → расчёт. Покрывает расширение Plan 2 Tasks 9/16 (3-фазная формула
+# AAEP + HorseType subcategory selector).
 #
 # Запуск:
 #   maestro test maestro/quick_calc_horse.yaml
 #
-# Локаль: русские строки (default по §6).
+# Локаль: английские селекторы — эмулятор CI работает в en-US, values-en
+# перекрывает default (ru). См. комментарий в create_first_pet.yaml.
 #
 # Эталонное значение ЧГ (лошадь 10 лет = 35.5 ЧГ по §4.10) не ассертится: дефолтная
 # дата = «1 год назад» (лошадь 1 год = 6.5 ЧГ), вождение DatePicker к точной дате
@@ -18,25 +19,25 @@ appId: app.pawclock.debug
 - clearState
 - launchApp
 
-- tapOn: "Быстрый расчёт"
-- assertVisible: "Быстрый расчёт"
+- tapOn: "Quick calculator"
+- assertVisible: "Quick calculator"
 
-# Выбрать вид «Лошадь» (11-й chip в FlowRow — почти наверняка под фолдом, scroll).
+# Выбрать вид Horse (11-й chip в FlowRow — почти наверняка под фолдом, scroll).
 - scrollUntilVisible:
     element:
-      text: "Лошадь"
+      text: "Horse"
     direction: DOWN
     timeout: 20000
-- tapOn: "Лошадь"
+- tapOn: "Horse"
 
-# Subcategory dropdown для лошади (HorseType). «Верховая» = horse_type_light_horse.
+# Subcategory dropdown для лошади (HorseType). Light horse = horse_type_light_horse.
 - scrollUntilVisible:
     element:
-      text: "Верховая"
+      text: "Light horse"
     direction: DOWN
     timeout: 20000
-- assertVisible: "Верховая"
-- tapOn: "Верховая"
+- assertVisible: "Light horse"
+- tapOn: "Light horse"
 
 # Указать дату рождения (дефолт = «1 год назад»).
 - scrollUntilVisible:
@@ -46,9 +47,9 @@ appId: app.pawclock.debug
     timeout: 20000
 - tapOn:
     id: "quick_calc_birth_date_field"
-- tapOn: "ОК"
+- tapOn: "OK"
 
 - tapOn:
     id: "quick_calc_calculate_fab"
 
-- assertVisible: "В человеческих годах"
+- assertVisible: "In human years"
