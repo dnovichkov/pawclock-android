@@ -149,11 +149,14 @@ class QuickCalcScreenTest {
             )
         }
 
+        // Банер в конце формы — скроллим, чтобы не зависеть от высоты экрана.
         composeRule
             .onNodeWithText("• " + string(R.string.quick_calc_error_species_required))
+            .performScrollTo()
             .assertIsDisplayed()
         composeRule
             .onNodeWithText("• " + string(R.string.quick_calc_error_birth_date_required))
+            .performScrollTo()
             .assertIsDisplayed()
     }
 
@@ -174,8 +177,13 @@ class QuickCalcScreenTest {
             )
         }
 
-        // Method toggle секция — Wang/SizeBased для собак.
-        composeRule.onNodeWithText(string(R.string.quick_calc_method_size_based)).performClick()
+        // Method toggle секция — Wang/SizeBased для собак. Секция в конце формы —
+        // на маленьких экранах за фолдом: без скролла тап уходит мимо кнопки
+        // (узел находится, но клик по координатам вне видимой области не доходит).
+        composeRule
+            .onNodeWithText(string(R.string.quick_calc_method_size_based))
+            .performScrollTo()
+            .performClick()
 
         assertTrue(
             "Click on SizeBased button must produce SetMethod(SIZE_BASED)",

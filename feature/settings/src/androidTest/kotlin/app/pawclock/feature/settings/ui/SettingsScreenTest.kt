@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.platform.app.InstrumentationRegistry
 import app.pawclock.domain.export.ExportFormat
 import app.pawclock.domain.import_.ImportStrategy
@@ -134,8 +135,10 @@ class SettingsScreenTest {
             )
         }
 
+        // Секция метода — ниже theme/language: на маленьких экранах за фолдом.
         composeRule
             .onNode(hasTestTag(calculationMethodOptionTag(CalculationMethod.SIZE_BASED)))
+            .performScrollTo()
             .performClick()
 
         assertTrue(
@@ -159,7 +162,7 @@ class SettingsScreenTest {
             )
         }
 
-        composeRule.onNodeWithTag(ABOUT_ROW_TEST_TAG).performClick()
+        composeRule.onNodeWithTag(ABOUT_ROW_TEST_TAG).performScrollTo().performClick()
 
         assertTrue("About row click must trigger onOpenAbout callback", aboutOpened)
     }
@@ -194,7 +197,8 @@ class SettingsScreenTest {
             )
         }
 
-        composeRule.onNodeWithTag(EXPORT_ROW_TEST_TAG).assertIsDisplayed()
+        // Секция «Резервная копия» — в самом низу экрана настроек, скроллим к ней.
+        composeRule.onNodeWithTag(EXPORT_ROW_TEST_TAG).performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -208,7 +212,7 @@ class SettingsScreenTest {
             )
         }
 
-        composeRule.onNodeWithTag(IMPORT_ROW_TEST_TAG).assertIsDisplayed()
+        composeRule.onNodeWithTag(IMPORT_ROW_TEST_TAG).performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -222,8 +226,9 @@ class SettingsScreenTest {
             )
         }
 
-        composeRule.onNodeWithTag(EXPORT_ROW_TEST_TAG).performClick()
+        composeRule.onNodeWithTag(EXPORT_ROW_TEST_TAG).performScrollTo().performClick()
 
+        // Диалог — отдельное окно поверх экрана, ему скролл не нужен.
         composeRule.onNodeWithTag(EXPORT_DIALOG_TEST_TAG).assertIsDisplayed()
         composeRule.onNode(hasTestTag(exportFormatOptionTag(ExportFormat.JSON))).assertIsDisplayed()
         composeRule.onNode(hasTestTag(exportFormatOptionTag(ExportFormat.CSV))).assertIsDisplayed()
@@ -240,7 +245,7 @@ class SettingsScreenTest {
             )
         }
 
-        composeRule.onNodeWithTag(IMPORT_ROW_TEST_TAG).performClick()
+        composeRule.onNodeWithTag(IMPORT_ROW_TEST_TAG).performScrollTo().performClick()
 
         composeRule.onNodeWithTag(IMPORT_DIALOG_TEST_TAG).assertIsDisplayed()
         composeRule.onNode(hasTestTag(importStrategyOptionTag(ImportStrategy.MERGE))).assertIsDisplayed()
@@ -260,7 +265,7 @@ class SettingsScreenTest {
             )
         }
 
-        composeRule.onNodeWithTag(EXPORT_ROW_TEST_TAG).performClick()
+        composeRule.onNodeWithTag(EXPORT_ROW_TEST_TAG).performScrollTo().performClick()
         composeRule.onNode(hasTestTag(exportFormatOptionTag(ExportFormat.CSV))).performClick()
         composeRule.onNodeWithText(string(R.string.settings_backup_confirm)).performClick()
 
@@ -283,7 +288,7 @@ class SettingsScreenTest {
             )
         }
 
-        composeRule.onNodeWithTag(IMPORT_ROW_TEST_TAG).performClick()
+        composeRule.onNodeWithTag(IMPORT_ROW_TEST_TAG).performScrollTo().performClick()
         composeRule.onNode(hasTestTag(importStrategyOptionTag(ImportStrategy.REPLACE))).performClick()
         composeRule.onNodeWithText(string(R.string.settings_backup_confirm)).performClick()
 

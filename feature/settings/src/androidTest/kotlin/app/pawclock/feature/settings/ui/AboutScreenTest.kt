@@ -7,6 +7,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.platform.app.InstrumentationRegistry
 import app.pawclock.feature.settings.R
 import org.junit.Assert.assertTrue
@@ -81,7 +82,9 @@ class AboutScreenTest {
             AboutScreen(appVersion = "0.1.0", onBack = { })
         }
 
-        composeRule.onNodeWithTag(DISCLAIMER_TEST_TAG).assertIsDisplayed()
+        // Дисклеймер, источники и DOI — внизу длинного About-экрана: на маленьких
+        // экранах (дефолтный CI-AVD) они за фолдом, поэтому сперва скроллим.
+        composeRule.onNodeWithTag(DISCLAIMER_TEST_TAG).performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -90,7 +93,7 @@ class AboutScreenTest {
             AboutScreen(appVersion = "0.1.0", onBack = { })
         }
 
-        composeRule.onNodeWithTag(SOURCES_HEADER_TEST_TAG).assertIsDisplayed()
+        composeRule.onNodeWithTag(SOURCES_HEADER_TEST_TAG).performScrollTo().assertIsDisplayed()
     }
 
     @Test
@@ -100,7 +103,10 @@ class AboutScreenTest {
         }
 
         // Wang Cell Systems 2020 DOI — критично для educational angle.
-        composeRule.onNodeWithText("DOI: 10.1016/j.cels.2020.06.006").assertIsDisplayed()
+        composeRule
+            .onNodeWithText("DOI: 10.1016/j.cels.2020.06.006")
+            .performScrollTo()
+            .assertIsDisplayed()
     }
 
     @Test
@@ -109,7 +115,10 @@ class AboutScreenTest {
             AboutScreen(appVersion = "0.1.0", onBack = { })
         }
 
-        composeRule.onNodeWithText("DOI: 10.1177/1098612X21993657").assertIsDisplayed()
+        composeRule
+            .onNodeWithText("DOI: 10.1177/1098612X21993657")
+            .performScrollTo()
+            .assertIsDisplayed()
     }
 
     @Test

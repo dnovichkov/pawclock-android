@@ -242,11 +242,15 @@ class PetEditorScreenTest {
             )
         }
 
+        // Банер рендерится в конце длинной формы — на маленьких экранах (например,
+        // дефолтный CI-AVD) он за фолдом, поэтому сперва скроллим к нему.
         composeRule
             .onNodeWithText("• " + string(R.string.pet_editor_error_name_blank))
+            .performScrollTo()
             .assertIsDisplayed()
         composeRule
             .onNodeWithText("• " + string(R.string.pet_editor_error_birth_date_in_future))
+            .performScrollTo()
             .assertIsDisplayed()
     }
 
