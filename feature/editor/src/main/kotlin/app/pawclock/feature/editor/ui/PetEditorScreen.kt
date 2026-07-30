@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -146,11 +147,17 @@ internal fun PetEditorContent(
             )
         },
         floatingActionButton = {
+            // M3 1.4 вычищает text-слот Extended FAB из semantics (clearAndSetSemantics),
+            // поэтому имя кнопки задаётся явно через contentDescription.
+            val saveLabel = stringResource(R.string.pet_editor_save)
             ExtendedFloatingActionButton(
-                modifier = Modifier.testTag(SAVE_FAB_TEST_TAG),
+                modifier =
+                    Modifier
+                        .testTag(SAVE_FAB_TEST_TAG)
+                        .semantics { contentDescription = saveLabel },
                 onClick = { onEvent(PetEditorEvent.Save) },
                 icon = { Icon(Icons.Filled.Done, contentDescription = null) },
-                text = { Text(text = stringResource(R.string.pet_editor_save)) },
+                text = { Text(text = saveLabel) },
             )
         },
     ) { padding ->

@@ -27,7 +27,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -121,10 +124,18 @@ internal fun PetsListContent(
             )
         },
         floatingActionButton = {
+            // M3 1.4 оборачивает text-слот Extended FAB в clearAndSetSemantics {} (ради
+            // expand/collapse-анимации), так что имя кнопки для TalkBack, UI-тестов и
+            // Maestro задаётся явно через contentDescription.
+            val addLabel = stringResource(R.string.pets_list_add)
             ExtendedFloatingActionButton(
+                modifier =
+                    Modifier
+                        .testTag(ADD_PET_FAB_TEST_TAG)
+                        .semantics { contentDescription = addLabel },
                 onClick = onAddPetClick,
                 icon = { Icon(Icons.Filled.Add, contentDescription = null) },
-                text = { Text(text = stringResource(R.string.pets_list_add)) },
+                text = { Text(text = addLabel) },
             )
         },
     ) { padding ->
@@ -229,3 +240,5 @@ private fun ErrorContent(padding: PaddingValues) {
 private const val HORIZONTAL_PADDING_DP: Int = 16
 private const val VERTICAL_PADDING_DP: Int = 8
 private const val CARD_SPACING_DP: Int = 12
+
+internal const val ADD_PET_FAB_TEST_TAG: String = "pets_list_add_fab"

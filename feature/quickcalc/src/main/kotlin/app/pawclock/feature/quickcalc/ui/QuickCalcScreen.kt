@@ -23,6 +23,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -96,10 +98,16 @@ internal fun QuickCalcContent(
             )
         },
         floatingActionButton = {
+            // M3 1.4 вычищает text-слот Extended FAB из semantics (clearAndSetSemantics),
+            // поэтому имя кнопки задаётся явно через contentDescription.
+            val calculateLabel = stringResource(R.string.quick_calc_calculate)
             ExtendedFloatingActionButton(
-                modifier = Modifier.testTag(CALCULATE_FAB_TEST_TAG),
+                modifier =
+                    Modifier
+                        .testTag(CALCULATE_FAB_TEST_TAG)
+                        .semantics { contentDescription = calculateLabel },
                 onClick = { onEvent(QuickCalcEvent.Calculate) },
-                text = { Text(text = stringResource(R.string.quick_calc_calculate)) },
+                text = { Text(text = calculateLabel) },
                 icon = { /* без иконки — текстовая FAB достаточно выразительна */ },
             )
         },

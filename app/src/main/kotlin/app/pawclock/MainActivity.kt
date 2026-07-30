@@ -9,6 +9,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.pawclock.datastore.AppSettings
 import app.pawclock.datastore.SettingsRepository
@@ -66,7 +68,15 @@ private fun ThemedApp(settingsRepository: SettingsRepository) {
         darkTheme = darkTheme,
         dynamicColor = settings.dynamicColor,
     ) {
-        Surface(modifier = Modifier.fillMaxSize()) {
+        // testTagsAsResourceId прокидывает Modifier.testTag в accessibility resource-id —
+        // без него id-селекторы Maestro (tapOn: id: "pet_editor_save_fab") не находят
+        // Compose-элементы. Действует на всё поддерево от этого корня.
+        Surface(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .semantics { testTagsAsResourceId = true },
+        ) {
             PawClockNavHost()
         }
     }
