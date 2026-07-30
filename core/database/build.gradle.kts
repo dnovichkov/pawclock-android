@@ -19,6 +19,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
+        isCoreLibraryDesugaringEnabled = true
     }
 }
 
@@ -40,6 +41,10 @@ kotlin {
 }
 
 dependencies {
+    // androidTest-APK library-модуля собирается его собственным toolchain'ом (без :app),
+    // поэтому java.time на API 24-25 требует desugaring и здесь (иначе NoClassDefFoundError).
+    coreLibraryDesugaring(libs.desugar.jdk.libs)
+
     implementation(libs.kotlin.stdlib)
     implementation(libs.kotlinx.coroutines.core)
 
