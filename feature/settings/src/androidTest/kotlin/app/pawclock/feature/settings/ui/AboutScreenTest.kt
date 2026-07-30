@@ -7,6 +7,8 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.platform.app.InstrumentationRegistry
+import app.pawclock.feature.settings.R
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -26,6 +28,14 @@ class AboutScreenTest {
     @get:Rule
     val composeRule = createComposeRule()
 
+    // Строки сверяются через ресурсы, а не литералы: эмулятор CI работает в en-US,
+    // и default (ru) перекрывается values-en — литералы делали тесты locale-зависимыми.
+    // Локале-независимые тексты (DOI, github, Apache) остаются литералами.
+    private fun string(
+        resId: Int,
+        vararg args: Any,
+    ): String = InstrumentationRegistry.getInstrumentation().targetContext.getString(resId, *args)
+
     @Test
     fun rendersAppTitle() {
         composeRule.setContent {
@@ -43,7 +53,7 @@ class AboutScreenTest {
         }
 
         composeRule.onNodeWithTag(VERSION_TEST_TAG).assertIsDisplayed()
-        composeRule.onNodeWithText("Версия 1.2.3-test").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.about_version, "1.2.3-test")).assertIsDisplayed()
     }
 
     @Test
@@ -110,7 +120,7 @@ class AboutScreenTest {
         }
 
         // "Назад" — это contentDescription у IconButton в TopAppBar.
-        composeRule.onNodeWithContentDescription("Назад").performClick()
+        composeRule.onNodeWithContentDescription(string(R.string.about_back)).performClick()
 
         assertTrue("Back button click must trigger onBack callback", backCalled)
     }

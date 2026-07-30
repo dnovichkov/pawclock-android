@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import app.pawclock.feature.pets.R as petsR
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -40,6 +41,10 @@ class AppLaunchTest {
     @Test
     fun cold_start_renders_pets_list_destination() {
         // По умолчанию NavHost открывает Route.PetsList — должен появиться его title.
-        composeRule.onNodeWithText("Питомцы").assertIsDisplayed()
+        // Строка берётся из ресурсов: эмулятор CI (en-US) резолвит values-en,
+        // и русский литерал делал тест locale-зависимым.
+        composeRule
+            .onNodeWithText(composeRule.activity.getString(petsR.string.pets_list_title))
+            .assertIsDisplayed()
     }
 }

@@ -2,8 +2,12 @@ package app.pawclock.feature.pets.list
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.platform.app.InstrumentationRegistry
+import app.pawclock.feature.pets.R
+import app.pawclock.feature.pets.list.ui.ADD_PET_FAB_TEST_TAG
 import app.pawclock.feature.pets.list.ui.PetsListContent
 import app.pawclock.model.Pet
 import app.pawclock.model.Species
@@ -27,6 +31,10 @@ class PetsListScreenTest {
 
     private val sampleDate: LocalDate = LocalDate.of(2024, 1, 1)
 
+    // Строки сверяются через ресурсы, а не литералы: эмулятор CI работает в en-US,
+    // и default (ru) перекрывается values-en — литералы делали тесты locale-зависимыми.
+    private fun string(resId: Int): String = InstrumentationRegistry.getInstrumentation().targetContext.getString(resId)
+
     private fun pet(
         id: Long,
         name: String,
@@ -48,7 +56,7 @@ class PetsListScreenTest {
                 onAddPetClick = {},
             )
         }
-        composeRule.onNodeWithText("Добавьте первого питомца").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.pets_list_empty_title)).assertIsDisplayed()
     }
 
     @Test
@@ -74,7 +82,8 @@ class PetsListScreenTest {
                 onAddPetClick = { addClicked = true },
             )
         }
-        composeRule.onNodeWithText("Добавить").performClick()
+        // FAB ищется по тегу: M3 1.4 вычищает text-слот Extended FAB из semantics.
+        composeRule.onNodeWithTag(ADD_PET_FAB_TEST_TAG).performClick()
         assert(addClicked) { "onAddPetClick should be called when FAB is clicked" }
     }
 }

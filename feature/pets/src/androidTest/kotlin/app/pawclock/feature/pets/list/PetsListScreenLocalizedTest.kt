@@ -6,6 +6,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import app.pawclock.feature.pets.list.ui.PetsListContent
 import java.util.Locale
@@ -46,7 +47,9 @@ class PetsListScreenLocalizedTest {
         }
         composeRule.onNodeWithText("Добавьте первого питомца").assertIsDisplayed()
         composeRule.onNodeWithText("Питомцы").assertIsDisplayed()
-        composeRule.onNodeWithText("Добавить").assertIsDisplayed()
+        // Текст FAB вычищен из semantics (M3 1.4 clearAndSetSemantics) — проверяем
+        // локализованное имя кнопки через её явный contentDescription.
+        composeRule.onNodeWithContentDescription("Добавить").assertIsDisplayed()
     }
 
     @Test
@@ -62,7 +65,8 @@ class PetsListScreenLocalizedTest {
         }
         composeRule.onNodeWithText("Add your first pet").assertIsDisplayed()
         composeRule.onNodeWithText("Pets").assertIsDisplayed()
-        composeRule.onNodeWithText("Add").assertIsDisplayed()
+        // См. комментарий в russian_locale-тесте про semantics Extended FAB.
+        composeRule.onNodeWithContentDescription("Add").assertIsDisplayed()
     }
 
     @androidx.compose.runtime.Composable

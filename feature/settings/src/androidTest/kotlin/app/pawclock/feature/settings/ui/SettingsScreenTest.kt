@@ -6,8 +6,10 @@ import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.test.platform.app.InstrumentationRegistry
 import app.pawclock.domain.export.ExportFormat
 import app.pawclock.domain.import_.ImportStrategy
+import app.pawclock.feature.settings.R
 import app.pawclock.feature.settings.SettingsEvent
 import app.pawclock.feature.settings.SettingsState
 import app.pawclock.feature.settings.ui.section.EXPORT_DIALOG_TEST_TAG
@@ -42,6 +44,10 @@ class SettingsScreenTest {
     @get:Rule
     val composeRule = createComposeRule()
 
+    // Строки сверяются через ресурсы, а не литералы: эмулятор CI работает в en-US,
+    // и default (ru) перекрывается values-en — литералы делали тесты locale-зависимыми.
+    private fun string(resId: Int): String = InstrumentationRegistry.getInstrumentation().targetContext.getString(resId)
+
     @Test
     fun initialState_rendersTitle() {
         composeRule.setContent {
@@ -53,7 +59,7 @@ class SettingsScreenTest {
             )
         }
 
-        composeRule.onNodeWithText("Настройки").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.settings_title)).assertIsDisplayed()
     }
 
     @Test
@@ -170,7 +176,7 @@ class SettingsScreenTest {
         }
 
         // "Назад" — contentDescription у IconButton в topBar.
-        composeRule.onNodeWithText("Настройки").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.settings_title)).assertIsDisplayed()
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -256,7 +262,7 @@ class SettingsScreenTest {
 
         composeRule.onNodeWithTag(EXPORT_ROW_TEST_TAG).performClick()
         composeRule.onNode(hasTestTag(exportFormatOptionTag(ExportFormat.CSV))).performClick()
-        composeRule.onNodeWithText("Продолжить").performClick()
+        composeRule.onNodeWithText(string(R.string.settings_backup_confirm)).performClick()
 
         assertTrue(
             "Confirming export dialog must invoke onExportFormatChosen with the selected format",
@@ -279,7 +285,7 @@ class SettingsScreenTest {
 
         composeRule.onNodeWithTag(IMPORT_ROW_TEST_TAG).performClick()
         composeRule.onNode(hasTestTag(importStrategyOptionTag(ImportStrategy.REPLACE))).performClick()
-        composeRule.onNodeWithText("Продолжить").performClick()
+        composeRule.onNodeWithText(string(R.string.settings_backup_confirm)).performClick()
 
         assertTrue(
             "Confirming import dialog must invoke onImportStrategyChosen with the selected strategy",

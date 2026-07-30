@@ -8,10 +8,12 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import androidx.test.platform.app.InstrumentationRegistry
 import app.pawclock.domain.pet.PetValidationError
 import app.pawclock.feature.editor.PetEditorEvent
 import app.pawclock.feature.editor.PetEditorSaveResult
 import app.pawclock.feature.editor.PetEditorState
+import app.pawclock.feature.editor.R
 import app.pawclock.feature.editor.SubcategoryOption
 import app.pawclock.feature.editor.ui.section.BIRTH_DATE_FIELD_TEST_TAG
 import app.pawclock.model.DogSize
@@ -40,6 +42,10 @@ class PetEditorScreenTest {
     @get:Rule
     val composeRule = createComposeRule()
 
+    // Строки сверяются через ресурсы, а не литералы: эмулятор CI работает в en-US,
+    // и default (ru) перекрывается values-en — литералы делали тесты locale-зависимыми.
+    private fun string(resId: Int): String = InstrumentationRegistry.getInstrumentation().targetContext.getString(resId)
+
     @Test
     fun newPetMode_rendersSaveButtonAndEmptyForm() {
         val events = mutableListOf<PetEditorEvent>()
@@ -53,7 +59,7 @@ class PetEditorScreenTest {
         }
 
         // Toolbar title — «Новый питомец».
-        composeRule.onNodeWithText("Новый питомец").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.pet_editor_title_new)).assertIsDisplayed()
         // Save FAB присутствует.
         composeRule.onNodeWithTag(SAVE_FAB_TEST_TAG).assertIsDisplayed()
     }
@@ -106,7 +112,7 @@ class PetEditorScreenTest {
         }
 
         // Toolbar показывает «Редактирование» (т.к. editingPetId != null).
-        composeRule.onNodeWithText("Редактирование").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.pet_editor_title_edit)).assertIsDisplayed()
     }
 
     @Test
@@ -149,11 +155,11 @@ class PetEditorScreenTest {
         }
 
         // Подкатегория-секция показывает все 5 размеров.
-        composeRule.onNodeWithText("Той").assertIsDisplayed()
-        composeRule.onNodeWithText("Маленькая").assertIsDisplayed()
-        composeRule.onNodeWithText("Средняя").assertIsDisplayed()
-        composeRule.onNodeWithText("Большая").assertIsDisplayed()
-        composeRule.onNodeWithText("Гигантская").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.dog_size_toy)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.dog_size_small)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.dog_size_medium)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.dog_size_large)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.dog_size_giant)).assertIsDisplayed()
     }
 
     @Test
@@ -174,8 +180,8 @@ class PetEditorScreenTest {
 
         // Локализованные RabbitSize метки, а не «собачьи» (id small/medium/large совпадают
         // с DogSize, но species=Rabbit резолвит rabbit_size_*).
-        composeRule.onNodeWithText("Карликовый").assertIsDisplayed()
-        composeRule.onNodeWithText("Гигантский").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.rabbit_size_dwarf)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.rabbit_size_giant)).assertIsDisplayed()
     }
 
     @Test
@@ -194,8 +200,8 @@ class PetEditorScreenTest {
             )
         }
 
-        composeRule.onNodeWithText("Корелла").assertIsDisplayed()
-        composeRule.onNodeWithText("Жако").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.bird_type_cockatiel)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.bird_type_african_grey)).assertIsDisplayed()
     }
 
     @Test
@@ -215,7 +221,7 @@ class PetEditorScreenTest {
             )
         }
 
-        composeRule.onNodeWithText("Подкатегория").assertDoesNotExist()
+        composeRule.onNodeWithText(string(R.string.pet_editor_subcategory_label)).assertDoesNotExist()
     }
 
     @Test
@@ -236,8 +242,12 @@ class PetEditorScreenTest {
             )
         }
 
-        composeRule.onNodeWithText("• Введите имя питомца").assertIsDisplayed()
-        composeRule.onNodeWithText("• Дата рождения не может быть в будущем").assertIsDisplayed()
+        composeRule
+            .onNodeWithText("• " + string(R.string.pet_editor_error_name_blank))
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText("• " + string(R.string.pet_editor_error_birth_date_in_future))
+            .assertIsDisplayed()
     }
 
     @Test
@@ -298,6 +308,6 @@ class PetEditorScreenTest {
             .performScrollTo()
             .performClick()
 
-        composeRule.onNodeWithText("ОК").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.pet_editor_date_ok)).assertIsDisplayed()
     }
 }

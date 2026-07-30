@@ -7,12 +7,14 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.test.platform.app.InstrumentationRegistry
 import app.pawclock.domain.pet.CalculatedAge
 import app.pawclock.feature.quickcalc.QuickCalcEvent
 import app.pawclock.feature.quickcalc.QuickCalcResult
 import app.pawclock.feature.quickcalc.QuickCalcState
 import app.pawclock.feature.quickcalc.QuickCalcSubcategoryOption
 import app.pawclock.feature.quickcalc.QuickCalcValidationError
+import app.pawclock.feature.quickcalc.R
 import app.pawclock.feature.quickcalc.ui.section.QUICK_CALC_BIRTH_DATE_FIELD_TEST_TAG
 import app.pawclock.feature.quickcalc.ui.section.quickCalcMethodTag
 import app.pawclock.feature.quickcalc.ui.section.quickCalcSpeciesChipTag
@@ -45,6 +47,13 @@ class QuickCalcScreenTest {
     @get:Rule
     val composeRule = createComposeRule()
 
+    // Строки сверяются через ресурсы, а не литералы: эмулятор CI работает в en-US,
+    // и default (ru) перекрывается values-en — литералы делали тесты locale-зависимыми.
+    private fun string(
+        resId: Int,
+        vararg args: Any,
+    ): String = InstrumentationRegistry.getInstrumentation().targetContext.getString(resId, *args)
+
     @Test
     fun initialState_rendersTitleAndCalculateFab() {
         val events = mutableListOf<QuickCalcEvent>()
@@ -56,7 +65,7 @@ class QuickCalcScreenTest {
             )
         }
 
-        composeRule.onNodeWithText("Быстрый расчёт").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.quick_calc_title)).assertIsDisplayed()
         composeRule.onNodeWithTag(CALCULATE_FAB_TEST_TAG).assertIsDisplayed()
     }
 
@@ -114,11 +123,11 @@ class QuickCalcScreenTest {
         }
 
         // Все 5 размеров видимы.
-        composeRule.onNodeWithText("Той").assertIsDisplayed()
-        composeRule.onNodeWithText("Маленькая").assertIsDisplayed()
-        composeRule.onNodeWithText("Средняя").assertIsDisplayed()
-        composeRule.onNodeWithText("Большая").assertIsDisplayed()
-        composeRule.onNodeWithText("Гигантская").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.quick_calc_subcategory_toy)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.quick_calc_subcategory_small)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.quick_calc_subcategory_medium)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.quick_calc_subcategory_large)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.quick_calc_subcategory_giant)).assertIsDisplayed()
     }
 
     @Test
@@ -140,8 +149,12 @@ class QuickCalcScreenTest {
             )
         }
 
-        composeRule.onNodeWithText("• Выберите вид питомца").assertIsDisplayed()
-        composeRule.onNodeWithText("• Укажите дату рождения").assertIsDisplayed()
+        composeRule
+            .onNodeWithText("• " + string(R.string.quick_calc_error_species_required))
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText("• " + string(R.string.quick_calc_error_birth_date_required))
+            .assertIsDisplayed()
     }
 
     @Test
@@ -162,7 +175,7 @@ class QuickCalcScreenTest {
         }
 
         // Method toggle секция — Wang/SizeBased для собак.
-        composeRule.onNodeWithText("По размеру").performClick()
+        composeRule.onNodeWithText(string(R.string.quick_calc_method_size_based)).performClick()
 
         assertTrue(
             "Click on SizeBased button must produce SetMethod(SIZE_BASED)",
@@ -195,9 +208,13 @@ class QuickCalcScreenTest {
         }
 
         // Hero "57 ЧГ" — главная цифра в AgeBigCard.
-        composeRule.onNodeWithText("57 ЧГ").assertIsDisplayed()
+        composeRule
+            .onNodeWithText(string(R.string.quick_calc_result_human_years_unit, 57))
+            .assertIsDisplayed()
         // LifeStageChip для MatureAdult.
-        composeRule.onNodeWithText("Зрелый взрослый").assertIsDisplayed()
+        composeRule
+            .onNodeWithText(string(R.string.quick_calc_life_stage_dog_mature_adult))
+            .assertIsDisplayed()
     }
 
     @Test
@@ -223,8 +240,12 @@ class QuickCalcScreenTest {
         }
 
         // "36 ЧГ" — главная цифра.
-        composeRule.onNodeWithText("36 ЧГ").assertIsDisplayed()
-        composeRule.onNodeWithText("Молодой взрослый").assertIsDisplayed()
+        composeRule
+            .onNodeWithText(string(R.string.quick_calc_result_human_years_unit, 36))
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText(string(R.string.quick_calc_life_stage_cat_young_adult))
+            .assertIsDisplayed()
         // Method toggle "Wang (эпигенетика)" — НЕ должен быть виден для кошки.
         // (sheet содержит method toggle только когда species == Dog)
     }
@@ -248,9 +269,9 @@ class QuickCalcScreenTest {
         }
 
         // Метки RabbitSize, а не DogSize: «Карликовый»/«Гигантский» вместо «Той»/«Гигантская».
-        composeRule.onNodeWithText("Карликовый").assertIsDisplayed()
-        composeRule.onNodeWithText("Средний").assertIsDisplayed()
-        composeRule.onNodeWithText("Гигантский").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.rabbit_size_dwarf)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.rabbit_size_medium)).assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.rabbit_size_giant)).assertIsDisplayed()
     }
 
     @Test
@@ -277,8 +298,12 @@ class QuickCalcScreenTest {
         }
 
         // Rabbit Medium 5y ≈ 45 ЧГ, стадия Adult («Взрослый»).
-        composeRule.onNodeWithText("45 ЧГ").assertIsDisplayed()
-        composeRule.onNodeWithText("Взрослый").assertIsDisplayed()
+        composeRule
+            .onNodeWithText(string(R.string.quick_calc_result_human_years_unit, 45))
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText(string(R.string.quick_calc_life_stage_rabbit_adult))
+            .assertIsDisplayed()
         // Method toggle отсутствует для не-собаки.
         composeRule.onNodeWithTag(quickCalcMethodTag(CalculationMethod.SIZE_BASED)).assertDoesNotExist()
     }
@@ -307,8 +332,12 @@ class QuickCalcScreenTest {
             )
         }
 
-        composeRule.onNodeWithText("34 ЧГ").assertIsDisplayed()
-        composeRule.onNodeWithText("Взрослая").assertIsDisplayed()
+        composeRule
+            .onNodeWithText(string(R.string.quick_calc_result_human_years_unit, 34))
+            .assertIsDisplayed()
+        composeRule
+            .onNodeWithText(string(R.string.quick_calc_life_stage_bird_adult))
+            .assertIsDisplayed()
     }
 
     // Регрессия b0f220b (та же, что в PetEditor BirthDateField): read-only
@@ -330,6 +359,6 @@ class QuickCalcScreenTest {
             .performScrollTo()
             .performClick()
 
-        composeRule.onNodeWithText("ОК").assertIsDisplayed()
+        composeRule.onNodeWithText(string(R.string.quick_calc_date_ok)).assertIsDisplayed()
     }
 }
