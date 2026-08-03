@@ -1,6 +1,6 @@
 [versions]
 # Kotlin & build
-kotlin = "2.0.21"
+kotlin = "2.4.10"
 ksp = "2.0.21-1.0.28"
 # Plan 4 (lint fix): bumped AGP 8.7.3 → 8.13.2. Причина — lint из AGP 8.7.3 (lint 31.7.3)
 # падал с NegativeArraySizeException в LintJarApiMigration при попытке «мигрировать» lint-джары
