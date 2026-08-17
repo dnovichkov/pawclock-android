@@ -12,7 +12,7 @@ javaToolchain = "17"
 # AndroidX core
 # Task 17: bumped androidxCore 1.15.0 → 1.16.0 to drop transitive constraint on lifecycle 2.8.7
 # (not in offline cache); core 1.16.0 requires only lifecycle 2.6.2 (cached).
-androidxCore = "1.16.0"
+androidxCore = "1.19.0"
 # Task 17: bumped 2.8.7 → 2.9.0 — only 2.9.x cached offline. Lifecycle 2.9 is API-compatible
 # with 2.8.x for our usage (lifecycle-runtime-ktx, viewmodel-compose) и Activity 1.10 совместим.
 androidxLifecycle = "2.9.0"
